@@ -1,0 +1,1 @@
+https://stackoverflow.com/questions/5343932/lib-exe-visual-studio-generating-lib-files-from-dlls-and-def-files
