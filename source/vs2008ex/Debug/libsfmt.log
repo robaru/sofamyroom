@@ -1,0 +1,2 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: la directory intermedia (.\Debug\) contiene file condivisi da un altro progetto (libroomsim.vcxproj, roomsim.vcxproj). Tale condizione può comportare un comportamento di pulizia e ricompilazione non corretto.
+  libsfmt.vcxproj -> C:\Users\csc\Desktop\roomsim versions\schimmel\roomsim - x64 win\source\vs2008ex\.\Debug\libsfmt.lib
