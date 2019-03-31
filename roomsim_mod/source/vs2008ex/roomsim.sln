@@ -4,10 +4,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.28307.539
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libroomsim", "libroomsim.vcxproj", "{29FF6DF5-D9D0-4C94-A089-7BB4E5EBDCCB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6DD0C7A7-6B51-48C6-8D62-E71C59A5BAA3} = {6DD0C7A7-6B51-48C6-8D62-E71C59A5BAA3}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsfmt", "libsfmt.vcxproj", "{6DD0C7A7-6B51-48C6-8D62-E71C59A5BAA3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "roomsim", "roomsim.vcxproj", "{EC547451-246C-4FD6-BDA0-DDED89B93886}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6DD0C7A7-6B51-48C6-8D62-E71C59A5BAA3} = {6DD0C7A7-6B51-48C6-8D62-E71C59A5BAA3}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
