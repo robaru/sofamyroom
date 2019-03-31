@@ -1,4 +1,0 @@
-﻿  SFMT.c
-c:\repos\roomsim\roomsim-1.0.0a-source\source\libsfmt\sfmt.h(129): warning C4244: 'return': conversion from 'long double' to 'double', possible loss of data
-C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(1397,5): warning MSB8012: TargetPath(C:\repos\roomsim\roomsim-1.0.0a-source\source\vs2008ex\x64\Debug\libsfmt.lib) does not match the Library's OutputFile property value (C:\repos\roomsim\roomsim-1.0.0a-source\source\vs2008ex\Debug\libsfmt.lib). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
-  libsfmt.vcxproj -> C:\repos\roomsim\roomsim-1.0.0a-source\source\vs2008ex\x64\Debug\libsfmt.lib

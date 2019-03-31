@@ -99,28 +99,34 @@
     <_ProjectFileVersion>15.0.28127.55</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>.\Release\</OutDir>
-    <IntDir>.\Release\</IntDir>
+    <OutDir>$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>.\Debug\</OutDir>
-    <IntDir>.\Debug\</IntDir>
+    <OutDir>$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Unittest|Win32'">
-    <OutDir>.\Unittest\</OutDir>
-    <IntDir>.\Unittest\</IntDir>
+    <OutDir>$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Unittest|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
@@ -136,10 +142,10 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <DisableLanguageExtensions>true</DisableLanguageExtensions>
-      <PrecompiledHeaderOutputFile>.\Release/roomsim.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>.\Release/</AssemblerListingLocation>
-      <ObjectFileName>.\Release/</ObjectFileName>
-      <ProgramDataBaseFileName>.\Release/</ProgramDataBaseFileName>
+      <PrecompiledHeaderOutputFile>$(Platform)\$(Configuration)\$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(Platform)\$(Configuration)\</AssemblerListingLocation>
+      <ObjectFileName>$(Platform)\$(Configuration)\$(TargetName).obj\</ObjectFileName>
+      <ProgramDataBaseFileName>$(Platform)\$(Configuration)\$(TargetName).pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <CompileAs>CompileAsC</CompileAs>
@@ -148,16 +154,13 @@
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
     </ResourceCompile>
-    <PreLinkEvent>
-      <Command>cl /nologo /c ..\build.c /Fo"Release/build.obj"</Command>
-    </PreLinkEvent>
+    <PreLinkEvent />
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:libcmtd %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>odbc32.lib;odbccp32.lib;libfftw3-3.lib;Release/build.obj;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>.\Release/roomsim.exe</OutputFile>
+      <AdditionalDependencies>odbc32.lib;odbccp32.lib;libfftw3-3.lib;$(Platform)/$(Configuration)/build.obj;$(Platform)/$(Configuration)/libsfmt.lib;$(Platform)/$(Configuration)/libroomsim.lib</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\libfftw\win32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ProgramDatabaseFile>.\Release/roomsim.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(Platform)/$(Configuration)/$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
@@ -165,8 +168,15 @@
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\Release/roomsim.bsc</OutputFile>
+      <OutputFile>$(Platform)\$(Configuration)\$(TargetName).bsc</OutputFile>
     </Bscmake>
+    <PreLinkEvent>
+      <Command>cl /nologo /c ../build.c /Fo"$(Platform)/$(Configuration)/build.obj"</Command>
+    </PreLinkEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Midl>
@@ -177,16 +187,16 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\libroomsim\include;..\libsfmt;..\libfftw\win32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libroomsim\include;..\libsfmt;..\libfftw\win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <DisableLanguageExtensions>true</DisableLanguageExtensions>
-      <PrecompiledHeaderOutputFile>.\Release/roomsim.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>.\Release/</AssemblerListingLocation>
-      <ObjectFileName>.\Release/</ObjectFileName>
-      <ProgramDataBaseFileName>.\Release/</ProgramDataBaseFileName>
+      <PrecompiledHeaderOutputFile>$(Platform)\$(Configuration)\$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(Platform)\$(Configuration)\</AssemblerListingLocation>
+      <ObjectFileName>$(Platform)\$(Configuration)\$(TargetName).obj\</ObjectFileName>
+      <ProgramDataBaseFileName>$(Platform)\$(Configuration)\$(TargetName).pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <CompileAs>CompileAsC</CompileAs>
@@ -195,16 +205,13 @@
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
     </ResourceCompile>
-    <PreLinkEvent>
-      <Command>cl /nologo /c ..\build.c /Fo"Release/build.obj"</Command>
-    </PreLinkEvent>
+    <PreLinkEvent />
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:libcmtd %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>odbc32.lib;odbccp32.lib;libfftw3-3.lib;Release/build.obj;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>.\Release/roomsim.exe</OutputFile>
+      <AdditionalDependencies>odbc32.lib;odbccp32.lib;libfftw3-3.lib;$(Platform)/$(Configuration)/build.obj;$(Platform)/$(Configuration)/libsfmt.lib;$(Platform)/$(Configuration)/libroomsim.lib</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\libfftw\win32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ProgramDatabaseFile>.\Release/roomsim.pdb</ProgramDatabaseFile>
+      <AdditionalLibraryDirectories>..\libfftw\win64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ProgramDatabaseFile>$(Platform)/$(Configuration)/$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
@@ -212,8 +219,15 @@
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\Release/roomsim.bsc</OutputFile>
+      <OutputFile>$(Platform)\$(Configuration)\$(TargetName).bsc</OutputFile>
     </Bscmake>
+    <PreLinkEvent>
+      <Command>cl /nologo /c ../build.c /Fo"$(Platform)/$(Configuration)/build.obj"</Command>
+    </PreLinkEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
@@ -228,10 +242,10 @@
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <DisableLanguageExtensions>true</DisableLanguageExtensions>
-      <PrecompiledHeaderOutputFile>.\Debug/roomsim.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>.\Debug/</AssemblerListingLocation>
-      <ObjectFileName>.\Debug/</ObjectFileName>
-      <ProgramDataBaseFileName>.\Debug/</ProgramDataBaseFileName>
+      <PrecompiledHeaderOutputFile>$(Platform)\$(Configuration)\$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(Platform)\$(Configuration)\</AssemblerListingLocation>
+      <ObjectFileName>$(Platform)\$(Configuration)\$(TargetName).obj\</ObjectFileName>
+      <ProgramDataBaseFileName>$(Platform)\$(Configuration)\$(TargetName).pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -241,17 +255,14 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
     </ResourceCompile>
-    <PreLinkEvent>
-      <Command>cl /nologo /c ..\build.c /Fo"Debug/build.obj"</Command>
-    </PreLinkEvent>
+    <PreLinkEvent />
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:libcmt %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>odbc32.lib;odbccp32.lib;libfftw3-3.lib;Debug/build.obj;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>.\Debug/roomsim.exe</OutputFile>
+      <AdditionalDependencies>odbc32.lib;odbccp32.lib;libfftw3-3.lib;$(Platform)/$(Configuration)/build.obj;$(Platform)/$(Configuration)/libsfmt.lib;$(Platform)/$(Configuration)/libroomsim.lib</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\libfftw\win32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>.\Debug/roomsim.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(Platform)/$(Configuration)/$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
@@ -259,8 +270,15 @@
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\Debug/roomsim.bsc</OutputFile>
+      <OutputFile>$(Platform)\$(Configuration)\$(TargetName).bsc</OutputFile>
     </Bscmake>
+    <PreLinkEvent>
+      <Command>cl /nologo /c ../build.c /Fo"$(Platform)/$(Configuration)/build.obj"</Command>
+    </PreLinkEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Midl>
@@ -270,15 +288,15 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\libroomsim\include;..\libsfmt;..\libfftw\win32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libroomsim\include;..\libsfmt;..\libfftw\win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <DisableLanguageExtensions>true</DisableLanguageExtensions>
-      <PrecompiledHeaderOutputFile>.\Debug/roomsim.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>.\Debug/</AssemblerListingLocation>
-      <ObjectFileName>.\Debug/</ObjectFileName>
-      <ProgramDataBaseFileName>.\Debug/</ProgramDataBaseFileName>
+      <PrecompiledHeaderOutputFile>$(Platform)\$(Configuration)\$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(Platform)\$(Configuration)\</AssemblerListingLocation>
+      <ObjectFileName>$(Platform)\$(Configuration)\$(TargetName).obj\</ObjectFileName>
+      <ProgramDataBaseFileName>$(Platform)\$(Configuration)\$(TargetName).pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -288,17 +306,14 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
     </ResourceCompile>
-    <PreLinkEvent>
-      <Command>cl /nologo /c ..\build.c /Fo"Debug/build.obj"</Command>
-    </PreLinkEvent>
+    <PreLinkEvent />
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:libcmt %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>odbc32.lib;odbccp32.lib;libfftw3-3.lib;Debug/build.obj;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>.\Debug/roomsim.exe</OutputFile>
+      <AdditionalDependencies>odbc32.lib;odbccp32.lib;libfftw3-3.lib;$(Platform)/$(Configuration)/build.obj;$(Platform)/$(Configuration)/libsfmt.lib;$(Platform)/$(Configuration)/libroomsim.lib</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\libfftw\win32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\libfftw\win64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>.\Debug/roomsim.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(Platform)/$(Configuration)/$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
@@ -306,8 +321,15 @@
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\Debug/roomsim.bsc</OutputFile>
+      <OutputFile>$(Platform)\$(Configuration)\$(TargetName).bsc</OutputFile>
     </Bscmake>
+    <PreLinkEvent>
+      <Command>cl /nologo /c ../build.c /Fo"$(Platform)/$(Configuration)/build.obj"</Command>
+    </PreLinkEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Unittest|Win32'">
     <Midl>
@@ -322,10 +344,10 @@
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <DisableLanguageExtensions>true</DisableLanguageExtensions>
-      <PrecompiledHeaderOutputFile>.\Unittest/roomsim.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>.\Unittest/</AssemblerListingLocation>
-      <ObjectFileName>.\Unittest/</ObjectFileName>
-      <ProgramDataBaseFileName>.\Unittest/</ProgramDataBaseFileName>
+      <PrecompiledHeaderOutputFile>$(Platform)\$(Configuration)\$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(Platform)\$(Configuration)\</AssemblerListingLocation>
+      <ObjectFileName>$(Platform)\$(Configuration)\$(TargetName).obj\</ObjectFileName>
+      <ProgramDataBaseFileName>$(Platform)\$(Configuration)\$(TargetName).pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -335,17 +357,14 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
     </ResourceCompile>
-    <PreLinkEvent>
-      <Command>cl /nologo /c ..\build.c /Fo"Unittest/build.obj"</Command>
-    </PreLinkEvent>
+    <PreLinkEvent />
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:libcmt %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>odbc32.lib;odbccp32.lib;libfftw3-3.lib;Unittest\build.obj;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>Unittest/unittest.exe</OutputFile>
+      <AdditionalDependencies>odbc32.lib;odbccp32.lib;libfftw3-3.lib;$(Platform)/$(Configuration)/build.obj;$(Platform)/$(Configuration)/libsfmt.lib;$(Platform)/$(Configuration)/libroomsim.lib</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\libfftw\win32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>.\Unittest/unittest.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(Platform)/$(Configuration)/$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
@@ -353,8 +372,15 @@
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\Unittest/roomsim.bsc</OutputFile>
+      <OutputFile>$(Platform)\$(Configuration)\$(TargetName).bsc</OutputFile>
     </Bscmake>
+    <PreLinkEvent>
+      <Command>cl /nologo /c ../build.c /Fo"$(Platform)/$(Configuration)/build.obj"</Command>
+    </PreLinkEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Unittest|x64'">
     <Midl>
@@ -364,15 +390,15 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\libroomsim\include;..\libsfmt;..\libfftw\win32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libroomsim\include;..\libsfmt;..\libfftw\win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;UNITTEST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <DisableLanguageExtensions>true</DisableLanguageExtensions>
-      <PrecompiledHeaderOutputFile>.\Unittest/roomsim.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>.\Unittest/</AssemblerListingLocation>
-      <ObjectFileName>.\Unittest/</ObjectFileName>
-      <ProgramDataBaseFileName>.\Unittest/</ProgramDataBaseFileName>
+      <PrecompiledHeaderOutputFile>$(Platform)\$(Configuration)\$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(Platform)\$(Configuration)\</AssemblerListingLocation>
+      <ObjectFileName>$(Platform)\$(Configuration)\$(TargetName).obj\</ObjectFileName>
+      <ProgramDataBaseFileName>$(Platform)\$(Configuration)\$(TargetName).pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -382,17 +408,14 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
     </ResourceCompile>
-    <PreLinkEvent>
-      <Command>cl /nologo /c ..\build.c /Fo"Unittest/build.obj"</Command>
-    </PreLinkEvent>
+    <PreLinkEvent />
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:libcmt %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>odbc32.lib;odbccp32.lib;libfftw3-3.lib;Unittest\build.obj;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>Unittest/unittest.exe</OutputFile>
+      <AdditionalDependencies>odbc32.lib;odbccp32.lib;libfftw3-3.lib;$(Platform)/$(Configuration)/build.obj;$(Platform)/$(Configuration)/libsfmt.lib;$(Platform)/$(Configuration)/libroomsim.lib</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\libfftw\win32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\libfftw\win64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>.\Unittest/unittest.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(Platform)/$(Configuration)/$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
@@ -400,8 +423,15 @@
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\Unittest/roomsim.bsc</OutputFile>
+      <OutputFile>$(Platform)\$(Configuration)\$(TargetName).bsc</OutputFile>
     </Bscmake>
+    <PreLinkEvent>
+      <Command>cl /nologo /c ../build.c /Fo"$(Platform)/$(Configuration)/build.obj"</Command>
+    </PreLinkEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\main.c" />
