@@ -6,3 +6,16 @@
 
 /roomsim_mod/source/vs2008ex/x64/
 
+/libmysofa/windows/bin/
+
+/libmysofa/windows/log/
+
+/libmysofa/windows/obj/
+
+/libmysofa/windows/.vs/
+
+/libmysofa/windows/testApp/Win32/
+
+/libmysofa/windows/testApp/x64/
+
+/libmysofa/windows/testApp/.vs/

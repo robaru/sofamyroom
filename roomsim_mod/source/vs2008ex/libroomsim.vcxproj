@@ -126,7 +126,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\win32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\$(Platform)\include;..\libmysofa\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -148,6 +148,8 @@
       <OutputFile>$(Platform)\$(Configuration)\$(TargetName).lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalDependencies>libfftw3-3.lib;libsfmt.lib;mysofa.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib</AdditionalLibraryDirectories>
     </Lib>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -158,7 +160,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\$(Platform)\include;..\libmysofa\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -179,6 +181,8 @@
     <Lib>
       <OutputFile>$(Platform)\$(Configuration)\$(TargetName).lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <AdditionalDependencies>libfftw3-3.lib;libsfmt.lib;mysofa.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib</AdditionalLibraryDirectories>
     </Lib>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -188,7 +192,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Unittest|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\win32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\$(Platform)\include;..\libmysofa\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -211,6 +215,8 @@
       <OutputFile>$(Platform)\$(Configuration)\$(TargetName).lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalDependencies>libfftw3-3.lib;libsfmt.lib;mysofa.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib</AdditionalLibraryDirectories>
     </Lib>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -220,7 +226,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Unittest|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\$(Platform)\include;..\libmysofa\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -241,6 +247,8 @@
     <Lib>
       <OutputFile>$(Platform)\$(Configuration)\$(TargetName).lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <AdditionalDependencies>libfftw3-3.lib;libsfmt.lib;mysofa.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib</AdditionalLibraryDirectories>
     </Lib>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -250,7 +258,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\win32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\$(Platform)\include;..\libmysofa\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -273,6 +281,8 @@
       <OutputFile>$(Platform)\$(Configuration)\$(TargetName).lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalDependencies>libfftw3-3.lib;libsfmt.lib;mysofa.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib</AdditionalLibraryDirectories>
     </Lib>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -282,7 +292,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\$(Platform)\include;..\libmysofa\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -303,6 +313,8 @@
     <Lib>
       <OutputFile>$(Platform)\$(Configuration)\$(TargetName).lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <AdditionalDependencies>libfftw3-3.lib;libsfmt.lib;mysofa.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib</AdditionalLibraryDirectories>
     </Lib>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>

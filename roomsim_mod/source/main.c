@@ -61,7 +61,9 @@ void Roomsetup(CRoomSetup *par)
 	};
 	static const CSensor receiver[] = {
 		/*{{1,2,1}, {0,PI/2,0}, "cardioid"} */
-		{{1.0,2.0,1.0}, {0,0,0}, "MIT ../data/MIT/KEMARsmall.hrtf"}
+		/*{{1.0,2.0,1.0}, {0,0,0}, "MIT ../../../../data/MIT/KEMARsmall.hrtf"}*/
+		{{1.0,2.0,1.0}, {0,0,0}, "SOFA ../../../../data/MIT/KEMARsmall.hrtf"}
+
 	};
 	FILE *fid;
 	int i;
@@ -141,7 +143,7 @@ int main(int argc, char **argv)
 
 	printf("ROOMSIM v" ROOMSIM_VERSION ", built %s %s\n", builddate, buildtime);
 
-	if (argc<=1)
+	/*if (argc<=1)
 	{
 		MsgPrintf("Usage: roomsim setup [output]\n");
 		return 0;
@@ -153,10 +155,11 @@ int main(int argc, char **argv)
 		char msg[256];
 		sprintf(msg,"error reading setup file '%s'\n",argv[1]);
 		MsgErrorExit(msg);
-	}
+	}*/
 
 	/* PrintSetup(&filesetup.root); */
-	LoadCRoomSetup(&filesetup.root,&setup);
+	/*LoadCRoomSetup(&filesetup.root,&setup);*/
+	Roomsetup(&setup);
 	ValidateSetup(&setup);
 
 	/* run the simulator */

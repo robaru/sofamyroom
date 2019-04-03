@@ -452,6 +452,115 @@ void sensor_MIT_init(const char *datafile, CSensorDefinition *definition)
 #endif
 }
 
+/***** SOFA *******************************/
+int sensor_SOFA_probe(const CSensorDefinition *sensor, const XYZ *xyz)
+{
+	static const int MITprobe_nazs[] = { 56, 60, 72, 72, 72, 72, 72, 60, 56, 45, 36, 24, 12, 1 };
+	static const int MITprobe_cumidx[] = { 0, 56, 116, 188, 260, 332, 404, 476, 536, 592, 637, 673, 697, 709 };
+
+	int elidx, naz, azidx, idx;
+	AZEL vp;
+
+	UNREFERENCED_PARAMETER(sensor);
+
+	/* MsgPrintf("MIT probe [%f,%f,%f],%p\n", xyz->x, xyz->y, xyz->z, arg); */
+
+	/* convert vector to vertical-polar azimuth,elevation */
+	azel_vp(xyz, &vp);
+
+	/* validate elevation  */
+	if (vp.el<DEG2RAD(-45) || vp.el>DEG2RAD(90))
+		return -1;
+
+	/* negate azimuth and convert to 0...2 pi */
+	vp.az = -vp.az; if (vp.az < 0) vp.az += TWOPI;
+	/* NOTE: negating required due to difference in azimuth convention */
+	/* MIT: positive azimuth = right; ROOMSIM: positive azimuth = left. */
+
+	/* determine idx of nearest response */
+	elidx = (int)floor((vp.el + DEG2RAD(45.0)) / DEG2RAD(10.0));
+	naz = MITprobe_nazs[elidx];
+	azidx = (int)(ROUND(naz * vp.az / TWOPI) % naz);
+	idx = MITprobe_cumidx[elidx] + azidx;
+
+	/*MsgPrintf("MIT probe: az=%7.3f, el=%7.3f [%d,%d,%d]\n", vp.az/PI, vp.el/PI, azidx,elidx,idx); */
+
+	/* return nearest HRTF */
+	/*return &(((const double *)definition->responsedata)[idx * definition->nSamples * 2]); */
+	/*return &(((CMITdata *)arg)->data[idx * (((CMITdata *)arg)->hrtflen) * 2]); */
+	return idx;
+}
+
+void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
+{
+	char msg[256];
+	unsigned int hrtflen;
+	long len;
+	FILE *fid;
+	size_t res;
+
+	/* test that a datafile name is provided */
+	if (!datafile)
+		MsgErrorExit("no SOFA datafile specified\n");
+
+	/* open HRTF file */
+	fid = fopen(datafile, "rb");
+	if (!fid)
+	{
+		sprintf(msg, "unable to open SOFA data file '%s'", datafile);
+		MsgErrorExit(msg);
+	}
+
+	/* determine file length */
+	if ((fseek(fid, 0, SEEK_END) != 0) || ((len = ftell(fid)) == -1L) || (fseek(fid, 0, SEEK_SET) != 0))
+	{
+		sprintf(msg, "unable to determine length of SOFA data file '%s'", datafile);
+		MsgErrorExit(msg);
+	}
+
+	/* determine length of HRTFs */
+	hrtflen = (len / (SENSORMIT_NHRTFS * 2 * sizeof(double)));
+
+	/* verify that data file has the proper size */
+	if (hrtflen * SENSORMIT_NHRTFS * 2 * sizeof(double) != (unsigned long)len)
+	{
+		sprintf(msg, "invalid size for SOFA data file '%s'", datafile);
+		MsgErrorExit(msg);
+	}
+
+	/* allocate memory for sensor response data */
+	definition->responsedata = MemMalloc(len);
+
+	/* read HRTF data and close HRTF file */
+	res = fread(definition->responsedata, sizeof(double), 2 * hrtflen * SENSORMIT_NHRTFS, fid);
+	fclose(fid);
+
+	/* if read unsuccessful, terminate */
+	if (res != 2 * hrtflen * SENSORMIT_NHRTFS)
+	{
+		sprintf(msg, "unable to read data from SOFA data file '%s' (error code %d)", datafile, res);
+		MsgErrorExit(msg);
+	}
+
+	/* fill sensor definition structure */
+	definition->type = ST_IMPULSERESPONSE;
+	definition->probe.xyz2idx = sensor_SOFA_probe;
+	definition->fs = 44100.0;
+	definition->nChannels = 2;
+	definition->nEntries = SENSORMIT_NHRTFS;
+	definition->nSamples = hrtflen;
+
+	/* provide some feedback */
+	MsgPrintf("Successfully loaded SOFA HRTFs (#pos=%d, #samples=%d, #ch=2, fs=44100)\n",
+		SENSORMIT_NHRTFS, hrtflen);
+	MsgRelax;
+
+#ifdef MEX
+	/* make response data memory persistent */
+	mexMakeMemoryPersistent(definition->responsedata);
+#endif
+}
+
 /********************************************** 
  * sensor list
  **********************************************/
@@ -465,7 +574,8 @@ CSensorListItem sensor[] = {
     {"subcardioid",     sensor_subcardioid_init     },
     {"supercardioid",	sensor_supercardioid_init   },
     {"unidirectional",  sensor_unidirectional_init  },
-    {"MIT",             sensor_MIT_init             }
+    {"MIT",             sensor_MIT_init             },
+	{"SOFA",			sensor_SOFA_init			}
 };
 int nSensors = sizeof(sensor) / sizeof(CSensorListItem);
 
