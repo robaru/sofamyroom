@@ -31,6 +31,7 @@
 #include "msg.h"
 #include "types.h"
 #include "sensor.h"
+#include "mysofa.h"
 
 /* disable warnings about unsafe CRT functions */
 #ifdef _MSC_VER
@@ -498,16 +499,40 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	long len;
 	FILE *fid;
 	size_t res;
+	int err;
 
 	/* test that a datafile name is provided */
 	if (!datafile)
 		MsgErrorExit("no SOFA datafile specified\n");
 
-	/* open HRTF file */
-	fid = fopen(datafile, "rb");
-	if (!fid)
+	/* memory allocation for SOFA data */
+	struct MYSOFA_EASY *hrtf = MemMalloc(sizeof(struct MYSOFA_EASY));
+
+	/* check memory allocation error*/
+	if (!hrtf)
 	{
-		sprintf(msg, "unable to open SOFA data file '%s'", datafile);
+		sprintf(msg, "unable to allocate memory for SOFA data file '%s'", datafile);
+		MsgErrorExit(msg);
+	}
+
+	/* SOFA structure fields initialization */
+	hrtf->lookup = NULL;
+	hrtf->neighborhood = NULL;
+	hrtf->fir = NULL;
+
+	/* open SOFA file */
+	hrtf->hrtf = mysofa_load(datafile, &err);
+	if (!hrtf->hrtf) {
+		mysofa_close(hrtf);
+		sprintf(msg, "unable to load SOFA data file '%s' (error %d)", datafile, err);
+		MsgErrorExit(msg);
+	}
+
+	/* check SOFA data */
+	err = mysofa_check(hrtf->hrtf);
+	if (err != MYSOFA_OK) {
+		mysofa_close(hrtf);
+		sprintf(msg, "error in SOFA hrtf data '%s' (error %d)", datafile, err);
 		MsgErrorExit(msg);
 	}
 
