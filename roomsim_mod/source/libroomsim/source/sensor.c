@@ -537,48 +537,51 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	}
 
 	/* determine file length */
-	if ((fseek(fid, 0, SEEK_END) != 0) || ((len = ftell(fid)) == -1L) || (fseek(fid, 0, SEEK_SET) != 0))
-	{
-		sprintf(msg, "unable to determine length of SOFA data file '%s'", datafile);
-		MsgErrorExit(msg);
-	}
+	//if ((fseek(fid, 0, SEEK_END) != 0) || ((len = ftell(fid)) == -1L) || (fseek(fid, 0, SEEK_SET) != 0))
+	//{
+	//	sprintf(msg, "unable to determine length of SOFA data file '%s'", datafile);
+	//	MsgErrorExit(msg);
+	//}
 
 	/* determine length of HRTFs */
-	hrtflen = (len / (SENSORMIT_NHRTFS * 2 * sizeof(double)));
+	//hrtflen = (len / (SENSORMIT_NHRTFS * 2 * sizeof(double)));
 
 	/* verify that data file has the proper size */
-	if (hrtflen * SENSORMIT_NHRTFS * 2 * sizeof(double) != (unsigned long)len)
-	{
-		sprintf(msg, "invalid size for SOFA data file '%s'", datafile);
-		MsgErrorExit(msg);
-	}
+	//if (hrtflen * SENSORMIT_NHRTFS * 2 * sizeof(double) != (unsigned long)len)
+	//{
+	//	sprintf(msg, "invalid size for MIT data file '%s'", datafile);
+	//	MsgErrorExit(msg);
+	//}
 
 	/* allocate memory for sensor response data */
-	definition->responsedata = MemMalloc(len);
+	//definition->responsedata = MemMalloc(len);
 
 	/* read HRTF data and close HRTF file */
-	res = fread(definition->responsedata, sizeof(double), 2 * hrtflen * SENSORMIT_NHRTFS, fid);
-	fclose(fid);
+	//res = fread(definition->responsedata, sizeof(double), 2 * hrtflen * SENSORMIT_NHRTFS, fid);
+	//fclose(fid);
 
 	/* if read unsuccessful, terminate */
-	if (res != 2 * hrtflen * SENSORMIT_NHRTFS)
-	{
-		sprintf(msg, "unable to read data from SOFA data file '%s' (error code %d)", datafile, res);
-		MsgErrorExit(msg);
-	}
+	//if (res != 2 * hrtflen * SENSORMIT_NHRTFS)
+	//{
+	//	sprintf(msg, "unable to read data from MIT data file '%s' (error code %d)", datafile, res);
+	//	MsgErrorExit(msg);
+	//}
 
 	/* fill sensor definition structure */
 	definition->type = ST_IMPULSERESPONSE;
 	definition->probe.xyz2idx = sensor_SOFA_probe;
-	definition->fs = 44100.0;
-	definition->nChannels = 2;
-	definition->nEntries = SENSORMIT_NHRTFS;
-	definition->nSamples = hrtflen;
+	definition->fs = hrtf->hrtf->DataSamplingRate.values[0];
+	definition->nChannels = hrtf->hrtf->R;
+	definition->nEntries = hrtf->hrtf->M;
+	definition->nSamples = hrtf->hrtf->N;
 
 	/* provide some feedback */
-	MsgPrintf("Successfully loaded SOFA HRTFs (#pos=%d, #samples=%d, #ch=2, fs=44100)\n",
-		SENSORMIT_NHRTFS, hrtflen);
+	MsgPrintf("Successfully loaded SOFA HRTFs (#pos=%d, #samples=%d, #ch=%d, fs=%f)\n",
+		definition->nEntries, definition->nSamples, definition->nChannels, definition->fs);
 	MsgRelax;
+
+	/* close the file */
+	mysofa_close(hrtf);
 
 #ifdef MEX
 	/* make response data memory persistent */

@@ -149,7 +149,8 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalDependencies>libfftw3-3.lib;libsfmt.lib;mysofa.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib\$(Configuration)</AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
     </Lib>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -182,7 +183,8 @@
       <OutputFile>$(Platform)\$(Configuration)\$(TargetName).lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalDependencies>libfftw3-3.lib;libsfmt.lib;mysofa.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib\$(Configuration)</AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
     </Lib>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -215,8 +217,9 @@
       <OutputFile>$(Platform)\$(Configuration)\$(TargetName).lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>libfftw3-3.lib;libsfmt.lib;mysofa.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libfftw3-3.lib;libsfmt.lib;mysofad.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib\Debug</AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
     </Lib>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -247,8 +250,9 @@
     <Lib>
       <OutputFile>$(Platform)\$(Configuration)\$(TargetName).lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalDependencies>libfftw3-3.lib;libsfmt.lib;mysofa.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libfftw3-3.lib;libsfmt.lib;mysofad.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib\Debug</AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
     </Lib>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -281,8 +285,9 @@
       <OutputFile>$(Platform)\$(Configuration)\$(TargetName).lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>libfftw3-3.lib;libsfmt.lib;mysofa.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libfftw3-3.lib;libsfmt.lib;mysofad.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib\$(Configuration)</AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
     </Lib>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -313,8 +318,9 @@
     <Lib>
       <OutputFile>$(Platform)\$(Configuration)\$(TargetName).lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalDependencies>libfftw3-3.lib;libsfmt.lib;mysofa.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libfftw3-3.lib;libsfmt.lib;mysofad.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib\$(Configuration)</AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
     </Lib>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
