@@ -21,6 +21,12 @@
  * along with ROOMSIM. If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
+#define SOFA
+
+#ifdef SOFA
+#include <mysofa.h>
+#endif
+
 #ifndef _TYPES_H_3019823578647120321803
 #define _TYPES_H_3019823578647120321803
 
@@ -114,6 +120,12 @@ struct CSensorDefinition {
 	int    nSimulationBands;
 	double *simulationfrequency;
 	double *simulationlogweights;
+
+	/* for SOFA file */
+#	ifdef SOFA
+	struct MYSOFA_EASY *sofaHandle;
+	int delayLeft, delayRight;
+#	endif
 
 } ;
 

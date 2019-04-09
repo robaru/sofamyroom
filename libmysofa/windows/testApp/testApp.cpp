@@ -58,6 +58,10 @@ int main()
 	{
 		printf("%f\n", hrtf->hrtf->DataSamplingRate.values[i]);
 	}
+	fprintf(stderr, "DataIR elements: %d\n", hrtf->hrtf->DataIR.elements);
+	fprintf(stderr, "SourcePosition elements: %d\n", hrtf->hrtf->SourcePosition.elements);
+
+
 	 
 	// get index to a position given in t (in spherical)
 	float t[3], a[3];
