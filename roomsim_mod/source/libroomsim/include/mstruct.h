@@ -44,9 +44,14 @@
 #  ifdef MEX
 #    include <matrix.h>
 #  else
+#	ifndef _STDBOOL
 	 typedef int bool;
 #    define TRUE  1
 #    define FALSE 0
+#	else
+#	 define TRUE true
+#	 define FALSE false
+#	endif
 #  endif
 
 #define STRUCTBEGIN(n)                  typedef struct {
