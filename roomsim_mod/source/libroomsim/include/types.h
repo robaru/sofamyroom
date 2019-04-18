@@ -124,7 +124,6 @@ struct CSensorDefinition {
 	/* for SOFA file */
 #	ifdef SOFA
 	struct MYSOFA_EASY *sofaHandle;
-	int delayLeft, delayRight;
 #	endif
 
 } ;

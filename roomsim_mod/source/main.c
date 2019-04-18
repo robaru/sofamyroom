@@ -62,7 +62,8 @@ void Roomsetup(CRoomSetup *par)
 	static const CSensor receiver[] = {
 		/*{{1,2,1}, {0,PI/2,0}, "cardioid"} */
 		//{{1.0,2.0,1.0}, {0,0,0}, "MIT ../../../../data/MIT/KEMARsmall.hrtf"}
-		{{1.0,2.0,1.0}, {0,0,0}, "SOFA ../../../../data/SOFA/MIT_KEMAR_normal_pinna.sofa"}
+		//{{1.0,2.0,1.0}, {0,0,0}, "SOFA ../../../../data/SOFA/MIT_KEMAR_normal_pinna.sofa"}
+		{{1.0,2.0,1.0}, {0,0,0}, "SOFA ../../../../data/SOFA/MIT_KEMAR_large_pinna.sofa"}
 
 	};
 	FILE *fid;
