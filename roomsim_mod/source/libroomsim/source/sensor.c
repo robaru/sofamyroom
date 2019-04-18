@@ -66,11 +66,8 @@ int SensorGetResponse(const CSensorDefinition *sensor, const XYZ *xyz, CSensorRe
 			if ((idx = sensor->probe.xyz2idx(sensor, xyz)) < 0)
 				return 0;
 			response->type = SR_IMPULSERESPONSE;
-#			ifndef SOFA
 			response->data.impulseresponse = &sensor->responsedata[idx * sensor->nSamples * sensor->nChannels];
-#			else
-			response->data.impulseresponse = &sensor->responsedata;
-#			endif
+			printf("%f\n", response->data.impulseresponse[0]);
 			return 1;
 		}
 	}
@@ -460,22 +457,25 @@ void sensor_MIT_init(const char *datafile, CSensorDefinition *definition)
 /***** SOFA *******************************/
 int sensor_SOFA_probe(const CSensorDefinition *sensor, const XYZ *xyz)
 {
+	float c[3];
+	int nearest;
+
 	UNREFERENCED_PARAMETER(sensor);
 
-	mysofa_getfilter_float(sensor->sofaHandle, xyz->x, xyz->y, xyz->z,
-		sensor->responsedata, sensor->responsedata + sensor->nSamples, sensor->delayLeft, sensor->delayRight);
+	c[0] = (float)xyz->x;
+	c[1] = (float)xyz->y;
+	c[2] = (float)xyz->z;
 
-	return 1;
+	nearest = mysofa_lookup(sensor->sofaHandle->lookup, c);
+
+	return nearest;
 }
 
 void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 {
 	char msg[256];
-	unsigned int hrtflen;
-	long len;
-	FILE *fid;
-	size_t res;
 	int err;
+	unsigned int i;
 
 	/* test that a datafile name is provided */
 	if (!datafile)
@@ -512,6 +512,18 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 		MsgErrorExit(msg);
 	}
 
+	/* SOFA lookup initialization */
+	if (!verifyAttribute(definition->sofaHandle->hrtf->SourcePosition.attributes, "Type", "cartesian"))
+		mysofa_tocartesian(definition->sofaHandle->hrtf);
+
+	definition->sofaHandle->lookup = mysofa_lookup_init(definition->sofaHandle->hrtf);
+	if (definition->sofaHandle->lookup == NULL) {
+		err = MYSOFA_INTERNAL_ERROR;
+		mysofa_close(definition->sofaHandle);
+		sprintf(msg, "unable to initialize lookup (error %d)", err);
+		MsgErrorExit(msg);
+	}
+
 	/* allocate memory for sensor response data */
 	definition->responsedata = MemMalloc(definition->sofaHandle->hrtf->DataIR.elements * sizeof(double));
 
@@ -522,6 +534,10 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 		sprintf(msg, "unable to allocate memory for impulse response");
 		MsgErrorExit(msg);
 	}
+
+	/* read HRTF data */
+	for (i = 0; i < definition->sofaHandle->hrtf->DataIR.elements; ++i)
+		definition->responsedata[i] = (double)definition->sofaHandle->hrtf->DataIR.values[i];
 
 	/* fill sensor definition structure */
 	definition->type = ST_IMPULSERESPONSE;
@@ -712,8 +728,7 @@ void ClearSensor(CSensorDefinitionListItem *item)
 	if (item->definition.simulationlogweights)
 		MemFree(item->definition.simulationlogweights);
 #	ifdef SOFA
-	if (item->definition.sofaHandle)
-		MemFree(item->definition.sofaHandle);
+	mysofa_close(item->definition.sofaHandle);
 #	endif
     
     /* release memory associated with item */
