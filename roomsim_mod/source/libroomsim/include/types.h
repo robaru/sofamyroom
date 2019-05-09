@@ -124,6 +124,10 @@ struct CSensorDefinition {
 	/* for SOFA file */
 #	ifdef SOFA
 	struct MYSOFA_EASY *sofaHandle;
+	double *interpolatedResponseData;
+	float *tempInterpolatedResponseData;
+	bool interpolate;
+	int leftDelay, rightDelay;
 #	endif
 
 } ;

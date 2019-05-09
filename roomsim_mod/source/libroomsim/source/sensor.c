@@ -63,12 +63,25 @@ int SensorGetResponse(const CSensorDefinition *sensor, const XYZ *xyz, CSensorRe
 		
 		case ST_IMPULSERESPONSE:
 		{
-			if ((idx = sensor->probe.xyz2idx(sensor, xyz)) < 0)
-				return 0;
-			response->type = SR_IMPULSERESPONSE;
-			response->data.impulseresponse = &sensor->responsedata[idx * sensor->nSamples * sensor->nChannels];
-			printf("%f\n", response->data.impulseresponse[0]);
-			return 1;
+#			ifdef SOFA
+			if (!sensor->interpolate)
+			{
+#			endif
+				if ((idx = sensor->probe.xyz2idx(sensor, xyz)) < 0)
+					return 0;
+				response->type = SR_IMPULSERESPONSE;
+				response->data.impulseresponse = &sensor->responsedata[idx * sensor->nSamples * sensor->nChannels];
+				return 1;
+#			ifdef SOFA
+			}
+			else
+			{
+				sensor->probe.xyz2idx(sensor, xyz);
+				response->type = SR_IMPULSERESPONSE;
+				response->data.impulseresponse = &sensor->interpolatedResponseData;
+				return 1;
+			}
+#			endif
 		}
 	}
 	return 0;
@@ -471,6 +484,28 @@ int sensor_SOFA_probe(const CSensorDefinition *sensor, const XYZ *xyz)
 	return nearest;
 }
 
+int sensor_SOFA_probe_interp(const CSensorDefinition *sensor, const XYZ *xyz)
+{
+	float c[3];
+	unsigned int i;
+
+	UNREFERENCED_PARAMETER(sensor);
+
+	c[0] = (float)xyz->x;
+	c[1] = (float)xyz->y;
+	c[2] = (float)xyz->z;
+
+	mysofa_getfilter_float(sensor->sofaHandle, c[0], c[1], c[2], sensor->tempInterpolatedResponseData, sensor->tempInterpolatedResponseData + sensor->sofaHandle->hrtf->N,
+		&sensor->leftDelay, &sensor->rightDelay);
+
+	for (i = 0; i < 2 * sensor->sofaHandle->hrtf->N; ++i)
+	{
+		sensor->interpolatedResponseData[i] = (double)sensor->tempInterpolatedResponseData[i];
+	}
+
+	return 0;
+}
+
 void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 {
 	char msg[256];
@@ -527,6 +562,12 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	/* allocate memory for sensor response data */
 	definition->responsedata = MemMalloc(definition->sofaHandle->hrtf->DataIR.elements * sizeof(double));
 
+	/* allocate memory for sensor temporary interpolated response data */
+	definition->tempInterpolatedResponseData = MemMalloc(definition->sofaHandle->hrtf->N * definition->sofaHandle->hrtf->R * sizeof(float));
+
+	/* allocate memory for sensor interpolated response data */
+	definition->interpolatedResponseData = MemMalloc(definition->sofaHandle->hrtf->N * definition->sofaHandle->hrtf->R * sizeof(double));
+
 	/* check memory allocation error */
 	if (!definition->responsedata)
 	{
@@ -541,7 +582,10 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 
 	/* fill sensor definition structure */
 	definition->type = ST_IMPULSERESPONSE;
-	definition->probe.xyz2idx = sensor_SOFA_probe;
+	if(!definition->interpolate)
+		definition->probe.xyz2idx = sensor_SOFA_probe;
+	else
+		definition->probe.xyz2idx = sensor_SOFA_probe_interp;
 	definition->fs = definition->sofaHandle->hrtf->DataSamplingRate.values[0];
 	definition->nChannels = definition->sofaHandle->hrtf->R;
 	definition->nEntries = definition->sofaHandle->hrtf->M;
@@ -729,6 +773,8 @@ void ClearSensor(CSensorDefinitionListItem *item)
 		MemFree(item->definition.simulationlogweights);
 #	ifdef SOFA
 	mysofa_close(item->definition.sofaHandle);
+	MemFree(item->definition.interpolatedResponseData);
+	MemFree(item->definition.tempInterpolatedResponseData);
 #	endif
     
     /* release memory associated with item */

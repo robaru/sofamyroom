@@ -416,6 +416,9 @@ STRUCTBEGIN ( CSensor )
     FIELDDOUBLEARRAY ( location, 3    )
     FIELDDOUBLEARRAY ( orientation, 3 )
     FIELDSTRING      ( description    )
+#	ifdef SOFA
+	FIELDBOOL ( interpolate )
+#	endif
 STRUCTEND ( CSensor )
 
 STRUCTBEGIN ( CRoomSetup )
