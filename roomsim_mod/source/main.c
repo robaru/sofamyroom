@@ -61,9 +61,9 @@ void Roomsetup(CRoomSetup *par)
 	};
 	static const CSensor receiver[] = {
 		/*{{1,2,1}, {0,PI/2,0}, "cardioid"} */
-		//{{1.0,2.0,1.0}, {0,0,0}, "MIT ../../../../data/MIT/KEMARsmall.hrtf"}
-		//{{1.0,2.0,1.0}, {0,0,0}, "SOFA ../../../../data/SOFA/MIT_KEMAR_normal_pinna.sofa"}
-		{{1.0,2.0,1.0}, {0,0,0}, "SOFA ../../../../data/SOFA/MIT_KEMAR_large_pinna.sofa"}
+		//{{5.0,7.0,1.0}, {0,0,0}, "MIT ../../../../data/MIT/KEMARsmall.hrtf"}
+		{{5.0,7.0,1.0}, {0,0,0}, "SOFA ../../../../data/SOFA/MIT_KEMAR_normal_pinna.sofa", TRUE}
+		//{{1.0,2.0,1.0}, {0,0,0}, "SOFA ../../../../data/SOFA/MIT_KEMAR_large_pinna.sofa"}
 
 	};
 	FILE *fid;
@@ -90,8 +90,8 @@ void Roomsetup(CRoomSetup *par)
 	par->options.rayenergyfloordB     = -80;
 	par->options.diffusetimestep      = 0.010;
 
-	par->room.dimension[0]			  = 4;
-	par->room.dimension[1]			  = 5;
+	par->room.dimension[0]			  = 10;
+	par->room.dimension[1]			  = 15;
 	par->room.dimension[2]			  = 3;
 	par->room.humidity				  = 0.42;
 	par->room.temperature			  = 20;

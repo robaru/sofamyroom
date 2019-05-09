@@ -842,6 +842,11 @@ CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup)
 		pSimulation->receiver[r].nSbin = nSpacebin;
 		pSimulation->receiver[r].TFShist = (double *) MemCalloc(nBins, sizeof(double));
 
+#		ifdef SOFA
+		/* set interpolation on/off */
+		pSimulation->receiver[r].definition->interpolate = pSetup->receiver[r].interpolate;
+#		endif
+
 		/* allocate and initialize first time-of-arrival array */
 		pSimulation->receiver[r].FirstTOA = (double *) MemMalloc(nSpacebin * sizeof(double));
 		for (i=0; i<nSpacebin; i++)
