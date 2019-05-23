@@ -78,7 +78,7 @@ int SensorGetResponse(const CSensorDefinition *sensor, const XYZ *xyz, CSensorRe
 			{
 				sensor->probe.xyz2idx(sensor, xyz);
 				response->type = SR_IMPULSERESPONSE;
-				response->data.impulseresponse = &sensor->interpolatedResponseData;
+				response->data.impulseresponse = sensor->interpolatedResponseData;
 				return 1;
 			}
 #			endif
@@ -340,6 +340,7 @@ void sensor_unidirectional_init(const char *datafile, CSensorDefinition *definit
     definition->probe.loggain = sensor_unidirectional_probe;
 }
 
+#ifndef SOFA
 /***** MIT KEMAR *******************************/
 
 #define SENSORMIT_NHRTFS  710
@@ -465,6 +466,7 @@ void sensor_MIT_init(const char *datafile, CSensorDefinition *definition)
     mexMakeMemoryPersistent(definition->responsedata);
 #endif
 }
+#endif
 
 #ifdef SOFA
 /***** SOFA *******************************/
@@ -496,7 +498,7 @@ int sensor_SOFA_probe_interp(const CSensorDefinition *sensor, const XYZ *xyz)
 	c[2] = (float)xyz->z;
 
 	mysofa_getfilter_float(sensor->sofaHandle, c[0], c[1], c[2], sensor->tempInterpolatedResponseData, sensor->tempInterpolatedResponseData + sensor->sofaHandle->hrtf->N,
-		&sensor->leftDelay, &sensor->rightDelay);
+		&sensor->delays[0], &sensor->delays[1]);
 
 	for (i = 0; i < 2 * sensor->sofaHandle->hrtf->N; ++i)
 	{
@@ -548,8 +550,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	}
 
 	/* SOFA lookup initialization */
-	if (!verifyAttribute(definition->sofaHandle->hrtf->SourcePosition.attributes, "Type", "cartesian"))
-		mysofa_tocartesian(definition->sofaHandle->hrtf);
+	mysofa_tocartesian(definition->sofaHandle->hrtf);
 
 	definition->sofaHandle->lookup = mysofa_lookup_init(definition->sofaHandle->hrtf);
 	if (definition->sofaHandle->lookup == NULL) {
@@ -559,14 +560,19 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 		MsgErrorExit(msg);
 	}
 
+	definition->delays = MemMalloc(2 * sizeof(float));
+
 	/* allocate memory for sensor response data */
 	definition->responsedata = MemMalloc(definition->sofaHandle->hrtf->DataIR.elements * sizeof(double));
 
-	/* allocate memory for sensor temporary interpolated response data */
-	definition->tempInterpolatedResponseData = MemMalloc(definition->sofaHandle->hrtf->N * definition->sofaHandle->hrtf->R * sizeof(float));
+	if (definition->interpolate)
+	{
+		/* allocate memory for sensor temporary interpolated response data */
+		definition->tempInterpolatedResponseData = MemMalloc(definition->sofaHandle->hrtf->N * definition->sofaHandle->hrtf->R * sizeof(float));
 
-	/* allocate memory for sensor interpolated response data */
-	definition->interpolatedResponseData = MemMalloc(definition->sofaHandle->hrtf->N * definition->sofaHandle->hrtf->R * sizeof(double));
+		/* allocate memory for sensor interpolated response data */
+		definition->interpolatedResponseData = MemMalloc(definition->sofaHandle->hrtf->N * definition->sofaHandle->hrtf->R * sizeof(double));
+	}
 
 	/* check memory allocation error */
 	if (!definition->responsedata)
@@ -616,7 +622,9 @@ CSensorListItem sensor[] = {
     {"subcardioid",     sensor_subcardioid_init     },
     {"supercardioid",	sensor_supercardioid_init   },
     {"unidirectional",  sensor_unidirectional_init  },
+#	ifndef SOFA
     {"MIT",             sensor_MIT_init             },
+#	endif
 #	ifdef SOFA
 	{"SOFA",			sensor_SOFA_init			},
 #	endif
@@ -773,8 +781,15 @@ void ClearSensor(CSensorDefinitionListItem *item)
 		MemFree(item->definition.simulationlogweights);
 #	ifdef SOFA
 	mysofa_close(item->definition.sofaHandle);
-	MemFree(item->definition.interpolatedResponseData);
-	MemFree(item->definition.tempInterpolatedResponseData);
+	if (item->definition.interpolate)
+	{
+		if (item->definition.interpolatedResponseData)
+			MemFree(item->definition.interpolatedResponseData);
+		if (item->definition.tempInterpolatedResponseData)
+			MemFree(item->definition.tempInterpolatedResponseData);
+		if (item->definition.delays)
+			MemFree(item->definition.delays);
+	}
 #	endif
     
     /* release memory associated with item */
