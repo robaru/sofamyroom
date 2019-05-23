@@ -26,6 +26,9 @@ add_executable(roomsim
 
 if(MSVC)
 	target_link_options(roomsim PRIVATE "/LTCG")
+	add_custom_command(TARGET roomsim POST_BUILD
+                   	COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                   	"${CMAKE_SOURCE_DIR}/libfftw/${PLATFORM}/bin/libfftw3-3.dll" $<TARGET_FILE_DIR:roomsim>)
 endif()
 
 include_directories(
