@@ -24,7 +24,7 @@
 #define SOFA
 
 #ifdef SOFA
-#include <mysofa.h>
+#include "mysofa.h"
 #endif
 
 #ifndef _TYPES_H_3019823578647120321803
@@ -126,8 +126,8 @@ struct CSensorDefinition {
 	struct MYSOFA_EASY *sofaHandle;
 	double *interpolatedResponseData;
 	float *tempInterpolatedResponseData;
+	float *delays; //delays[0] -> left
 	bool interpolate;
-	int leftDelay, rightDelay;
 #	endif
 
 } ;
