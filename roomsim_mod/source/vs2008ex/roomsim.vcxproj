@@ -136,7 +136,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\libroomsim\include;..\libmysofa\$(Platform)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libroomsim\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -181,7 +181,7 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)..\libfftw\$(Platform)\bin\libfftw3-3.dll" "$(SolutionDir)$(Platform)\$(Configuration)"</Command>
+      <Command>copy "$(SolutionDir)..\libfftw\Windows\$(Platform)\bin\libfftw3-3.dll" "$(SolutionDir)$(Platform)\$(Configuration)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -193,7 +193,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\libroomsim\include;..\libmysofa\$(Platform)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libroomsim\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -238,7 +238,7 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)..\libfftw\$(Platform)\bin\libfftw3-3.dll" "$(SolutionDir)$(Platform)\$(Configuration)"</Command>
+      <Command>copy "$(SolutionDir)..\libfftw\Windows\$(Platform)\bin\libfftw3-3.dll" "$(SolutionDir)$(Platform)\$(Configuration)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -248,7 +248,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\libroomsim\include;..\libmysofa\$(Platform)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libroomsim\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -294,7 +294,7 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)..\libfftw\$(Platform)\bin\*.dll" "$(SolutionDir)$(Platform)\$(Configuration)"</Command>
+      <Command>copy "$(SolutionDir)..\libfftw\Windows\$(Platform)\bin\libfftw3-3.dll" "$(SolutionDir)$(Platform)\$(Configuration)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -305,7 +305,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\libroomsim\include;..\libmysofa\$(Platform)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libroomsim\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -350,7 +350,7 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)..\libfftw\$(Platform)\bin\*.dll" "$(SolutionDir)$(Platform)\$(Configuration)"</Command>
+      <Command>copy "$(SolutionDir)..\libfftw\Windows\$(Platform)\bin\libfftw3-3.dll" "$(SolutionDir)$(Platform)\$(Configuration)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Unittest|Win32'">
@@ -360,7 +360,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\libroomsim\include;..\libmysofa\$(Platform)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libroomsim\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;UNITTEST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -406,7 +406,7 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)..\libfftw\$(Platform)\bin\*.dll" "$(SolutionDir)$(Platform)\$(Configuration)"</Command>
+      <Command>copy "$(SolutionDir)..\libfftw\Windows\$(Platform)\bin\libfftw3-3.dll" "$(SolutionDir)$(Platform)\$(Configuration)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Unittest|x64'">
@@ -417,7 +417,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\libroomsim\include;..\libmysofa\$(Platform)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libroomsim\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;UNITTEST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -462,7 +462,7 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)..\libfftw\$(Platform)\bin\*.dll" "$(SolutionDir)$(Platform)\$(Configuration)"</Command>
+      <Command>copy "$(SolutionDir)..\libfftw\Windows\$(Platform)\bin\libfftw3-3.dll" "$(SolutionDir)$(Platform)\$(Configuration)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
