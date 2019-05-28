@@ -126,7 +126,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\$(Platform)\include;..\libmysofa\$(Platform)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\Windows\$(Platform)\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -149,7 +149,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalDependencies>libfftw3-3.lib;libsfmt.lib;mysofa.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\libfftw\Windows\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\Windows\$(Platform)\lib\$(Configuration)</AdditionalLibraryDirectories>
       <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
     </Lib>
     <Bscmake>
@@ -161,7 +161,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\$(Platform)\include;..\libmysofa\$(Platform)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\Windows\$(Platform)\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -183,7 +183,7 @@
       <OutputFile>$(Platform)\$(Configuration)\$(TargetName).lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalDependencies>libfftw3-3.lib;libsfmt.lib;mysofa.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\libfftw\Windows\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\Windows\$(Platform)\lib\$(Configuration)</AdditionalLibraryDirectories>
       <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
     </Lib>
     <Bscmake>
@@ -194,7 +194,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Unittest|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\$(Platform)\include;..\libmysofa\$(Platform)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\Windows\$(Platform)\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -218,7 +218,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalDependencies>libfftw3-3.lib;libsfmt.lib;mysofad.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\libfftw\Windows\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\Windows\$(Platform)\lib\Debug</AdditionalLibraryDirectories>
       <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
     </Lib>
     <Bscmake>
@@ -229,7 +229,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Unittest|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\$(Platform)\include;..\libmysofa\$(Platform)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\Windows\$(Platform)\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -251,7 +251,7 @@
       <OutputFile>$(Platform)\$(Configuration)\$(TargetName).lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalDependencies>libfftw3-3.lib;libsfmt.lib;mysofad.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\libfftw\Windows\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\Windows\$(Platform)\lib\Debug</AdditionalLibraryDirectories>
       <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
     </Lib>
     <Bscmake>
@@ -262,7 +262,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\$(Platform)\include;..\libmysofa\$(Platform)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\Windows\$(Platform)\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -286,7 +286,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalDependencies>libfftw3-3.lib;libsfmt.lib;mysofad.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\libfftw\Windows\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\Windows\$(Platform)\lib\$(Configuration)</AdditionalLibraryDirectories>
       <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
     </Lib>
     <Bscmake>
@@ -297,7 +297,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\$(Platform)\include;..\libmysofa\$(Platform)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\libsfmt;..\libroomsim\include;..\libfftw\Windows\$(Platform)\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -319,7 +319,7 @@
       <OutputFile>$(Platform)\$(Configuration)\$(TargetName).lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalDependencies>libfftw3-3.lib;libsfmt.lib;mysofad.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\libfftw\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\$(Platform)\lib\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\libfftw\Windows\$(Platform)\lib;$(Platform)\$(Configuration)\;..\libmysofa\Windows\$(Platform)\lib\$(Configuration)</AdditionalLibraryDirectories>
       <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
     </Lib>
     <Bscmake>
