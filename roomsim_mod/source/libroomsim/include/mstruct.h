@@ -44,7 +44,7 @@
 #  ifdef MEX
 #    include <matrix.h>
 #  else
-#	ifndef _STDBOOL
+#	ifndef __bool_true_false_are_defined
 	 typedef int bool;
 #    define TRUE  1
 #    define FALSE 0

@@ -11,13 +11,27 @@ add_library(libroomsim STATIC
 	
 include_directories(
 	"${CMAKE_CURRENT_SOURCE_DIR}/include"
-	"${CMAKE_SOURCE_DIR}/libfftw/${PLATFORM}/include"
+	"${CMAKE_SOURCE_DIR}/libfftw/${OS}/${PLATFORM}/include"
 	"${CMAKE_SOURCE_DIR}/libsfmt/"
-	"${CMAKE_SOURCE_DIR}/libmysofa/${PLATFORM}/include"
+	"${CMAKE_SOURCE_DIR}/libmysofa/${OS}/${PLATFORM}/include"
 	)
 
+if(${OS} STREQUAL "Windows")
+	set(FFTW_NAME "libfftw3-3.lib")
+	set(MYSOFA_NAME "mysofa*.lib")
+	set(MATH "")
+	set(LIBZ "")
+elseif(${OS} STREQUAL "Linux")
+	set(FFTW_NAME "${CMAKE_BUILD_TYPE}/libfftw3.a")
+	set(MYSOFA_NAME "libmysofa.a")
+	set(MATH "m")
+	set(LIBZ "z")
+endif()
+
 target_link_libraries(libroomsim
+	"${MATH}"
 	libsfmt
-	"${CMAKE_SOURCE_DIR}/libfftw/${PLATFORM}/lib/libfftw3-3.lib"
-	"${CMAKE_SOURCE_DIR}/libmysofa/${PLATFORM}/lib/${CMAKE_BUILD_TYPE}/mysofa*.lib"
+	"${CMAKE_SOURCE_DIR}/libfftw/${OS}/${PLATFORM}/lib/${FFTW_NAME}"
+	"${CMAKE_SOURCE_DIR}/libmysofa/${OS}/${PLATFORM}/lib/${CMAKE_BUILD_TYPE}/${MYSOFA_NAME}"
+	"${LIBZ}"
 	)
