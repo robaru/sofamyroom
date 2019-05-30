@@ -714,7 +714,7 @@ CSensorDefinition *LoadSensor(const char *description)
         sprintf(msg,"Loading source/receiver %s (%s)...\n", sensor[s].name, subid);
     else
         sprintf(msg,"Loading source/receiver %s...\n", sensor[s].name);
-    MsgPrintf(msg);
+    MsgPrintf("%s", msg);
     MsgRelax;
 
     /* allocate new SensorDefinitionListItem */
@@ -750,7 +750,7 @@ CSensorDefinition *LoadSensor(const char *description)
 
 void ClearSensor(CSensorDefinitionListItem *item)
 {
-    char msg[256];
+    char msg[512];
     
     /* make sure item is not NULL */
     if (!item) return;
@@ -768,7 +768,7 @@ void ClearSensor(CSensorDefinitionListItem *item)
         sprintf(msg,"Clearing %s (%s)...\n", item->sensorid, item->subid);
     else
         sprintf(msg,"Clearing %s...\n", item->sensorid);
-    MsgPrintf(msg);
+    MsgPrintf("%s",msg);
 
     /* release allocated memory, if any */
 	if (item->definition.frequency)
