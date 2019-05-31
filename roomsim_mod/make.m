@@ -35,12 +35,15 @@ switches = { '-DMEX'
              '-DLOGLEVEL=0'
              '-DMEXP=19937'
              '-Isource\libroomsim\include'
-             '-Isource\libfftw\win32\include'
+             '-Isource\libfftw\Windows\x64\include'
              '-Isource\libsfmt'
              '-Isource'
+             '-Isource\libmysofa\Windows\x64\include'
            };
-options = { '-Lsource\libfftw\win32\lib\'
+options = { '-Lsource\libfftw\Windows\x64\lib'
             '-lfftw3-3'
+            '-Lsource\libmysofa\Windows\x64\lib\Release'
+            '-lmysofa.lib'
           };
 output = 'roomsim';       
 
