@@ -63,8 +63,8 @@ int SensorGetResponse(const CSensorDefinition *sensor, const XYZ *xyz, CSensorRe
 		
 		case ST_IMPULSERESPONSE:
 		{
-#			ifdef SOFA
-			if (!sensor->interpolate)
+#			ifdef MYSOFA_H_INCLUDED
+			if (!sensor->interpolation)
 			{
 #			endif
 				if ((idx = sensor->probe.xyz2idx(sensor, xyz)) < 0)
@@ -72,13 +72,13 @@ int SensorGetResponse(const CSensorDefinition *sensor, const XYZ *xyz, CSensorRe
 				response->type = SR_IMPULSERESPONSE;
 				response->data.impulseresponse = &sensor->responsedata[idx * sensor->nSamples * sensor->nChannels];
 				return 1;
-#			ifdef SOFA
+#			ifdef MYSOFA_H_INCLUDED
 			}
 			else
 			{
 				sensor->probe.xyz2idx(sensor, xyz);
 				response->type = SR_IMPULSERESPONSE;
-				response->data.impulseresponse = sensor->interpolatedResponseData;
+				response->data.impulseresponse = sensor->interpResponseDataDouble;
 				return 1;
 			}
 #			endif
@@ -340,7 +340,7 @@ void sensor_unidirectional_init(const char *datafile, CSensorDefinition *definit
     definition->probe.loggain = sensor_unidirectional_probe;
 }
 
-#ifndef SOFA
+#ifndef MYSOFA_H_INCLUDED
 /***** MIT KEMAR *******************************/
 
 #define SENSORMIT_NHRTFS  710
@@ -466,9 +466,7 @@ void sensor_MIT_init(const char *datafile, CSensorDefinition *definition)
     mexMakeMemoryPersistent(definition->responsedata);
 #endif
 }
-#endif
-
-#ifdef SOFA
+#else
 /***** SOFA *******************************/
 int sensor_SOFA_probe(const CSensorDefinition *sensor, const XYZ *xyz)
 {
@@ -488,39 +486,73 @@ int sensor_SOFA_probe(const CSensorDefinition *sensor, const XYZ *xyz)
 
 int sensor_SOFA_probe_interp(const CSensorDefinition *sensor, const XYZ *xyz)
 {
-	float c[3];
 	unsigned int i;
 
 	UNREFERENCED_PARAMETER(sensor);
 
-	c[0] = (float)xyz->x;
-	c[1] = (float)xyz->y;
-	c[2] = (float)xyz->z;
-
-	mysofa_getfilter_float(sensor->sofaHandle, c[0], c[1], c[2], sensor->tempInterpolatedResponseData, sensor->tempInterpolatedResponseData + sensor->sofaHandle->hrtf->N,
+	mysofa_getfilter_float(sensor->sofaHandle, (float)xyz->x, (float)xyz->y, (float)xyz->z, sensor->interpResponseDataFloat, sensor->interpResponseDataFloat + sensor->sofaHandle->hrtf->N,
 		&sensor->delays[0], &sensor->delays[1]);
 
-	for (i = 0; i < 2 * sensor->sofaHandle->hrtf->N; ++i)
+	for (i = 0; i < sensor->sofaHandle->hrtf->R * sensor->sofaHandle->hrtf->N; ++i)
 	{
-		sensor->interpolatedResponseData[i] = (double)sensor->tempInterpolatedResponseData[i];
+		sensor->interpResponseDataDouble[i] = (double)sensor->interpResponseDataFloat[i];
 	}
 
 	return 0;
 }
 
-void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
+bool getInterpolation(char *datafile)
+{
+	int length;
+	bool interpolation;
+
+	length = strlen(datafile);
+
+	if (datafile[length - 2] == ' ')
+	{
+		switch (datafile[length - 1])
+		{
+			case '0': {
+				interpolation = false;
+				break;
+			}
+			case '1': {
+				interpolation = true;
+				break;
+			}
+			default: {
+				MsgPrintf("invalid interpolation option, setting interpolation to false\n");
+				interpolation = false;
+			}
+		}
+
+		datafile[length - 2] = '\0';
+
+	}
+	else
+	{
+		MsgPrintf("no interpolation option provided, setting interpolation to false\n");
+		interpolation = false;
+	}
+
+	return interpolation;
+}
+
+void sensor_SOFA_init(char *datafile, CSensorDefinition *definition)
 {
 	char msg[256];
 	int err;
-	unsigned int i;
+	unsigned int i, length;
 
 	/* test that a datafile name is provided */
 	if (!datafile)
 		MsgErrorExit("no SOFA datafile specified\n");
 
+	definition->interpolation = getInterpolation(datafile);
+
 	/* memory allocation for SOFA data */
 	definition->sofaHandle = MemMalloc(sizeof(struct MYSOFA_EASY));
-
+	
 	/* check memory allocation error*/
 	if (!definition->sofaHandle)
 	{
@@ -560,18 +592,30 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 		MsgErrorExit(msg);
 	}
 
-	definition->delays = MemMalloc(2 * sizeof(float));
+	definition->sofaHandle->neighborhood = mysofa_neighborhood_init(definition->sofaHandle->hrtf, definition->sofaHandle->lookup);
+	if (definition->sofaHandle->neighborhood == NULL) {
+		err = MYSOFA_INTERNAL_ERROR;
+		mysofa_close(definition->sofaHandle);
+		sprintf(msg, "unable to initialize neighborhood (error %d)", err);
+		MsgErrorExit(msg);
+	}
 
 	/* allocate memory for sensor response data */
 	definition->responsedata = MemMalloc(definition->sofaHandle->hrtf->DataIR.elements * sizeof(double));
 
-	if (definition->interpolate)
+	if (definition->interpolation)
 	{
 		/* allocate memory for sensor temporary interpolated response data */
-		definition->tempInterpolatedResponseData = MemMalloc(definition->sofaHandle->hrtf->N * definition->sofaHandle->hrtf->R * sizeof(float));
+		definition->interpResponseDataFloat = MemMalloc(definition->sofaHandle->hrtf->N * definition->sofaHandle->hrtf->R * sizeof(float));
 
 		/* allocate memory for sensor interpolated response data */
-		definition->interpolatedResponseData = MemMalloc(definition->sofaHandle->hrtf->N * definition->sofaHandle->hrtf->R * sizeof(double));
+		definition->interpResponseDataDouble = MemMalloc(definition->sofaHandle->hrtf->N * definition->sofaHandle->hrtf->R * sizeof(double));
+
+		/* allocate memory for delays */
+		definition->delays = MemMalloc(definition->sofaHandle->hrtf->R * sizeof(float));
+
+		/* allocate memory for fir filters */
+		definition->sofaHandle->fir = MemMalloc(definition->sofaHandle->hrtf->N * definition->sofaHandle->hrtf->R * sizeof(float));
 	}
 
 	/* check memory allocation error */
@@ -588,7 +632,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 
 	/* fill sensor definition structure */
 	definition->type = ST_IMPULSERESPONSE;
-	if(!definition->interpolate)
+	if (!definition->interpolation)
 		definition->probe.xyz2idx = sensor_SOFA_probe;
 	else
 		definition->probe.xyz2idx = sensor_SOFA_probe_interp;
@@ -601,7 +645,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	MsgPrintf("Successfully loaded SOFA HRTFs (#pos=%d, #samples=%d, #ch=%d, fs=%f)\n",
 		definition->nEntries, definition->nSamples, definition->nChannels, definition->fs);
 	MsgRelax;
-
+	
 #ifdef MEX
 	/* make response data memory persistent */
 	mexMakeMemoryPersistent(definition->responsedata);
@@ -622,11 +666,10 @@ CSensorListItem sensor[] = {
     {"subcardioid",     sensor_subcardioid_init     },
     {"supercardioid",	sensor_supercardioid_init   },
     {"unidirectional",  sensor_unidirectional_init  },
-#	ifndef SOFA
+#	ifndef MYSOFA_H_INCLUDED
     {"MIT",             sensor_MIT_init             },
-#	endif
-#	ifdef SOFA
-	{"SOFA",			sensor_SOFA_init			},
+#	else
+	{"SOFA",             sensor_SOFA_init           }
 #	endif
 };
 int nSensors = sizeof(sensor) / sizeof(CSensorListItem);
@@ -695,7 +738,7 @@ CSensorDefinition *LoadSensor(const char *description)
 
     /* when no matching sensor found, terminate */
     if (s<0) 
-    { 
+    {
         sprintf(msg,"unknown source/receiver '%s'", description);
         MsgErrorExit(msg);
     }
@@ -714,7 +757,7 @@ CSensorDefinition *LoadSensor(const char *description)
         sprintf(msg,"Loading source/receiver %s (%s)...\n", sensor[s].name, subid);
     else
         sprintf(msg,"Loading source/receiver %s...\n", sensor[s].name);
-    MsgPrintf("%s", msg);
+    MsgPrintf(msg);
     MsgRelax;
 
     /* allocate new SensorDefinitionListItem */
@@ -750,7 +793,7 @@ CSensorDefinition *LoadSensor(const char *description)
 
 void ClearSensor(CSensorDefinitionListItem *item)
 {
-    char msg[512];
+    char msg[256];
     
     /* make sure item is not NULL */
     if (!item) return;
@@ -768,7 +811,7 @@ void ClearSensor(CSensorDefinitionListItem *item)
         sprintf(msg,"Clearing %s (%s)...\n", item->sensorid, item->subid);
     else
         sprintf(msg,"Clearing %s...\n", item->sensorid);
-    MsgPrintf("%s",msg);
+    MsgPrintf(msg);
 
     /* release allocated memory, if any */
 	if (item->definition.frequency)
@@ -779,14 +822,14 @@ void ClearSensor(CSensorDefinitionListItem *item)
 		MemFree(item->definition.sensordata);
 	if (item->definition.simulationlogweights)
 		MemFree(item->definition.simulationlogweights);
-#	ifdef SOFA
+#	ifdef MYSOFA_H_INCLUDED
 	mysofa_close(item->definition.sofaHandle);
-	if (item->definition.interpolate)
+	if (item->definition.interpolation)
 	{
-		if (item->definition.interpolatedResponseData)
-			MemFree(item->definition.interpolatedResponseData);
-		if (item->definition.tempInterpolatedResponseData)
-			MemFree(item->definition.tempInterpolatedResponseData);
+		if (item->definition.interpResponseDataDouble)
+			MemFree(item->definition.interpResponseDataDouble);
+		if (item->definition.interpResponseDataFloat)
+			MemFree(item->definition.interpResponseDataFloat);
 		if (item->definition.delays)
 			MemFree(item->definition.delays);
 	}

@@ -795,7 +795,7 @@ CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup)
     /* prepare yaw-pitch-roll transformation matrices */
     for (s=0; s<pSetup->nSources; s++)
     {
-        pSimulation->source[s].definition = LoadSensor(pSetup->source[s].description);
+		pSimulation->source[s].definition = LoadSensor(pSetup->source[s].description);
 
 		/* verify that source sampling frequency matches simulation sampling frequency */
         if (!(pSimulation->source[s].definition->fs == ANY_FS 
@@ -819,7 +819,7 @@ CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup)
     for (r=0; r<pSetup->nReceivers; r++)
     {
         pSimulation->receiver[r].definition = LoadSensor(pSetup->receiver[r].description);
-        
+
 		/* verify that receiver sampling frequency matches simulation sampling frequency */
         if (!(pSimulation->receiver[r].definition->fs == ANY_FS 
 			|| pSimulation->receiver[r].definition->fs == pSimulation->fs))
@@ -841,11 +841,6 @@ CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup)
 		pSimulation->receiver[r].nFbin = nFreqbin;
 		pSimulation->receiver[r].nSbin = nSpacebin;
 		pSimulation->receiver[r].TFShist = (double *) MemCalloc(nBins, sizeof(double));
-
-#		ifdef SOFA
-		/* set interpolation on/off */
-		pSimulation->receiver[r].definition->interpolate = pSetup->receiver[r].interpolate;
-#		endif
 
 		/* allocate and initialize first time-of-arrival array */
 		pSimulation->receiver[r].FirstTOA = (double *) MemMalloc(nSpacebin * sizeof(double));

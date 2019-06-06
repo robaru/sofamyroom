@@ -45,7 +45,6 @@ int main()
 	}
 	hrtf->neighborhood = mysofa_neighborhood_init(hrtf->hrtf, hrtf->lookup);
 
-
 	// general information about the loaded HRTF set
 	fprintf(stderr, "Number of HRTFs: %d\n", hrtf->hrtf->M);
 	fprintf(stderr, "Filter length: %d samples\n", hrtf->hrtf->N);
@@ -76,8 +75,12 @@ int main()
 	a[0] = hrtf->hrtf->SourcePosition.values[3 * nearest];
 	a[1] = hrtf->hrtf->SourcePosition.values[3 * nearest+1];
 	a[2] = hrtf->hrtf->SourcePosition.values[3 * nearest+2];
-	mysofa_c2s(a);
+	//mysofa_c2s(a);
 	fprintf(stderr, "Actual Position: %f, %f, %f\n", a[0],a[1],a[2]);
+
+	float IRLeft[256];
+	float delayL, delayR;
+	mysofa_getfilter_float(hrtf, 0, 0, 0, IRLeft, IRLeft + 128, &delayL, &delayR);
 
 	// get the HRIR for the position given in t
 	float *IRL, *IRR, delL, delR;

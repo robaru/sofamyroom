@@ -24,6 +24,8 @@
 #ifndef _INTERFACE_H_94718466154761251723
 #define _INTERFACE_H_94718466154761251723
 
+#include "mysofa.h"
+
 /* type declarations */
 #define MSTRUCT_DECLARE
 #undef MSTRUCT_PROTOTYPE

@@ -145,7 +145,7 @@ int main(int argc, char **argv)
 
 	printf("ROOMSIM v" ROOMSIM_VERSION ", built %s %s\n", builddate, buildtime);
 
-	/*if (argc<=1)
+	if (argc<=1)
 	{
 		MsgPrintf("Usage: roomsim setup [output]\n");
 		return 0;
@@ -157,11 +157,11 @@ int main(int argc, char **argv)
 		char msg[256];
 		sprintf(msg,"error reading setup file '%s'\n",argv[1]);
 		MsgErrorExit(msg);
-	}*/
+	}
 
-	/* PrintSetup(&filesetup.root); */
-	/*LoadCRoomSetup(&filesetup.root,&setup);*/
-	Roomsetup(&setup);
+	//PrintSetup(&filesetup.root); 
+	LoadCRoomSetup(&filesetup.root,&setup);
+	//Roomsetup(&setup);
 	ValidateSetup(&setup);
 
 	/* run the simulator */
