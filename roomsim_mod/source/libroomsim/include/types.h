@@ -21,14 +21,10 @@
  * along with ROOMSIM. If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
 
-#define SOFA
-
-#ifdef SOFA
-#include "mysofa.h"
-#endif
-
 #ifndef _TYPES_H_3019823578647120321803
 #define _TYPES_H_3019823578647120321803
+
+#include "mysofa.h"
 
 /* yaw-pitch-roll data types */
 /* typedef double YPR[3]; */
@@ -121,13 +117,13 @@ struct CSensorDefinition {
 	double *simulationfrequency;
 	double *simulationlogweights;
 
-	/* for SOFA file */
-#	ifdef SOFA
+	/* for SOFA format */
+#	ifdef MYSOFA_H_INCLUDED
 	struct MYSOFA_EASY *sofaHandle;
-	double *interpolatedResponseData;
-	float *tempInterpolatedResponseData;
-	float *delays; //delays[0] -> left
-	bool interpolate;
+	double *interpResponseDataDouble;
+	float  *interpResponseDataFloat;
+	float  *delays; //delays[0] -> left
+	bool   interpolation;
 #	endif
 
 } ;

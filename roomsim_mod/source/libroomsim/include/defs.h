@@ -99,13 +99,13 @@
 
 /* system-dependent functions */
 #if 1
-	#ifdef __GNUC__
-		#define stricmp     strcasecmp
-		#define strnicmp    strncasecmp
-	#else
-		#define stricmp     _stricmp
-		#define strnicmp    _strnicmp
-	#endif	
+#	ifdef __GNUC__
+#		define stricmp     strcasecmp
+#		define strnicmp    strncasecmp
+#	else
+#		define stricmp     _stricmp
+#		define strnicmp    _strnicmp
+#	endif	
 #endif
 
 #endif /* #ifndef _DEFS_H_9834798749126316831231 */
