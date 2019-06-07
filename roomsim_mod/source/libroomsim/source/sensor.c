@@ -592,6 +592,7 @@ void sensor_SOFA_init(char *datafile, CSensorDefinition *definition)
 		MsgErrorExit(msg);
 	}
 
+	/* SOFA neighborhood initialization */
 	definition->sofaHandle->neighborhood = mysofa_neighborhood_init(definition->sofaHandle->hrtf, definition->sofaHandle->lookup);
 	if (definition->sofaHandle->neighborhood == NULL) {
 		err = MYSOFA_INTERNAL_ERROR;
@@ -600,8 +601,14 @@ void sensor_SOFA_init(char *datafile, CSensorDefinition *definition)
 		MsgErrorExit(msg);
 	}
 
-	/* allocate memory for sensor response data */
-	definition->responsedata = MemMalloc(definition->sofaHandle->hrtf->DataIR.elements * sizeof(double));
+	/* SOFA FIR initialization */
+	definition->sofaHandle->fir = MemMalloc(definition->sofaHandle->hrtf->N * definition->sofaHandle->hrtf->R * sizeof(float));
+	if (definition->sofaHandle->fir == NULL) {
+		err = MYSOFA_INTERNAL_ERROR;
+		mysofa_close(definition->sofaHandle);
+		sprintf(msg, "unable to initialize fir filter memory (error %d)", err);
+		MsgErrorExit(msg);
+	}
 
 	if (definition->interpolation)
 	{
@@ -614,9 +621,16 @@ void sensor_SOFA_init(char *datafile, CSensorDefinition *definition)
 		/* allocate memory for delays */
 		definition->delays = MemMalloc(definition->sofaHandle->hrtf->R * sizeof(float));
 
-		/* allocate memory for fir filters */
-		definition->sofaHandle->fir = MemMalloc(definition->sofaHandle->hrtf->N * definition->sofaHandle->hrtf->R * sizeof(float));
+		if (!definition->interpResponseDataFloat || !definition->interpResponseDataDouble || !definition->delays)
+		{
+			mysofa_close(definition->sofaHandle);
+			sprintf(msg, "unable to allocate memory for impulse responses");
+			MsgErrorExit(msg);
+		}
 	}
+	
+	/* allocate memory for sensor response data */
+	definition->responsedata = MemMalloc(definition->sofaHandle->hrtf->DataIR.elements * sizeof(double));
 
 	/* check memory allocation error */
 	if (!definition->responsedata)
