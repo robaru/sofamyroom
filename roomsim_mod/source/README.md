@@ -1,15 +1,15 @@
 # Roomsim
 
-Roomsim is a fast, accurate, and flexible "shoebox" room acoustics simulator that supports both specular and diffuse reflections. It supports the AES SOFA file format for storing HRTFs thanks to `libmysofa` library.
+Roomsim is a fast, accurate, and flexible "shoebox" room acoustics simulator that supports both specular and diffuse reflections. The simulator extends the work released by Schimmel et al. by adding the rendering of Binaural Room Impulse Response, BRIR. It supports the AES SOFA file format for storing HRTFs thanks to `libmysofa` library. (aggiungere riferimenti bibliografici e links)
 
 
 # Installing Roomsim
 
-These instructions will get you a copy of the program up and running on your local machine.
+This repository includes the binary files and, if in case of need, the CMake scripts allow a customized compilation.
 
 ## OS support
 
-Roomsim binaries are available for Windows, Ubuntu Linux and hopefully MacOS, both 32 and 64 bit. 
+Roomsim binaries are available for Windows, Ubuntu Linux and hopefully MacOS, both 32 and 64 bit. (aggiungere versioni os)
 
 ## Installation on Windows
 
