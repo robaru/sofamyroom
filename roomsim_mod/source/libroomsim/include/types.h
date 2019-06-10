@@ -117,7 +117,7 @@ struct CSensorDefinition {
 	double *simulationfrequency;
 	double *simulationlogweights;
 
-	/* for SOFA format */
+	/* for SOFA HRTFs */
 #	ifdef MYSOFA_H_INCLUDED
 	struct MYSOFA_EASY *sofaHandle;
 	double *interpResponseDataDouble;

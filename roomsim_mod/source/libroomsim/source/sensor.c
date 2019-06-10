@@ -31,6 +31,7 @@
 #include "msg.h"
 #include "types.h"
 #include "sensor.h"
+#include "mysofa.h"
 
 /* disable warnings about unsafe CRT functions */
 #ifdef _MSC_VER
@@ -615,16 +616,30 @@ void sensor_SOFA_init(char *datafile, CSensorDefinition *definition)
 		/* allocate memory for sensor temporary interpolated response data */
 		definition->interpResponseDataFloat = MemMalloc(definition->sofaHandle->hrtf->N * definition->sofaHandle->hrtf->R * sizeof(float));
 
+		if (!definition->interpResponseDataFloat)
+		{
+			mysofa_close(definition->sofaHandle);
+			sprintf(msg, "unable to allocate memory for impulse responses");
+			MsgErrorExit(msg);
+		}
+
 		/* allocate memory for sensor interpolated response data */
 		definition->interpResponseDataDouble = MemMalloc(definition->sofaHandle->hrtf->N * definition->sofaHandle->hrtf->R * sizeof(double));
+
+		if (!definition->interpResponseDataDouble)
+		{
+			mysofa_close(definition->sofaHandle);
+			sprintf(msg, "unable to allocate memory for impulse responses");
+			MsgErrorExit(msg);
+		}
 
 		/* allocate memory for delays */
 		definition->delays = MemMalloc(definition->sofaHandle->hrtf->R * sizeof(float));
 
-		if (!definition->interpResponseDataFloat || !definition->interpResponseDataDouble || !definition->delays)
+		if (!definition->delays)
 		{
 			mysofa_close(definition->sofaHandle);
-			sprintf(msg, "unable to allocate memory for impulse responses");
+			sprintf(msg, "unable to allocate memory for delays");
 			MsgErrorExit(msg);
 		}
 	}
