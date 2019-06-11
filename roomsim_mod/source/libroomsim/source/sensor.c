@@ -526,8 +526,8 @@ bool getInterpolation(char *datafile)
 				interpolation = false;
 			}
 		}
-
-		datafile[length - 2] = '\0';
+        
+        datafile[length - 2] = '\0';
 
 	}
 	else
@@ -539,17 +539,21 @@ bool getInterpolation(char *datafile)
 	return interpolation;
 }
 
-void sensor_SOFA_init(char *datafile, CSensorDefinition *definition)
+void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 {
-	char msg[256];
+	char msg[256], *path;
 	int err;
-	unsigned int i, length;
+	unsigned int i;
 
 	/* test that a datafile name is provided */
 	if (!datafile)
 		MsgErrorExit("no SOFA datafile specified\n");
+    
+    path = (char *)MemMalloc(strlen(datafile) * sizeof(char));
+    
+    strcpy(path, datafile);
 
-	definition->interpolation = getInterpolation(datafile);
+	definition->interpolation = getInterpolation(path);
 
 	/* memory allocation for SOFA data */
 	definition->sofaHandle = MemMalloc(sizeof(struct MYSOFA_EASY));
@@ -557,7 +561,7 @@ void sensor_SOFA_init(char *datafile, CSensorDefinition *definition)
 	/* check memory allocation error*/
 	if (!definition->sofaHandle)
 	{
-		sprintf(msg, "unable to allocate memory for SOFA data file '%s'", datafile);
+		sprintf(msg, "unable to allocate memory for SOFA data file '%s'", path);
 		MsgErrorExit(msg);
 	}
 
@@ -567,10 +571,10 @@ void sensor_SOFA_init(char *datafile, CSensorDefinition *definition)
 	definition->sofaHandle->fir = NULL;
 
 	/* open SOFA file */
-	definition->sofaHandle->hrtf = mysofa_load(datafile, &err);
+	definition->sofaHandle->hrtf = mysofa_load(path, &err);
 	if (!definition->sofaHandle->hrtf) {
 		mysofa_close(definition->sofaHandle);
-		sprintf(msg, "unable to load SOFA data file '%s' (error %d)", datafile, err);
+		sprintf(msg, "unable to load SOFA data file '%s' (error %d)", path, err);
 		MsgErrorExit(msg);
 	}
 
@@ -578,7 +582,7 @@ void sensor_SOFA_init(char *datafile, CSensorDefinition *definition)
 	err = mysofa_check(definition->sofaHandle->hrtf);
 	if (err != MYSOFA_OK) {
 		mysofa_close(definition->sofaHandle);
-		sprintf(msg, "error in SOFA hrtf data '%s' (error %d)", datafile, err);
+		sprintf(msg, "error in SOFA hrtf data '%s' (error %d)", path, err);
 		MsgErrorExit(msg);
 	}
 
@@ -674,6 +678,8 @@ void sensor_SOFA_init(char *datafile, CSensorDefinition *definition)
 	MsgPrintf("Successfully loaded SOFA HRTFs (#pos=%d, #samples=%d, #ch=%d, fs=%f)\n",
 		definition->nEntries, definition->nSamples, definition->nChannels, definition->fs);
 	MsgRelax;
+    
+    MemFree(path);
 	
 #ifdef MEX
 	/* make response data memory persistent */
@@ -703,7 +709,7 @@ CSensorListItem sensor[] = {
 #	ifndef MYSOFA_H_INCLUDED
     {"MIT",             sensor_MIT_init             },
 #	else
-	{"SOFA",            sensor_SOFA_init            }
+    {"SOFA",             sensor_SOFA_init             }
 #	endif
 };
 int nSensors = sizeof(sensor) / sizeof(CSensorListItem);
