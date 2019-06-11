@@ -15,7 +15,7 @@ This repository includes the binary files and, if in case of need, the CMake scr
 
 ## OS support
 
-Roomsim binaries are available for Windows 10, Ubuntu Linux 16.04 and 18.04 and hopefully MacOS, both 32 and 64 bit. (aggiungere versioni os)
+Roomsim binaries are available for Windows 10, Ubuntu Linux 16.04 and 18.04 and MacOS High Sierra.
 
 ## Installation on Windows
 
@@ -29,7 +29,7 @@ $ sudo apt-get install zlib1g
 ```
 ## Installation on MacOS
 
-Hopefully, no further steps are required to run Roomsim on MacOS.
+No further steps are required to run Roomsim on MacOS.
 
 # Usage
 
@@ -77,13 +77,15 @@ To generate the Makefile, change directory to `source` and type the following co
 ```bash
 $ cmake . -G"Unix Makefiles" -DCMAKE_BULD_TYPE=BUILD_TYPE
 ```
-`BUILD_TYPE` can be `Debug` or `Release`.
+`BUILD_TYPE` can be `Debug` or `Release`. If `CMAKE_BULD_TYPE` is not set by the user, it defaults to `Release`.
 
 ## Building on MacOS
 
-...
-
-## Building with MATLAB
+You can use CMake to generate an XCode project. To generate the project, change directory to `source` and type the following command:
+```bash
+$ cmake . -G"XCode"
+```
+## Building with MATLAB (Windows)
 
 You can use MATLAB to generate a MEX-file. If you are using a 64-bit version of MATLAB, you have to type the following command in the Command Window:
 ```matlab
