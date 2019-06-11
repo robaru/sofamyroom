@@ -16,15 +16,20 @@ include_directories(
 	"${CMAKE_SOURCE_DIR}/libmysofa/${OS}/${PLATFORM}/include"
 	)
 
-if(${OS} STREQUAL "Windows")
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 	set(FFTW_NAME "libfftw3-3.lib")
 	set(MYSOFA_NAME "mysofa*.lib")
 	set(MATH "")
 	set(LIBZ "")
-elseif(${OS} STREQUAL "Linux")
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 	set(FFTW_NAME "${CMAKE_BUILD_TYPE}/libfftw3.a")
 	set(MYSOFA_NAME "libmysofa.a")
 	set(MATH "m")
+	set(LIBZ "z")
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+	set(FFTW_NAME "${CMAKE_BUILD_TYPE}/libfftw3.a")
+	set(MYSOFA_NAME "libmysofa.a")
+	set(MATH "")
 	set(LIBZ "z")
 endif()
 

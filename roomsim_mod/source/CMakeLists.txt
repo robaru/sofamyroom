@@ -26,7 +26,7 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
 	if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "8")
 		set(PLATFORM "64bit")
 	elseif("${CMAKE_SIZEOF_VOID_P}" STREQUAL "4")
-    	set(PLATFORM "32bit")
+    	message(FATAL_ERROR "32-bit MacOS is not supported")
 	endif()
 endif()
 
