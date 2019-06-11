@@ -1,4 +1,5 @@
 
+
 # Roomsim
 
 Roomsim is a fast, accurate, and flexible "shoebox" room acoustics simulator that supports both specular and diffuse reflections. The simulator extends the work released by Schimmel et al. by adding the rendering of Binaural Room Impulse Response, BRIR. It supports the AES Spatially Oriented Format for Acoustics (SOFA) file format for storing HRTFs thanks to MySofa library (hereinafter referred as `libmysofa`).
@@ -97,7 +98,6 @@ Please note that the build process with `make32` was not tested.
 # Known issues
 
 * The 32-bit version built using Debug configuration on Ubuntu Linux crashes due to a segmentation fault cause by `libmysofa`;
-* If a MATLAB MEX-file runs twice with the same setup, it causes MATLAB to crash.
 
 # License
 
@@ -107,6 +107,10 @@ Please note that the build process with `make32` was not tested.
 # Changelog
 
 Here is a list of changes made to the code.
+
+## File "interface.h"
+
+`#include "mysofa.h"` (row 27) was needed to define the macro `__bool_true_false_are_defined`, used by `mstruct.h` (see below).
 
 ## File "mstruct.h"
 

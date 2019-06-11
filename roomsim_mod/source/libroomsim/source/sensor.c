@@ -678,6 +678,11 @@ void sensor_SOFA_init(char *datafile, CSensorDefinition *definition)
 #ifdef MEX
 	/* make response data memory persistent */
 	mexMakeMemoryPersistent(definition->responsedata);
+	mexMakeMemoryPersistent(definition->sofaHandle);
+	mexMakeMemoryPersistent(definition->sofaHandle->fir);
+	mexMakeMemoryPersistent(definition->interpResponseDataFloat);
+	mexMakeMemoryPersistent(definition->interpResponseDataDouble);
+	mexMakeMemoryPersistent(definition->delays);
 #endif
 }
 #endif
