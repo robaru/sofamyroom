@@ -93,5 +93,5 @@ source(1).description        = 'subcardioid';       % source type
 %
 receiver(1).location         = [ 3 5 1.2 ];         % location of receiver (x,y,z; meters)
 receiver(1).orientation      = [ 0 0 0 ];           % orientation of receiver (yaw,pitch,roll; degrees)
-receiver(1).description      = 'SOFA ./data/SOFA/MIT_KEMAR_normal_pinna.sofa 1';  % receiver type
+receiver(1).description      = 'SOFA ./data/SOFA/MIT_KEMAR_normal_pinna.sofa';  % receiver type
 
