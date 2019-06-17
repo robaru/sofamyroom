@@ -112,11 +112,11 @@ Here is a list of changes made to the code.
 
 ## File "interface.h"
 
-`#include "mysofa.h"` (row 27) was needed to define the macro `__bool_true_false_are_defined`, used by `mstruct.h` (see below).
+`#include "mysofa.h"` was needed to define the macro `__bool_true_false_are_defined`, used by `mstruct.h` (see below).
 
 ## File "mstruct.h"
 
-The original Roomsim defined its own bool type (row 46).
+The original Roomsim defined its own bool type.
 ```c
 #  else
 	 typedef int bool;
@@ -140,7 +140,7 @@ This was in conflict with the definition of bool in `stdbool.h` used by `libmyso
 
 ## File "defs.h"
 
-The original Roomsim compared strings with `stricmp` and `strnicmp` functions (row 100). 
+The original Roomsim compared strings with `stricmp` and `strnicmp` functions. 
 ```c
 /* system-dependent functions */
 #if 1
@@ -164,7 +164,7 @@ These functions are Windows-specific. New functions had to be used in order to b
 
 ## File "types.h"
 
-This file describes the `struct` `CSensorDefinition`, that holds all the information about a sensor. The `struct` was expanded in order to manage SOFA HRTF data (row 120).
+This file describes the `struct` `CSensorDefinition`, that holds all the information about a sensor. The `struct` was expanded in order to manage SOFA HRTF data.
 ```c
 	/* for SOFA HRTFs */
 #	ifdef MYSOFA_H_INCLUDED
@@ -175,13 +175,13 @@ This file describes the `struct` `CSensorDefinition`, that holds all the informa
 	bool   interpolation;
 #	endif
 ```
-`#include "mysofa.h"` (row 27) allowed the use of `MYSOFA_EASY`.
+`#include "mysofa.h"` allowed the use of `MYSOFA_EASY`.
 
 ## File "sensor.c"
 
-`#include "mysofa.h"` (row 34) allowed the use of `libmysofa` functions. 
+`#include "mysofa.h"` allowed the use of `libmysofa` functions. 
 
-The list of sensors (row 688) was updated to support SOFA HRTFs:
+The list of sensors was updated to support SOFA HRTFs:
 ```c
 CSensorListItem sensor[] = {
     ...
@@ -196,7 +196,7 @@ Four new functions were added to the file to manage the SOFA format and compute 
 * `sensor_SOFA_probe`: it looks for the HRTF that is closest to the given coordinates;
 * `sensor_SOFA_probe_interp`: it computes the HRTF by interpolating the neighboring HRTFs.
 
-Function `SensorGetResponse` was edited in order to obtain the interpolated or non-interpolated HRTFs  (row 67):
+Function `SensorGetResponse` was edited in order to obtain the interpolated or non-interpolated HRTFs:
 ```c
 #			ifdef MYSOFA_H_INCLUDED
 			if (!sensor->interpolation)
@@ -218,7 +218,7 @@ Function `SensorGetResponse` was edited in order to obtain the interpolated or n
 			}
 #			endif
 ```
-Memory allocated by the functions mentioned above must be freed. Function `ClearSensor` was edited to perform these operations (row 854):
+Memory allocated by the functions mentioned above must be freed. Function `ClearSensor` was edited to perform these operations:
 ```c
 #	ifdef MYSOFA_H_INCLUDED
 	mysofa_close(item->definition.sofaHandle);
