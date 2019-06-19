@@ -549,7 +549,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	if (!datafile)
 		MsgErrorExit("no SOFA datafile specified\n");
     
-    path = (char *)MemMalloc(strlen(datafile) * sizeof(char));
+    path = (char *)MemMalloc((strlen(datafile) + 1) * sizeof(char));
     
     strcpy(path, datafile);
 
