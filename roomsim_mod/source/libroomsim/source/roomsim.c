@@ -755,6 +755,13 @@ CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup)
 	int  nTimebin, nFreqbin, nSpacebin, nBins;
 	int  length;
 
+	/* check simulation sample frequency */
+	if (pSetup->options.fs < 44100)
+	{
+		sprintf(msg, "warning: the sample rate of the simulation is low, should be at least 44100Hz\n");
+		MsgPrintf("%s", msg);
+	}
+
 	/* allocate memory for internal simulation data structure */
 	CRoomsimInternal *pSimulation = (CRoomsimInternal *) MemMalloc(sizeof(CRoomsimInternal));
 
@@ -834,7 +841,15 @@ CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup)
         ComputeSensor2RoomYPRT((YPR *)pSetup->receiver[r].orientation, (YPRT *)&pSimulation->receiver[r].s2r_yprt);
 
 		/* prepare receiver's simulation frequency band weights */
-		InitSimulationWeights(pSimulation, pSimulation->receiver[r].definition);
+		/* workaround, not used for impulse response */
+		if (pSimulation->receiver[r].definition->type == ST_IMPULSERESPONSE)
+		{
+			pSimulation->receiver[r].definition->simulationfrequency = NULL;
+			pSimulation->receiver[r].definition->simulationlogweights = NULL;
+			pSimulation->receiver[r].definition->nSimulationBands = -1;
+		}
+		else
+			InitSimulationWeights(pSimulation, pSimulation->receiver[r].definition);
 
 		/* allocate and initialize time-frequency-space histogram */
 		pSimulation->receiver[r].nTbin = nTimebin;

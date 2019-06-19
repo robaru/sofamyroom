@@ -1,5 +1,6 @@
 
 
+
 # Roomsim
 
 Roomsim is a fast, accurate, and flexible "shoebox" room acoustics simulator that supports both specular and diffuse reflections. The simulator extends the work released by Schimmel et al. by adding the rendering of Binaural Room Impulse Response, BRIR. It supports the AES Spatially Oriented Format for Acoustics (SOFA) file format for storing HRTFs thanks to MySofa library (hereinafter referred as `libmysofa`).
@@ -40,20 +41,40 @@ roomsim setup output
 ```
 `setup` is the name of the text file containing all the roomsim setup parameters structure. A sample of it can be found in `sampleroomsetup.m`. `output` is the name of the binary file written by roomsim, which contains the result of the simulation. To read this file, use MATLAB function `readbrir`, provided with this project. `setup` is mandatory, `output` is optional (the default name of the output file is `output.brir`).
 
-## Usage with MATLAB
+## Usage with MATLAB (Windows)
 
 A MEX-file for 64-bit MATLAB is available. To run it, type these commands in the Command Window:
 ```matlab
 >> setup = readsetup('sampleroomsetup.m');
->> roomsim(setup)
+>> output = roomsim(setup)
 ```
 ## Notes about the setup file
 
-The format of the field `receiver().description` **must** be the following:
+The format of the field `receiver().description` is the following:
 ```
-'RECEIVER_ID PATH_TO_HRTF_FILE INTERPOLATION'
+'RECEIVER_ID PATH_TO_HRTF_FILE interp=interp_value norm=norm_value fs=fs_value'
 ```
-`RECEIVER_ID` must be `SOFA`. `PATH_TO_HRTF_FILE` is the relative or absolute path to your `.sofa` file. `INTERPOLATION` can be `1` or `0`. If `0`, roomsim looks for the HRTF that is closest to the given coordinates, if `1` roomsim performs an interpolation of the neighboring HRTFs. `RECEIVER_ID` and `PATH_TO_HRTF_FILE` are mandatory. `INTERPOLATION` is optional, if not set the default value is `0`.
+`RECEIVER_ID` must be `SOFA`. `PATH_TO_HRTF_FILE` is the relative or absolute path to your `.sofa` file. The following values are:
+* `interp`: Roomsim can look up the HRTF that is closest to the given coordinates or it can interpolate the neighboring HRTFs to obtain the desired HRTF. `interp_value` can be T[RUE], t[rue], 1 (interpolation is active), or F[ALSE], f[alse], 0 (interpolation is not performed). Words in square brackets are optional, Roomsim just looks for the first character.
+*  `norm`: Roomsim can normalize HRTF data. `norm_value` behaves just like  `interp_value`, described above.
+*  `fs`: Roomsim can resample the HRTF data according to  `fs_value`. `fs_value` must be a positive integer, greater than 0.
+
+All the options described above are optional. If not set, interpolation, normalization and resampling are not performed. Unrecognized options are skipped.
+
+### Examples
+All the examples proposed below are valid:
+```
+'SOFA ./data/SOFA/mySofaFile.sofa'
+```
+```
+'SOFA ./data/SOFA/mySofaFile.sofa interp=TRUE norm=0 fs=44100'
+```
+```
+'SOFA ./data/SOFA/mySofaFile.sofa interp=1 norm=f'
+```
+```
+'SOFA ./data/SOFA/mySofaFile.sofa fs=88200 norm=f interp=0'
+```
 
 # Building Roomsim
 
@@ -99,12 +120,12 @@ Please note that the build process with `make32` was not tested.
 
 # Known issues
 
-* The 32-bit version built using Debug configuration on Ubuntu Linux crashes due to a segmentation fault cause by `libmysofa`;
+* The 32-bit version built using Debug configuration on Ubuntu Linux crashes due to a segmentation fault cause by `libmysofa` (file `src/hdf/dataobject.c`, function `log(" REFERENCE %lu %lX %s\n", reference, dataobject, buffer)`, line 551).
 
 # License
 
 * Roomsim - GNU GPL;
-* `libmysofa` - See `LICENSE` on the project page;
+* `libmysofa` - See `LICENSE` on `libmysofa` project page;
 
 # Changelog
 
@@ -171,8 +192,9 @@ This file describes the `struct` `CSensorDefinition`, that holds all the informa
 	struct MYSOFA_EASY *sofaHandle;
 	double *interpResponseDataDouble;
 	float  *interpResponseDataFloat;
-	float  *delays;
-	bool   interpolation;
+	float  *delays; //delays[0] -> left
+	bool   interpolation, normalization;
+	int    newFs;
 #	endif
 ```
 `#include "mysofa.h"` allowed the use of `MYSOFA_EASY`.
@@ -237,3 +259,25 @@ Memory allocated by the functions mentioned above must be freed. Function `Clear
 Some minor changes not related to SOFA HRTFs were carried out to suppress some compiler warnings:
 * Rows 789, 843: `MsgPrintf(msg);` became `MsgPrintf("%s", msg);`
 * Row 825: `char msg[256];` became `char msg[512];`
+## file "roomsim.c"
+A check of the sampling rate (field `option.fs` of the setup file) is performed. A sample rate lower than 44100Hz may lead to artifacts in the sound.
+```c
+/* check simulation sample frequency */
+if (pSetup->options.fs < 44100)
+{
+	sprintf(msg, "warning: the sample rate of the simulation is low, should be at least 44100Hz\n");
+	MsgPrintf("%s", msg);
+}
+```
+According to the algorithm on which Roomsim is based, the function `InitSimulationWeights` is called only when the type of the sensor is not `ST_IMPULSERESPONSE`.  The following code reflects this behaviour:
+```c
+/* workaround, not used for impulse response */
+if (pSimulation->receiver[r].definition->type == ST_IMPULSERESPONSE)
+{
+	pSimulation->receiver[r].definition->simulationfrequency = NULL;
+	pSimulation->receiver[r].definition->simulationlogweights = NULL;
+	pSimulation->receiver[r].definition->nSimulationBands = -1;
+}
+else
+	InitSimulationWeights(pSimulation, pSimulation->receiver[r].definition);
+```
