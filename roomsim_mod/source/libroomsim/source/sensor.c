@@ -502,58 +502,106 @@ int sensor_SOFA_probe_interp(const CSensorDefinition *sensor, const XYZ *xyz)
 	return 0;
 }
 
-bool getInterpolation(char *datafile)
+void getOptions(char *options, CSensorDefinition *definition)
 {
-	int length;
-	bool interpolation;
+	char *option, *value, msg[256];
+	char *stringOptions[] = { "interp=", "norm=", "fs=" };
 
-	length = strlen(datafile);
-
-	if (datafile[length - 2] == ' ')
+	option = strtok(options, " ");
+	
+	while (option)
 	{
-		switch (datafile[length - 1])
+		if (!strnicmp(option, stringOptions[0], strlen(stringOptions[0])))
 		{
-			case '0': {
-				interpolation = false;
+			switch (*(option + strlen(stringOptions[0])))
+			{
+			case 'f':
+			case 'F':
+			case '0': 
+				definition->interpolation = false;
 				break;
-			}
-			case '1': {
-				interpolation = true;
+			case 't':
+			case 'T':
+			case '1':
+				definition->interpolation = true;
 				break;
-			}
-			default: {
-				MsgPrintf("invalid interpolation option, setting interpolation to false\n");
-				interpolation = false;
+			default: 
+				sprintf(msg, "invalid interpolation value, setting it to false\n", option);
+				MsgPrintf("%s", msg);
+				definition->interpolation = false;
 			}
 		}
-        
-        datafile[length - 2] = '\0';
+		else if (!strnicmp(option, stringOptions[1], strlen(stringOptions[1])))
+		{
+			switch (*(option + strlen(stringOptions[1])))
+			{
+			case 'f':
+			case 'F':
+			case '0':
+				definition->normalization = false;
+				break;
+			case 't':
+			case 'T':
+			case '1':
+				definition->normalization = true;
+				break;
+			default:
+				sprintf(msg, "invalid normalization value, setting it to false\n", option);
+				MsgPrintf("%s", msg);
+				definition->normalization = false;
+			}
+		}
+		else if (!strnicmp(option, stringOptions[2], strlen(stringOptions[2])))
+		{
+			value = option + strlen(stringOptions[2]);
+			definition->newFs = atoi(value);
+			if (definition->newFs <= 0)
+			{
+				definition->newFs = 0;
+				sprintf(msg, "invalid sample rate, setting resampling to false\n", option);
+				MsgPrintf("%s", msg);
+			}
+		}
+		else
+		{
+			sprintf(msg, "%s, not a valid option\n", option);
+			MsgPrintf("%s", msg);
+		}
 
+		option = strtok(NULL, " ");
 	}
-	else
-	{
-		MsgPrintf("no interpolation option provided, setting interpolation to false\n");
-		interpolation = false;
-	}
-
-	return interpolation;
 }
 
 void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 {
-	char msg[256], *path;
+	char msg[256], *datafilecopy, *path, *options;
 	int err;
 	unsigned int i;
 
 	/* test that a datafile name is provided */
 	if (!datafile)
 		MsgErrorExit("no SOFA datafile specified\n");
-    
-    path = (char *)MemMalloc((strlen(datafile) + 1) * sizeof(char));
-    
-    strcpy(path, datafile);
 
-	definition->interpolation = getInterpolation(path);
+	/* setting options to default values */
+	definition->interpolation = false;
+	definition->normalization = false;
+	definition->newFs = 0;
+    
+    /* getting options */
+	datafilecopy = (char *)MemMalloc((strlen(datafile) + 1) * sizeof(char));
+    strcpy(datafilecopy, datafile);
+
+	path = strtok(datafilecopy, " ");
+
+	if (strlen(path) == strlen(datafile))
+	{
+		printf("no options provided, using default values\n");
+	}
+	else
+	{
+		options = path + strlen(path) + 1;
+		getOptions(options, definition);
+	}
 
 	/* memory allocation for SOFA data */
 	definition->sofaHandle = MemMalloc(sizeof(struct MYSOFA_EASY));
@@ -586,6 +634,31 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 		MsgErrorExit(msg);
 	}
 
+	/* SOFA data resampling */
+	if (definition->newFs)
+	{
+		sprintf(msg, "resampling HRTF data... ");
+		MsgPrintf(msg);
+		err = mysofa_resample(definition->sofaHandle->hrtf, definition->newFs);
+		if (err != MYSOFA_OK) {
+			mysofa_close(definition->sofaHandle);
+			sprintf(msg, "an error occurred during resampling of data\n (error %d)", err);
+			MsgErrorExit(msg);
+		}
+		sprintf(msg, "complete\n");
+		MsgPrintf(msg);
+	}
+
+	/* SOFA data normalization */
+	if (definition->normalization)
+	{
+		sprintf(msg, "normalizing HRTF data... ");
+		MsgPrintf(msg);
+		mysofa_loudness(definition->sofaHandle->hrtf);
+		sprintf(msg, "complete\n");
+		MsgPrintf(msg);
+	}
+
 	/* SOFA lookup initialization */
 	mysofa_tocartesian(definition->sofaHandle->hrtf);
 
@@ -607,7 +680,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	}
 
 	/* SOFA FIR initialization */
-	definition->sofaHandle->fir = MemMalloc(definition->sofaHandle->hrtf->N * definition->sofaHandle->hrtf->R * sizeof(float));
+	definition->sofaHandle->fir = malloc(definition->sofaHandle->hrtf->N * definition->sofaHandle->hrtf->R * sizeof(float));
 	if (definition->sofaHandle->fir == NULL) {
 		err = MYSOFA_INTERNAL_ERROR;
 		mysofa_close(definition->sofaHandle);
@@ -669,7 +742,10 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 		definition->probe.xyz2idx = sensor_SOFA_probe;
 	else
 		definition->probe.xyz2idx = sensor_SOFA_probe_interp;
-	definition->fs = definition->sofaHandle->hrtf->DataSamplingRate.values[0];
+	if (definition->newFs)
+		definition->fs = definition->newFs;
+	else
+		definition->fs = definition->sofaHandle->hrtf->DataSamplingRate.values[0];
 	definition->nChannels = definition->sofaHandle->hrtf->R;
 	definition->nEntries = definition->sofaHandle->hrtf->M;
 	definition->nSamples = definition->sofaHandle->hrtf->N;
@@ -679,13 +755,12 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 		definition->nEntries, definition->nSamples, definition->nChannels, definition->fs);
 	MsgRelax;
     
-    MemFree(path);
+    MemFree(datafilecopy);
 	
 #ifdef MEX
 	/* make response data memory persistent */
 	mexMakeMemoryPersistent(definition->responsedata);
 	mexMakeMemoryPersistent(definition->sofaHandle);
-	mexMakeMemoryPersistent(definition->sofaHandle->fir);
 	mexMakeMemoryPersistent(definition->interpResponseDataFloat);
 	mexMakeMemoryPersistent(definition->interpResponseDataDouble);
 	mexMakeMemoryPersistent(definition->delays);
