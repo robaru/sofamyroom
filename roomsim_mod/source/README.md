@@ -1,6 +1,7 @@
 
 
 
+
 # Roomsim
 
 Roomsim is a fast, accurate, and flexible "shoebox" room acoustics simulator that supports both specular and diffuse reflections. The simulator extends the work released by Schimmel et al. by adding the rendering of Binaural Room Impulse Response, BRIR. It supports the AES Spatially Oriented Format for Acoustics (SOFA) file format for storing HRTFs thanks to MySofa library (hereinafter referred as `libmysofa`).
@@ -259,7 +260,8 @@ Memory allocated by the functions mentioned above must be freed. Function `Clear
 Some minor changes not related to SOFA HRTFs were carried out to suppress some compiler warnings:
 * Rows 789, 843: `MsgPrintf(msg);` became `MsgPrintf("%s", msg);`
 * Row 825: `char msg[256];` became `char msg[512];`
-## file "roomsim.c"
+
+## File "roomsim.c"
 A check of the sampling rate (field `option.fs` of the setup file) is performed. A sample rate lower than 44100Hz may lead to artifacts in the sound.
 ```c
 /* check simulation sample frequency */
