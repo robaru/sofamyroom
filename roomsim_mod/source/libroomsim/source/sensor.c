@@ -32,6 +32,7 @@
 #include "types.h"
 #include "sensor.h"
 #include "mysofa.h"
+#include "global.h"
 
 /* disable warnings about unsafe CRT functions */
 #ifdef _MSC_VER
@@ -505,7 +506,7 @@ int sensor_SOFA_probe_interp(const CSensorDefinition *sensor, const XYZ *xyz)
 void getOptions(char *options, CSensorDefinition *definition)
 {
 	char *option, *value, msg[256];
-	char *stringOptions[] = { "interp=", "norm=", "fs=" };
+	char *stringOptions[] = { "interp=", "norm=", "resampling=" };
 
 	option = strtok(options, " ");
 	
@@ -553,13 +554,22 @@ void getOptions(char *options, CSensorDefinition *definition)
 		}
 		else if (!strnicmp(option, stringOptions[2], strlen(stringOptions[2])))
 		{
-			value = option + strlen(stringOptions[2]);
-			definition->newFs = atoi(value);
-			if (definition->newFs <= 0)
+			switch (*(option + strlen(stringOptions[2])))
 			{
-				definition->newFs = 0;
-				sprintf(msg, "invalid sample rate, setting resampling to false\n", option);
+			case 'f':
+			case 'F':
+			case '0':
+				definition->resampling = false;
+				break;
+			case 't':
+			case 'T':
+			case '1':
+				definition->resampling = true;
+				break;
+			default:
+				sprintf(msg, "invalid resempling value, setting it to false\n", option);
 				MsgPrintf("%s", msg);
+				definition->resampling = false;
 			}
 		}
 		else
@@ -585,7 +595,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	/* setting options to default values */
 	definition->interpolation = false;
 	definition->normalization = false;
-	definition->newFs = 0;
+	definition->resampling = false;
     
     /* getting options */
 	datafilecopy = (char *)MemMalloc((strlen(datafile) + 1) * sizeof(char));
@@ -635,11 +645,11 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	}
 
 	/* SOFA data resampling */
-	if (definition->newFs)
+	if (definition->resampling)
 	{
 		sprintf(msg, "resampling HRTF data... ");
 		MsgPrintf(msg);
-		err = mysofa_resample(definition->sofaHandle->hrtf, definition->newFs);
+		err = mysofa_resample(definition->sofaHandle->hrtf, (float)g_fs);
 		if (err != MYSOFA_OK) {
 			mysofa_close(definition->sofaHandle);
 			sprintf(msg, "an error occurred during resampling of data\n (error %d)", err);
@@ -742,8 +752,8 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 		definition->probe.xyz2idx = sensor_SOFA_probe;
 	else
 		definition->probe.xyz2idx = sensor_SOFA_probe_interp;
-	if (definition->newFs)
-		definition->fs = definition->newFs;
+	if (definition->resampling)
+		definition->fs = g_fs;
 	else
 		definition->fs = definition->sofaHandle->hrtf->DataSamplingRate.values[0];
 	definition->nChannels = definition->sofaHandle->hrtf->R;

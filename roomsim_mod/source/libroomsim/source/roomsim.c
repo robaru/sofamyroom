@@ -81,6 +81,11 @@
 #include "rng.h"
 #include "sensor.h"
 #include "types.h"
+#include "global.h"
+
+#ifdef GLOBAL_FOR_MYSOFA
+double g_fs = 0;
+#endif
 
 /* disable warnings about unreferenced inline functions and unsafe CRT functions */
 #ifdef _MSC_VER
@@ -764,6 +769,11 @@ CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup)
 
 	/* allocate memory for internal simulation data structure */
 	CRoomsimInternal *pSimulation = (CRoomsimInternal *) MemMalloc(sizeof(CRoomsimInternal));
+
+#	ifdef GLOBAL_FOR_MYSOFA
+	/* copy setup variable to global variable */
+	g_fs = pSetup->options.fs;
+#	endif
 
 	/* copy setup variables to simulation structure */
 	pSimulation->fs				 = pSetup->options.fs;

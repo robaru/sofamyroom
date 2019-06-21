@@ -123,8 +123,7 @@ struct CSensorDefinition {
 	double *interpResponseDataDouble;
 	float  *interpResponseDataFloat;
 	float  *delays; //delays[0] -> left
-	bool   interpolation, normalization;
-	int    newFs;
+	bool   interpolation, normalization, resampling;
 #	endif
 
 } ;
