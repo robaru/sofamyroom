@@ -1,7 +1,3 @@
-
-
-
-
 # Roomsim
 
 Roomsim is a fast, accurate, and flexible "shoebox" room acoustics simulator that supports both specular and diffuse reflections. The simulator extends the work released by Schimmel et al. by adding the rendering of Binaural Room Impulse Response, BRIR. It supports the AES Spatially Oriented Format for Acoustics (SOFA) file format for storing HRTFs thanks to MySofa library (hereinafter referred as `libmysofa`).
@@ -53,14 +49,14 @@ A MEX-file for 64-bit MATLAB is available. To run it, type these commands in the
 
 The format of the field `receiver().description` is the following:
 ```
-'RECEIVER_ID PATH_TO_HRTF_FILE interp=interp_value norm=norm_value fs=fs_value'
+'RECEIVER_ID PATH_TO_HRTF_FILE interp=interp_value norm=norm_value resampling=resampling_value'
 ```
 `RECEIVER_ID` must be `SOFA`. `PATH_TO_HRTF_FILE` is the relative or absolute path to your `.sofa` file. The following values are:
 * `interp`: Roomsim can look up the HRTF that is closest to the given coordinates or it can interpolate the neighboring HRTFs to obtain the desired HRTF. `interp_value` can be T[RUE], t[rue], 1 (interpolation is active), or F[ALSE], f[alse], 0 (interpolation is not performed). Words in square brackets are optional, Roomsim just looks for the first character.
 *  `norm`: Roomsim can normalize HRTF data. `norm_value` behaves just like  `interp_value`, described above.
-*  `fs`: Roomsim can resample the HRTF data according to  `fs_value`. `fs_value` must be a positive integer, greater than 0.
+*  `resampling`: Roomsim can resample the HRTF data according to  the sampling frequency defined in `options.fs`. `resampling_value` behaves just like `interp_value` and `norm_value`, described above.
 
-All the options described above are optional. If not set, interpolation, normalization and resampling are not performed. Unrecognized options are skipped.
+All the options described above are optional. If not set, interpolation, normalization and resampling are not performed. Unrecognized options are skipped. If options are repeated, only the last one is used.
 
 ### Examples
 All the examples proposed below are valid:
@@ -68,13 +64,13 @@ All the examples proposed below are valid:
 'SOFA ./data/SOFA/mySofaFile.sofa'
 ```
 ```
-'SOFA ./data/SOFA/mySofaFile.sofa interp=TRUE norm=0 fs=44100'
+'SOFA ./data/SOFA/mySofaFile.sofa interp=TRUE norm=0 resampling=t'
 ```
 ```
 'SOFA ./data/SOFA/mySofaFile.sofa interp=1 norm=f'
 ```
 ```
-'SOFA ./data/SOFA/mySofaFile.sofa fs=88200 norm=f interp=0'
+'SOFA ./data/SOFA/mySofaFile.sofa resampling=0 norm=F interp=0'
 ```
 
 # Building Roomsim
@@ -117,7 +113,7 @@ If you are using a 32-bit version of MATLAB, you have to type:
 ```matlab
 >> make32
 ```
-Please note that the build process with `make32` was not tested.
+Please note that the build process with `make32` is not tested.
 
 # Known issues
 
@@ -131,6 +127,10 @@ Please note that the build process with `make32` was not tested.
 # Changelog
 
 Here is a list of changes made to the code.
+
+## File "global.h"
+
+This file was added in order to declare the global variable `g_fs`, used to store the value of `options.fs` in `sampleroomsetup.m`. The global variable avoided the edit of many definitions and declarations of functions.
 
 ## File "interface.h"
 
@@ -194,8 +194,7 @@ This file describes the `struct` `CSensorDefinition`, that holds all the informa
 	double *interpResponseDataDouble;
 	float  *interpResponseDataFloat;
 	float  *delays; //delays[0] -> left
-	bool   interpolation, normalization;
-	int    newFs;
+	bool   interpolation, normalization, resampling;
 #	endif
 ```
 `#include "mysofa.h"` allowed the use of `MYSOFA_EASY`.
@@ -204,18 +203,20 @@ This file describes the `struct` `CSensorDefinition`, that holds all the informa
 
 `#include "mysofa.h"` allowed the use of `libmysofa` functions. 
 
+`#include "global.h"` allowed the use of the global variable `g_fs`.
+
 The list of sensors was updated to support SOFA HRTFs:
 ```c
-CSensorListItem sensor[] = {
-    ...
-	{"SOFA",            sensor_SOFA_init            }
-	...
-};
+#	ifndef MYSOFA_H_INCLUDED
+    {"MIT",             sensor_MIT_init             },
+#	else
+    {"SOFA",             sensor_SOFA_init             }
+#	endif
 ```
 
 Four new functions were added to the file to manage the SOFA format and compute the HRTFs:
 * `sensor_SOFA_init`: it reads SOFA file, allocates memory, fills sensor data;
-* `getInterpolation`: it reads `receiver().description` in order to retreive the interpolation flag;
+* `getOptions`: it reads `receiver().description` in order to retreive the options of the sensor;
 * `sensor_SOFA_probe`: it looks for the HRTF that is closest to the given coordinates;
 * `sensor_SOFA_probe_interp`: it computes the HRTF by interpolating the neighboring HRTFs.
 
@@ -262,7 +263,27 @@ Some minor changes not related to SOFA HRTFs were carried out to suppress some c
 * Row 825: `char msg[256];` became `char msg[512];`
 
 ## File "roomsim.c"
-A check of the sampling rate (field `option.fs` of the setup file) is performed. A sample rate lower than 44100Hz may lead to artifacts in the sound.
+
+In order to define and use the global variable `g_fs`, the following code was added to the file:
+```c
+#include "global.h"
+
+#ifdef GLOBAL_FOR_MYSOFA
+double g_fs = 0;
+#endif
+...
+CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup)
+{
+...
+#	ifdef GLOBAL_FOR_MYSOFA
+	/* copy setup variable to global variable */
+	g_fs = pSetup->options.fs;
+#	endif
+...
+}
+```
+
+A check of the sampling rate (field `options.fs` of the setup file) is performed. A sample rate lower than 44100Hz may lead to artifacts in the sound.
 ```c
 /* check simulation sample frequency */
 if (pSetup->options.fs < 44100)
@@ -271,7 +292,7 @@ if (pSetup->options.fs < 44100)
 	MsgPrintf("%s", msg);
 }
 ```
-According to the algorithm on which Roomsim is based, the function `InitSimulationWeights` is called only when the type of the sensor is not `ST_IMPULSERESPONSE`.  The following code reflects this behaviour:
+According to the algorithm on which Roomsim is based, the function `InitSimulationWeights` is called only when the type of the sensor is not `ST_IMPULSERESPONSE`:
 ```c
 /* workaround, not used for impulse response */
 if (pSimulation->receiver[r].definition->type == ST_IMPULSERESPONSE)

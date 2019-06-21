@@ -341,6 +341,7 @@
     <ClInclude Include="..\libroomsim\include\3D.h" />
     <ClInclude Include="..\libroomsim\include\defs.h" />
     <ClInclude Include="..\libroomsim\include\dsp.h" />
+    <ClInclude Include="..\libroomsim\include\global.h" />
     <ClInclude Include="..\libroomsim\include\interface.h" />
     <ClInclude Include="..\libroomsim\include\interp.h" />
     <ClInclude Include="..\libroomsim\include\mem.h" />
