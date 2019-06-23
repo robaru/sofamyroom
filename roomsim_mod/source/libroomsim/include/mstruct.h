@@ -410,6 +410,9 @@ STRUCTBEGIN ( COptions )
 	FIELDDOUBLE   ( diffusetimestep     )
 	FIELDDOUBLE   ( rayenergyfloordB    )
 	FIELDBOOL	  ( uncorrelatednoise   )
+
+	FIELDSTRING	  ( outputname			)
+	FIELDBOOL	  ( saveaswav			)
 STRUCTEND ( COptions )
 
 STRUCTBEGIN ( CSensor )
