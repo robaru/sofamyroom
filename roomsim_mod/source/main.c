@@ -29,6 +29,7 @@
 #include "setup.h"
 #include "msg.h"
 #include "build.h"
+#include "tinywav.h"
 
 /* disable warnings about unsafe CRT functions */
 #ifdef _MSC_VER
@@ -140,14 +141,17 @@ int main(int argc, char **argv)
 	CRoomSetup setup;
     BRIR	   *response;
     FILE	   *fid;
-	int		   i;
+	int		   i, j;
 	CFileSetup filesetup;
+	char	   filename[256];
+	TinyWav	   tw;
+	float      *samples;
 
 	printf("ROOMSIM v" ROOMSIM_VERSION ", built %s %s\n", builddate, buildtime);
 
 	if (argc<=1)
 	{
-		MsgPrintf("Usage: roomsim setup [output]\n");
+		MsgPrintf("Usage: roomsim setup\n");
 		return 0;
 	}
 
@@ -167,42 +171,64 @@ int main(int argc, char **argv)
 	/* run the simulator */
     response = Roomsim(&setup);
 
+	samples = (float *) malloc(response[0].nSamples * response[0].nChannels * sizeof(float));
+
 #define FWVAR(v) fwrite(&(v),sizeof(v),1,fid)
 #define FWDBLARR(v,c) fwrite(v,sizeof((v)[0]),c,fid)
 
 	fid = NULL;
-	if (argc>2)
-	{
-		fid = fopen(argv[2],"wb");
-		if (fid) MsgPrintf("Writing output file '%s'\n", argv[2]);
-	}
 
-	if (!fid)
-	{
-		fid = fopen("output.brir","wb");
-		if (fid) MsgPrintf("Writing output file 'output.brir'\n");
-	}
+	//if (!setup.options.saveaswav)
+	//{
+		sprintf(filename, "%s.brir", setup.options.outputname);
 
-	if (fid)
-	{
-		FWVAR(setup.nSources);
-		FWVAR(setup.nReceivers);
+		fid = fopen(filename, "wb");
 
-		for (i=0; i<setup.nSources*setup.nReceivers; i++)
-		{
-			FWVAR(response[i].fs);
-			FWVAR(response[i].nChannels);
-			FWVAR(response[i].nSamples);
-			FWDBLARR(response[i].sample,response[i].nChannels * response[i].nSamples);
+		if (fid) 
+		{ 
+			MsgPrintf("Writing output file '%s'\n", filename);
+
+			FWVAR(setup.nSources);
+			FWVAR(setup.nReceivers);
+
+			for (i = 0; i < setup.nSources*setup.nReceivers; i++)
+			{
+				FWVAR(response[i].fs);
+				FWVAR(response[i].nChannels);
+				FWVAR(response[i].nSamples);
+				FWDBLARR(response[i].sample, response[i].nChannels * response[i].nSamples);
+			}
+			fclose(fid);
 		}
-		fclose(fid);
-	}
+		else
+			MsgPrintf("unable to open '%s'\n", filename);
+	//}
+	//else
+	//{
+		for (i = 0; i < setup.nSources*setup.nReceivers; i++)
+		{
+			for (j = 0; j < response[i].nSamples * response[i].nChannels; ++j)
+			{
+				samples[j] = (float)response[i].sample[j];
+			}
+
+			sprintf(filename, "%s_%d.wav", setup.options.outputname, i);
+
+			MsgPrintf("Writing output file '%s'\n", filename);
+
+			tinywav_open_write(&tw, (int16_t) response[i].nChannels, (int32_t) response[i].fs, TW_FLOAT32, TW_INLINE, filename);
+			tinywav_write_f(&tw, (float *)samples, response[i].nSamples);
+			tinywav_close_write(&tw);
+		}
+	//}
     
 	/* release BRIR memory */
 	ReleaseBRIR(response);
 
 	/* release sensors */
 	ClearAllSensors();
+
+	free(samples);
 
 #ifdef DEBUG
 	printf("Press return to exit...\n");

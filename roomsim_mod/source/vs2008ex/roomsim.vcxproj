@@ -136,7 +136,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\libroomsim\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\tinywav\include;..\libroomsim\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -157,7 +157,7 @@
     <PreLinkEvent />
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:libcmtd %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>odbc32.lib;odbccp32.lib;$(Platform)/$(Configuration)/build.obj;$(Platform)/$(Configuration)/libroomsim.lib</AdditionalDependencies>
+      <AdditionalDependencies>odbc32.lib;odbccp32.lib;$(Platform)/$(Configuration)/build.obj;$(Platform)/$(Configuration)/libroomsim.lib;$(Platform)/$(Configuration)/tinywav.lib</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
@@ -193,7 +193,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\libroomsim\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\tinywav\include;..\libroomsim\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -214,7 +214,7 @@
     <PreLinkEvent />
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:libcmtd %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>odbc32.lib;odbccp32.lib;$(Platform)/$(Configuration)/build.obj;$(Platform)/$(Configuration)/libroomsim.lib</AdditionalDependencies>
+      <AdditionalDependencies>odbc32.lib;odbccp32.lib;$(Platform)/$(Configuration)/build.obj;$(Platform)/$(Configuration)/libroomsim.lib;$(Platform)/$(Configuration)/tinywav.lib</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
@@ -248,7 +248,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\libroomsim\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\tinywav\include;..\libroomsim\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -270,7 +270,7 @@
     <PreLinkEvent />
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:libcmt %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>odbc32.lib;odbccp32.lib;$(Platform)/$(Configuration)/build.obj;$(Platform)/$(Configuration)/libroomsim.lib</AdditionalDependencies>
+      <AdditionalDependencies>odbc32.lib;odbccp32.lib;$(Platform)/$(Configuration)/build.obj;$(Platform)/$(Configuration)/libroomsim.lib;$(Platform)/$(Configuration)/tinywav.lib</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
@@ -305,7 +305,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\libroomsim\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\tinywav\include;..\libroomsim\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -326,7 +326,7 @@
     <PreLinkEvent />
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:libcmt %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>odbc32.lib;odbccp32.lib;$(Platform)/$(Configuration)/build.obj;$(Platform)/$(Configuration)/libroomsim.lib</AdditionalDependencies>
+      <AdditionalDependencies>odbc32.lib;odbccp32.lib;$(Platform)/$(Configuration)/build.obj;$(Platform)/$(Configuration)/libroomsim.lib;$(Platform)/$(Configuration)/tinywav.lib</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
@@ -360,7 +360,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\libroomsim\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\tinywav\include;..\libroomsim\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;UNITTEST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -382,7 +382,7 @@
     <PreLinkEvent />
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:libcmt %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>odbc32.lib;odbccp32.lib;$(Platform)/$(Configuration)/build.obj;$(Platform)/$(Configuration)/libroomsim.lib</AdditionalDependencies>
+      <AdditionalDependencies>odbc32.lib;odbccp32.lib;$(Platform)/$(Configuration)/build.obj;$(Platform)/$(Configuration)/libroomsim.lib;$(Platform)/$(Configuration)/tinywav.lib</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
@@ -417,7 +417,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\libroomsim\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\tinywav\include;..\libroomsim\include;..\libmysofa\Windows\$(Platform)\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;UNITTEST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -438,7 +438,7 @@
     <PreLinkEvent />
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:libcmt %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>odbc32.lib;odbccp32.lib;$(Platform)/$(Configuration)/build.obj;$(Platform)/$(Configuration)/libroomsim.lib</AdditionalDependencies>
+      <AdditionalDependencies>odbc32.lib;odbccp32.lib;$(Platform)/$(Configuration)/build.obj;$(Platform)/$(Configuration)/libroomsim.lib;$(Platform)/$(Configuration)/tinywav.lib</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
