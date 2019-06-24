@@ -29,7 +29,7 @@
 #include "setup.h"
 #include "msg.h"
 #include "build.h"
-#include "tinywav.h"
+#include "wavwriter.h"
 
 /* disable warnings about unsafe CRT functions */
 #ifdef _MSC_VER
@@ -141,10 +141,10 @@ int main(int argc, char **argv)
 	CRoomSetup setup;
     BRIR	   *response;
     FILE	   *fid;
-	int		   i, j;
+	int		   i, j, k;
 	CFileSetup filesetup;
 	char	   filename[256];
-	TinyWav	   tw;
+	Wave	   w;
 	float      *samples;
 
 	printf("ROOMSIM v" ROOMSIM_VERSION ", built %s %s\n", builddate, buildtime);
@@ -171,7 +171,7 @@ int main(int argc, char **argv)
 	/* run the simulator */
     response = Roomsim(&setup);
 
-	samples = (float *) malloc(response[0].nSamples * response[0].nChannels * sizeof(float));
+	samples = (float *) malloc(response[0].nChannels * sizeof(float));
 
 #define FWVAR(v) fwrite(&(v),sizeof(v),1,fid)
 #define FWDBLARR(v,c) fwrite(v,sizeof((v)[0]),c,fid)
@@ -207,18 +207,23 @@ int main(int argc, char **argv)
 	//{
 		for (i = 0; i < setup.nSources*setup.nReceivers; i++)
 		{
-			for (j = 0; j < response[i].nSamples * response[i].nChannels; ++j)
-			{
-				samples[j] = (float)response[i].sample[j];
-			}
-
 			sprintf(filename, "%s_%d.wav", setup.options.outputname, i);
 
 			MsgPrintf("Writing output file '%s'\n", filename);
 
-			tinywav_open_write(&tw, (int16_t) response[i].nChannels, (int32_t) response[i].fs, TW_FLOAT32, TW_INLINE, filename);
-			tinywav_write_f(&tw, (float *)samples, response[i].nSamples);
-			tinywav_close_write(&tw);
+			w = makeWave(3, (int)response[i].fs, (short int)response[i].nChannels, (short int)32);
+			waveSetDuration(&w, (float)response[i].nSamples / response[i].fs);
+			for (j = 0; j < response[i].nSamples; ++j)
+			{
+				for (k = 0; k < response[i].nChannels; ++k)
+				{
+					samples[k] = (float)response[i].sample[j + response[i].nSamples * k];
+				}
+				waveAddSampleFloat(&w, samples);
+			}
+			waveToFile(&w, filename);
+			waveDestroy(&w);
+
 		}
 	//}
     
