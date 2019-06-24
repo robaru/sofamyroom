@@ -505,7 +505,7 @@ int sensor_SOFA_probe_interp(const CSensorDefinition *sensor, const XYZ *xyz)
 
 void getOptions(char *options, CSensorDefinition *definition)
 {
-	char *option, *value, msg[256];
+	char *option, msg[256];
 	char *stringOptions[] = { "interp=", "norm=", "resampling=" };
 
 	option = strtok(options, " ");
@@ -527,7 +527,7 @@ void getOptions(char *options, CSensorDefinition *definition)
 				definition->interpolation = true;
 				break;
 			default: 
-				sprintf(msg, "invalid interpolation value, setting it to false\n", option);
+				sprintf(msg, "invalid interpolation value, setting it to false\n");
 				MsgPrintf("%s", msg);
 				definition->interpolation = false;
 			}
@@ -547,7 +547,7 @@ void getOptions(char *options, CSensorDefinition *definition)
 				definition->normalization = true;
 				break;
 			default:
-				sprintf(msg, "invalid normalization value, setting it to false\n", option);
+				sprintf(msg, "invalid normalization value, setting it to false\n");
 				MsgPrintf("%s", msg);
 				definition->normalization = false;
 			}
@@ -567,7 +567,7 @@ void getOptions(char *options, CSensorDefinition *definition)
 				definition->resampling = true;
 				break;
 			default:
-				sprintf(msg, "invalid resempling value, setting it to false\n", option);
+				sprintf(msg, "invalid resempling value, setting it to false\n");
 				MsgPrintf("%s", msg);
 				definition->resampling = false;
 			}

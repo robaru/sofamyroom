@@ -37,6 +37,7 @@ endif()
 
 add_subdirectory(libsfmt)
 add_subdirectory(libroomsim)
+add_subdirectory(wavwriter)
 
 add_executable(roomsim
 	build.c
@@ -57,6 +58,8 @@ endif()
 
 include_directories(
 	"${CMAKE_SOURCE_DIR}/libroomsim/include"
-	"${CMAKE_SOURCE_DIR}/libmysofa/${OS}/${PLATFORM}/include")
+	"${CMAKE_SOURCE_DIR}/libmysofa/${OS}/${PLATFORM}/include"
+	"${CMAKE_SOURCE_DIR}/wavwriter/include"
+	)
 
-target_link_libraries(roomsim libroomsim)
+target_link_libraries(roomsim libroomsim wavwriter)
