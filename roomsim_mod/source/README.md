@@ -1,11 +1,13 @@
+
 # Roomsim
 
-Roomsim is a fast, accurate, and flexible "shoebox" room acoustics simulator that supports both specular and diffuse reflections. The simulator extends the work released by Schimmel et al. by adding the rendering of Binaural Room Impulse Response, BRIR. It supports the AES Spatially Oriented Format for Acoustics (SOFA) file format for storing HRTFs thanks to MySofa library (hereinafter referred as `libmysofa`).
+Roomsim is a fast, accurate, and flexible "shoebox" room acoustics simulator that supports both specular and diffuse reflections. The simulator extends the work released by Schimmel et al. by adding the rendering of Binaural Room Impulse Response, BRIR. It supports the AES Spatially Oriented Format for Acoustics (SOFA) file format for storing HRTFs thanks to MySofa library (hereinafter referred as `libmysofa`) and it can export the results of the simulation to a Windows WAVE file thanks to a set of function provided by Andrew Ippoliti.
 
 ## Authors
 * Steven M. Schimmel, Martin F. Muller, and Norbert Dillier - [Roomsim](https://sourceforge.net/projects/roomsim/)
 * Christian Hoene, Isabel C. Patiño Mejía, Alexandru Cacerovschi - [MySofa](https://github.com/hoene/libmysofa)
 * Piotr Majdak et al. - [Spatially Oriented Format for Acoustics (SOFA)](https://www.sofaconventions.org/)
+*  Andrew Ippoliti - [WAV file writer](http://blog.acipo.com/generating-wave-files-in-c/)
 
 # Installing Roomsim
 
@@ -34,10 +36,9 @@ No further steps are required to run Roomsim on MacOS.
 To use Roomsim, type this command:
 
 ```bash
-roomsim setup output
+roomsim setup
 ```
-`setup` is the name of the text file containing all the roomsim setup parameters structure. A sample of it can be found in `sampleroomsetup.m`. `output` is the name of the binary file written by roomsim, which contains the result of the simulation. To read this file, use MATLAB function `readbrir`, provided with this project. `setup` is mandatory, `output` is optional (the default name of the output file is `output.brir`).
-
+`setup` is the name of the text file containing all the roomsim setup parameters structure. A sample of it can be found in `sampleroomsetup.m`.
 ## Usage with MATLAB (Windows)
 
 A MEX-file for 64-bit MATLAB is available. To run it, type these commands in the Command Window:
@@ -47,6 +48,19 @@ A MEX-file for 64-bit MATLAB is available. To run it, type these commands in the
 ```
 ## Notes about the setup file
 
+This file stores all the information needed by roomsim to perform the simulation. 
+
+### Notes about the options
+Besides those related to the simulation, there are two options related to the output file: 
+```matlab
+options.outputname			= 'output';           	% name of the output file
+options.saveaswav	        = true;                 % format of the ouput file
+```
+`options.outputname` is the name given to the output file that stores the result of the simulation. The name must not contain the extension of the file, because roomsim takes care of that. `options.saveaswav` tells roomsim to export the results to a Windows WAVE (.wav) file (`options.saveaswav = true;`) or to a binary file (`options.saveaswav = false;`) that can later be opened in MATLAB by using the function `readbrir()`. 
+
+Note that one binary file stores the results of the simulation for every source-receiver couple, while there is one WAVE file for every source-receiver couple.
+
+### Notes about the receiver
 The format of the field `receiver().description` is the following:
 ```
 'RECEIVER_ID PATH_TO_HRTF_FILE interp=interp_value norm=norm_value resampling=resampling_value'
@@ -159,6 +173,14 @@ This was in conflict with the definition of bool in `stdbool.h` used by `libmyso
 #	endif
 #  endif
 ```
+Two options were added to the `struct` `COptions` to handle the name and the format of the output file:
+```c
+STRUCTBEGIN ( COptions )
+    ...
+	FIELDSTRING	  ( outputname			)
+	FIELDBOOL	  ( saveaswav			)
+STRUCTEND ( COptions )
+```
 
 ## File "defs.h"
 
@@ -183,7 +205,6 @@ These functions are Windows-specific. New functions had to be used in order to b
 #	endif	
 #endif
 ```
-
 ## File "types.h"
 
 This file describes the `struct` `CSensorDefinition`, that holds all the information about a sensor. The `struct` was expanded in order to manage SOFA HRTF data.
@@ -210,7 +231,7 @@ The list of sensors was updated to support SOFA HRTFs:
 #	ifndef MYSOFA_H_INCLUDED
     {"MIT",             sensor_MIT_init             },
 #	else
-    {"SOFA",             sensor_SOFA_init             }
+    {"SOFA",            sensor_SOFA_init             }
 #	endif
 ```
 
@@ -283,7 +304,7 @@ CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup)
 }
 ```
 
-A check of the sampling rate (field `options.fs` of the setup file) is performed. A sample rate lower than 44100Hz may lead to artifacts in the sound.
+A check of the sampling rate (field `options.fs` of the setup file) is performed. A sample rate lower than 44100Hz may lead to artifacts in the sound:
 ```c
 /* check simulation sample frequency */
 if (pSetup->options.fs < 44100)
@@ -304,3 +325,5 @@ if (pSimulation->receiver[r].definition->type == ST_IMPULSERESPONSE)
 else
 	InitSimulationWeights(pSimulation, pSimulation->receiver[r].definition);
 ```
+## File "main.c"
+This file is responsible for saving the output file. Edits were made to support the export of the results to Windows WAVE (.wav) files.

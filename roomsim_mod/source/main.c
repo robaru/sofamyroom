@@ -178,8 +178,8 @@ int main(int argc, char **argv)
 
 	fid = NULL;
 
-	//if (!setup.options.saveaswav)
-	//{
+	if (!setup.options.saveaswav)
+	{
 		sprintf(filename, "%s.brir", setup.options.outputname);
 
 		fid = fopen(filename, "wb");
@@ -202,9 +202,9 @@ int main(int argc, char **argv)
 		}
 		else
 			MsgPrintf("unable to open '%s'\n", filename);
-	//}
-	//else
-	//{
+	}
+	else
+	{
 		for (i = 0; i < setup.nSources*setup.nReceivers; i++)
 		{
 			sprintf(filename, "%s_%d.wav", setup.options.outputname, i);
@@ -225,7 +225,7 @@ int main(int argc, char **argv)
 			waveDestroy(&w);
 
 		}
-	//}
+	}
     
 	/* release BRIR memory */
 	ReleaseBRIR(response);

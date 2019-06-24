@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include "wavwriter.h"
+#include <math.h>
 
 /* disable warnings about unsafe CRT functions */
 #ifdef _MSC_VER
