@@ -16,7 +16,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "roomsim", "roomsim.vcxproj"
 		{6DD0C7A7-6B51-48C6-8D62-E71C59A5BAA3} = {6DD0C7A7-6B51-48C6-8D62-E71C59A5BAA3}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tinywav", "tinywav.vcxproj", "{4BA53C2C-A426-4082-9FDE-D128A2B8DA4D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wavwriter", "wavwriter.vcxproj", "{4BA53C2C-A426-4082-9FDE-D128A2B8DA4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
