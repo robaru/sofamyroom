@@ -135,6 +135,8 @@ Please note that the build process with `make32` is not tested.
 
 # License
 
+SofaMyRoom is covered by EUPL. 
+
 * Roomsim - GNU GPL;
 * `libmysofa` - See `LICENSE` on `libmysofa` project page;
 
