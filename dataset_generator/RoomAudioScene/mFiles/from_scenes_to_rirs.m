@@ -8,8 +8,8 @@ energy = @(x) sum(abs(x).^2);
 %% ROOMSIM setup
 fprintf('Loading ROOMSIM params ...\n')
 % The mex file supplied works with MATLAB installed on 64-bit linux distro only. If on windows or mac, contact me. I can explain how to handle that case.
-roomsim load omnidirectional;   % loads the receiver model
-roomsim load omnidirectional;   % loads the source model
+%roomsim load omnidirectional;   % loads the receiver model
+%roomsim load omnidirectional;   % loads the source model
 
 fprintf('done!\n\n')
 

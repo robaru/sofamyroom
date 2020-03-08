@@ -15,11 +15,10 @@ function [vast_params, roomsim_params] = load_parameters(n_experience)
 				% toggle debug mode
 			    vast_params.debug = 1;
 			    % Signal parameters parameters
-		        vast_params.Fs = 16000;
-    			vast_params.abs_coef_freq_bin = [125,250,500,1000,2000,4000];
+		        vast_params.Fs = 48000;
+    			vast_params.abs_coef_freq_bin = [125,250,500,1000,2000,4000]; %Rimettere 8000
     			vast_params.max_rir_time = 1.50;
 			    vast_params.datatype = "single";
-			    vast_params.Fs = 16000;
 			    vast_params.max_mic_dist   = 0.20; % [meters]
 			    vast_params.max_mic_height = 0.20; % [meters]
 			    vast_params.min_mic_dist   = 0.03; % [meters]
@@ -37,6 +36,10 @@ function [vast_params, roomsim_params] = load_parameters(n_experience)
 			    vast_params.do_real_rirs = true;
 			    vast_params.FreqBin    = [125,250,500,1000,2000,4000];
 			    vast_params.RIRMaxTime = 1.25;
+                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                vast_params.mics_max_elevation = 0;
+                vast_params.mics_min_elevation = 0; 
+                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			    %% Creating parameter variable 'roomsim_params'
 			    %    absorption profile
 			    vast_params.use_realistic_material_profiles = false;
@@ -73,9 +76,12 @@ function [vast_params, roomsim_params] = load_parameters(n_experience)
 			    roomsim_params.options.rayenergyfloordB    = -80;          % ray energy threshold (dB, with respect to initial energy)
 			    roomsim_params.options.uncorrelatednoise   = true;         % use uncorrelated poisson arrivals for binaural impulse responses?
 			    roomsim_params.options.simulatediffuse     = true;         % change this to false if user does not want to simulate diffuse reflections
-			    % appending more parameters in variable 'roomsim_params'
-			    roomsim_params.receiver(1).description     = 'omnidirectional';
-			    roomsim_params.receiver(2).description     = 'omnidirectional';
+                % output options
+                roomsim_params.options.outputname           = 'output';
+                roomsim_params.options.saveaswav            = true;
+                % appending more parameters in variable 'roomsim_params'
+			    roomsim_params.receiver(1).description     = 'SOFA MIT_KEMAR_large_pinna.sofa resampling=true';
+			    roomsim_params.receiver(2).description     = 'SOFA MIT_KEMAR_large_pinna.sofa resampling=true';
 			    roomsim_params.receiver(1).orientation     = [ 0, 0, 0 ];
 			    roomsim_params.receiver(2).orientation     = [ 0, 0, 0 ];
 			    roomsim_params.source(1).orientation       = [ 0, 0, 0 ];
@@ -95,11 +101,10 @@ function [vast_params, roomsim_params] = load_parameters(n_experience)
 				% toggle debug mode
 			    vast_params.debug = 1;
 			    % Signal parameters parameters
-		        vast_params.Fs = 16000;
-    			vast_params.abs_coef_freq_bin = [125,250,500,1000,2000,4000];
+		        vast_params.Fs = 48000;
+    			vast_params.abs_coef_freq_bin = [125,250,500,1000,2000,4000]; %Rimettere 8000
     			vast_params.max_rir_time = 1.50;
 			    vast_params.datatype = "single";
-			    vast_params.Fs = 16000;
 			    vast_params.max_mic_dist   = 0.20; % [meters]
 			    vast_params.max_mic_height = 0.20; % [meters]
 			    vast_params.min_mic_dist   = 0.03; % [meters]
@@ -152,9 +157,12 @@ function [vast_params, roomsim_params] = load_parameters(n_experience)
 			    roomsim_params.options.rayenergyfloordB    = -80;          % ray energy threshold (dB, with respect to initial energy)
 			    roomsim_params.options.uncorrelatednoise   = true;         % use uncorrelated poisson arrivals for binaural impulse responses?
 			    roomsim_params.options.simulatediffuse     = true;         % change this to false if user does not want to simulate diffuse reflections
-			    % appending more parameters in variable 'roomsim_params'
-			    roomsim_params.receiver(1).description     = 'omnidirectional';
-			    roomsim_params.receiver(2).description     = 'omnidirectional';
+			    % output options
+                roomsim_params.options.outputname           = 'output';
+                roomsim_params.options.saveaswav            = true;
+                % appending more parameters in variable 'roomsim_params'
+			    roomsim_params.receiver(1).description     = 'SOFA MIT_KEMAR_large_pinna.sofa resampling=true';
+			    roomsim_params.receiver(2).description     = 'SOFA MIT_KEMAR_large_pinna.sofa resampling=true';
 			    roomsim_params.receiver(1).orientation     = [ 0, 0, 0 ];
 			    roomsim_params.receiver(2).orientation     = [ 0, 0, 0 ];
 			    roomsim_params.source(1).orientation       = [ 0, 0, 0 ];
