@@ -144,7 +144,7 @@ void mexFunction(
             }
         }
     }
-    else if (nrhs>0 && IsMexString(prhs[0]))
+    else if (nrhs>0 /*&& IsMexString(prhs[0])*/)
     {
         char cmd[256];
         int  i, n;
@@ -168,8 +168,8 @@ void mexFunction(
         {
             if (nrhs<2)
                 mexErrMsgTxt("LOAD syntax error");
-            if (!IsMexString(prhs[1]))
-                mexErrMsgTxt("argument to LOAD must be a string");
+            /*if (!IsMexString(prhs[1]))
+                mexErrMsgTxt("argument to LOAD must be a string");*/
             
             /* get sensor type from input */
             mxGetString(prhs[1],cmd,sizeof(cmd)-1);
