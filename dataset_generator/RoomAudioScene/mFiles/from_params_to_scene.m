@@ -26,9 +26,11 @@ rng('shuffle');
 vast.RoomSize(:,2) = uniform(n_rirs, params.min_length, params.max_length); % length in meters
 rng('shuffle');
 vast.RoomSize(:,3) = uniform(n_rirs, params.min_height, params.max_height); % height in meters
+%%%%%
+n_bands = size(params.abs_coef_freq_bin, 2);
 
 % % Diffusion
-assert(all(size(params.diffuse) == [1,6]))
+assert(all(size(params.diffuse) == [1,n_bands]))
 wall_diff = params.diffuse;
 vast.diff_wall_north   = repmat(wall_diff, n_rirs, 1);
 vast.diff_wall_east    = repmat(wall_diff, n_rirs, 1);
@@ -40,13 +42,18 @@ vast.diff_wall_ceiling = repmat(wall_diff, n_rirs, 1);
 % % Absorption
 wall_abs = uniform(n_rirs, params.min_walls_abs, params.max_walls_abs);
 picnic_abs = uniform(n_rirs, params.min_picnic_abs, params.max_picnic_abs);
-vast.abs_wall_north   = repmat(wall_abs,  [1,6]);
-vast.abs_wall_east    = repmat(wall_abs,  [1,6]);
-vast.abs_wall_west    = repmat(wall_abs,  [1,6]);
-vast.abs_wall_south   = repmat(wall_abs,  [1,6]);
-vast.abs_wall_floor   = repmat(picnic_abs,[1,6]);
-vast.abs_wall_ceiling = repmat(wall_abs,  [1,6]);
-
+% vast.abs_wall_north   = repmat(wall_abs,  [1,6]);
+% vast.abs_wall_east    = repmat(wall_abs,  [1,6]);
+% vast.abs_wall_west    = repmat(wall_abs,  [1,6]);
+% vast.abs_wall_south   = repmat(wall_abs,  [1,6]);
+% vast.abs_wall_floor   = repmat(picnic_abs,[1,6]);
+% vast.abs_wall_ceiling = repmat(wall_abs,  [1,6]);
+vast.abs_wall_north   = repmat(wall_abs,  [1,n_bands]);
+vast.abs_wall_east    = repmat(wall_abs,  [1,n_bands]);
+vast.abs_wall_west    = repmat(wall_abs,  [1,n_bands]);
+vast.abs_wall_south   = repmat(wall_abs,  [1,n_bands]);
+vast.abs_wall_floor   = repmat(picnic_abs,[1,n_bands]);
+vast.abs_wall_ceiling = repmat(wall_abs,  [1,n_bands]);
 
 PicnicSize(:,1) = vast.RoomSize(:,1) - params.wall_mic_tol;
 PicnicSize(:,2) = vast.RoomSize(:,2) - params.wall_mic_tol;

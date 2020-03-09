@@ -16,7 +16,7 @@ function [vast_params, roomsim_params] = load_parameters(n_experience)
 			    vast_params.debug = 1;
 			    % Signal parameters parameters
 		        vast_params.Fs = 48000;
-    			vast_params.abs_coef_freq_bin = [125,250,500,1000,2000,4000]; %Rimettere 8000
+    			vast_params.abs_coef_freq_bin = [125,250,500,1000,2000,4000,8000]; %Rimettere 8000
     			vast_params.max_rir_time = 1.50;
 			    vast_params.datatype = "single";
 			    vast_params.max_mic_dist   = 0.20; % [meters]
@@ -34,7 +34,7 @@ function [vast_params, roomsim_params] = load_parameters(n_experience)
 			    vast_params.max_height  = 4;
 			    vast_params.do_syth_rirs = true;
 			    vast_params.do_real_rirs = true;
-			    vast_params.FreqBin    = [125,250,500,1000,2000,4000];
+			    vast_params.FreqBin    = [125,250,500,1000,2000,4000,8000];
 			    vast_params.RIRMaxTime = 1.25;
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 vast_params.mics_max_elevation = 0;
@@ -50,7 +50,7 @@ function [vast_params, roomsim_params] = load_parameters(n_experience)
 			    vast_params.min_walls_abs  = 0.5;
 			    vast_params.max_walls_abs  = 1;
                 vast_params.use_multiple_diffusion = 0;
-			    vast_params.diffuse = [0.0109,0.0075,0.0511,0.0668,0.1472,0.2878];
+			    vast_params.diffuse = [0.0109,0.0075,0.0511,0.0668,0.1472,0.2878,0.002]; %aggiunto l'ultimo
 			    % loading basic parameters of the room
 			    %    room settings
 			    roomsim_params.room.humidity               = 0.42;         % relative humidity (0,...,1)
@@ -102,7 +102,7 @@ function [vast_params, roomsim_params] = load_parameters(n_experience)
 			    vast_params.debug = 1;
 			    % Signal parameters parameters
 		        vast_params.Fs = 48000;
-    			vast_params.abs_coef_freq_bin = [125,250,500,1000,2000,4000]; %Rimettere 8000
+    			vast_params.abs_coef_freq_bin = [125,250,500,1000,2000,4000,8000]; %Rimettere 8000
     			vast_params.max_rir_time = 1.50;
 			    vast_params.datatype = "single";
 			    vast_params.max_mic_dist   = 0.20; % [meters]
@@ -120,7 +120,7 @@ function [vast_params, roomsim_params] = load_parameters(n_experience)
 			    vast_params.max_height  = 2;
 			    vast_params.do_syth_rirs = true;
 			    vast_params.do_real_rirs = true;
-			    vast_params.FreqBin    = [125,250,500,1000,2000,4000];
+			    vast_params.FreqBin    = [125,250,500,1000,2000,4000,8000];
 			    vast_params.RIRMaxTime = 1.25;
 			    %% Creating parameter variable 'roomsim_params'
 			    %    absorption profile
@@ -131,7 +131,7 @@ function [vast_params, roomsim_params] = load_parameters(n_experience)
 			    vast_params.max_picnic_abs = 0.2;
 			    vast_params.min_walls_abs  = 0.8;
 			    vast_params.max_walls_abs  = 0.8;
-			    vast_params.diffuse = [0.0109,0.0075,0.0511,0.0668,0.1472,0.2878];
+			    vast_params.diffuse = [0.0109,0.0075,0.0511,0.0668,0.1472,0.2878,0.002]; %aggiunto uno
 			    % loading basic parameters of the room
 			    %    room settings
 			    roomsim_params.room.humidity               = 0.42;         % relative humidity (0,...,1)
