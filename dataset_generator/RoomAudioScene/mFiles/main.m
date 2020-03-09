@@ -100,7 +100,7 @@ function [vast, rirs] = vasttable_init(n_rirs, params)
     % geometry
     vast.RoomSize = zeros(n_rirs,3);
     % Rooms Sound properties
-    vast.FreqRT60   = zeros(n_rirs,6);
+    vast.FreqRT60   = zeros(n_rirs,7); %originale 6
     vast.GlobalRT60 = zeros(n_rirs,1);
     % Walls Absorption coefficient
     vast.abs_wall_east = zeros(n_rirs, n_freq_abs);

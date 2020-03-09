@@ -31,7 +31,7 @@ if ~isfield(Params, 'FilterOrder') || isempty(Params.FilterOrder)
 end
 
 if ~isfield(Params, 'FreqBin') || isempty(Params.FreqBin)
-    Params.FreqBin = [125,250,500,1000,2000,4000];
+    Params.FreqBin = [125,250,500,1000,2000,4000,8000];
 end
 
 if ~isfield(Params, 'F0') || isempty(Params.F0)
