@@ -52,10 +52,11 @@ room1_setup.receiver.orientation = receiver1_orientation;
 room1_setup.receiver.description = receiver1_description;
 
 iterations = size(sofa1_obj.SourcePosition, 1);
+room1_output = zeros(ceil(room1_setup.options.fs * room1_setup.options.responseduration), 2 * iterations);
 for i=1:iterations
    fprintf("Room 1 - %d/%d\n", i, iterations);
    room1_setup.receiver.location = receiver1_position + sofa1_obj.SourcePosition(i, :);
-   roomsim(room1_setup);
+   room1_output(:, [2 * i - 1 2 * i]) = roomsim(room1_setup);
 end
 
 room2_absorption = [[0.15   0.10    0.06    0.08    0.10    0.05    0.05]     % solid wood panel
@@ -84,10 +85,11 @@ room2_setup.receiver.orientation = receiver2_orientation;
 room2_setup.receiver.description = receiver2_description;
 
 iterations = size(sofa2_obj.SourcePosition, 1);
+room2_output = zeros(ceil(room2_setup.options.fs * room2_setup.options.responseduration), 2 * iterations);
 for i=1:iterations
     fprintf("Room 2 - %d/%d\n", i, iterations);
     room2_setup.receiver.location = receiver2_position + sofa2_obj.SourcePosition(i, :);
-    roomsim(room2_setup);
+    room2_output(:, [2 * i - 1 2 * i]) = roomsim(room2_setup);
 end
 
 room3_absorption = [[0.01   0.01    0.01    0.02    0.02    0.02    0.02]     % ceramic tiles
@@ -116,8 +118,9 @@ room3_setup.receiver.orientation = receiver3_orientation;
 room3_setup.receiver.description = receiver3_description;
 
 iterations = size(sofa3_obj.SourcePosition, 1);
+room3_output = zeros(ceil(room3_setup.options.fs * room3_setup.options.responseduration), 2 * iterations);
 for i=1:iterations
     fprintf("Room 3 - %d/%d\n", i, iterations);
     room3_setup.receiver.location = receiver3_position + sofa3_obj.SourcePosition(i, :);
-    roomsim(room3_setup);
+    room3_output(:, [2 * i - 1 2 * i]) = roomsim(room3_setup);
 end
