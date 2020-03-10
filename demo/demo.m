@@ -28,9 +28,15 @@ common_params = readsetup('roomsetup.m');
 
 room1_absorption = [[0.55   0.86    0.83    0.87    0.90    0.87    0.87]    % prayers 1/1
                     [0.02   0.06    0.14    0.37    0.60    0.65    0.65]    % carpet on concrete
+                    [0.02   0.06    0.14    0.37    0.60    0.65    0.65]    % carpet on concrete
+                    [0.02   0.06    0.14    0.37    0.60    0.65    0.65]    % carpet on concrete
+                    [0.02   0.06    0.14    0.37    0.60    0.65    0.65]    % carpet on concrete
                     [0.02   0.06    0.14    0.37    0.60    0.65    0.65]];   % carpet on concrete
 
 room1_diffusion =  [[0.5    0.5     0.5     0.5     0.5     0.5     0.5]    % prayers 1/1
+                    [0.1    0.1     0.1     0.1     0.1     0.1     0.1]    % carpet on concrete
+                    [0.1    0.1     0.1     0.1     0.1     0.1     0.1]    % carpet on concrete
+                    [0.1    0.1     0.1     0.1     0.1     0.1     0.1]    % carpet on concrete
                     [0.1    0.1     0.1     0.1     0.1     0.1     0.1]    % carpet on concrete
                     [0.1    0.1     0.1     0.1     0.1     0.1     0.1]];  % carpet on concrete
 
@@ -45,17 +51,24 @@ room1_setup.room.surface.diffusion = room1_diffusion;
 room1_setup.receiver.orientation = receiver1_orientation;
 room1_setup.receiver.description = receiver1_description;
 
-for i=1:size(sofa1_obj.SourcePosition, 1)
+iterations = size(sofa1_obj.SourcePosition, 1);
+for i=1:iterations
+   fprintf("Room 1 - %d/%d\n", i, iterations);
    room1_setup.receiver.location = receiver1_position + sofa1_obj.SourcePosition(i, :);
-    
    roomsim(room1_setup);
 end
 
 room2_absorption = [[0.15   0.10    0.06    0.08    0.10    0.05    0.05]     % solid wood panel
                     [0.02   0.06    0.14    0.37    0.60    0.65    0.65]     % carpet on concrete
+                    [0.02   0.06    0.14    0.37    0.60    0.65    0.65]     % carpet on concrete
+                    [0.02   0.06    0.14    0.37    0.60    0.65    0.65]     % carpet on concrete
+                    [0.02   0.06    0.14    0.37    0.60    0.65    0.65]     % carpet on concrete
                     [0.02   0.06    0.14    0.37    0.60    0.65    0.65]];   % carpet on concrete
 
 room2_diffusion =  [[0.1    0.1     0.1     0.1     0.1     0.1     0.1]    % solid wood panel
+                    [0.1    0.1     0.1     0.1     0.1     0.1     0.1]    % carpet on concrete
+                    [0.1    0.1     0.1     0.1     0.1     0.1     0.1]    % carpet on concrete
+                    [0.1    0.1     0.1     0.1     0.1     0.1     0.1]    % carpet on concrete
                     [0.1    0.1     0.1     0.1     0.1     0.1     0.1]    % carpet on concrete
                     [0.1    0.1     0.1     0.1     0.1     0.1     0.1]];  % carpet on concrete
             
@@ -70,17 +83,24 @@ room2_setup.room.surface.diffusion = room2_diffusion;
 room2_setup.receiver.orientation = receiver2_orientation;
 room2_setup.receiver.description = receiver2_description;
 
-for i=1:size(sofa2_obj.SourcePosition, 1)
+iterations = size(sofa2_obj.SourcePosition, 1);
+for i=1:iterations
+    fprintf("Room 2 - %d/%d\n", i, iterations);
     room2_setup.receiver.location = receiver2_position + sofa2_obj.SourcePosition(i, :);
-    
     roomsim(room2_setup);
 end
 
 room3_absorption = [[0.01   0.01    0.01    0.02    0.02    0.02    0.02]     % ceramic tiles
                     [0.15   0.10    0.06    0.08    0.10    0.05    0.05]     % solid wood panel
+                    [0.15   0.10    0.06    0.08    0.10    0.05    0.05]     % solid wood panel
+                    [0.15   0.10    0.06    0.08    0.10    0.05    0.05]     % solid wood panel
+                    [0.15   0.10    0.06    0.08    0.10    0.05    0.05]     % solid wood panel
                     [0.15   0.10    0.06    0.08    0.10    0.05    0.05]];   % solid wood panel
 
 room3_diffusion = [[0.3    0.3     0.3     0.3     0.3     0.3     0.3]   % ceramic tiles
+                    [0.1    0.1     0.1     0.1     0.1     0.1     0.1]   % solid wood panel
+                    [0.1    0.1     0.1     0.1     0.1     0.1     0.1]   % solid wood panel
+                    [0.1    0.1     0.1     0.1     0.1     0.1     0.1]   % solid wood panel
                     [0.1    0.1     0.1     0.1     0.1     0.1     0.1]   % solid wood panel
                     [0.1    0.1     0.1     0.1     0.1     0.1     0.1]]; % solid wood panel]
 
@@ -95,8 +115,9 @@ room3_setup.room.surface.diffusion = room3_diffusion;
 room3_setup.receiver.orientation = receiver3_orientation;
 room3_setup.receiver.description = receiver3_description;
 
-for i=1:size(sofa3_obj.SourcePosition, 1)
+iterations = size(sofa3_obj.SourcePosition, 1);
+for i=1:iterations
+    fprintf("Room 3 - %d/%d\n", i, iterations);
     room3_setup.receiver.location = receiver3_position + sofa3_obj.SourcePosition(i, :);
-    
     roomsim(room3_setup);
 end
