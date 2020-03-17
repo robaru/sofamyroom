@@ -21,7 +21,7 @@
 * DANIELE: pulire repository
   * Sistemare le cartelle del repo per capire cosa pubblicare e aggiornare di conseguenza il README
   * Dare una ricontrollata al codice di	Roomsim
-  * aggiornare copyleft su header files	Roomsim
+  * EUPL: aggiornare copyleft su header files	Roomsim
 * ROBARU: documentazione
   * sfoltire documentazione
   * preparare istruzioni per compilare le mex (per Windows c'è già il README)
