@@ -1,5 +1,21 @@
-## TODO
-# Incontro, Michele 19/07/2019
-* ICASSP 2020: inviare solo binari a revisori come materiale aggiuntivo per mostrare che funziona
-* pubblicare modifiche roomsim a DAFx 2020 o AES 2020 
-    * chiedere a Daniele quando si laurea
+### TODO - RELEASE
+
+* decidere come rilasciare
+  * zip con compilati e standalone  	
+  * da compilare in toto
+* dataset generation
+  * testare VAST
+  * preparare codice di esempio
+* buildsystem
+  * barbatrucchi per farlo girare su 	linux: compilare libmysofa, generare deb e installarlo; rimuovere 	tutti i stricmp da mexmain.c
+  * Aggiornare libmysofa alla nuova 	versione
+  * da buildsystem compilare la cosa 	rispetto al sistema operativo
+  * Compilare Rommsim per rendere 	disponibili gli eseguibili in versione Release/x64 per tutte le 	piattaforme
+  * Testare la compilazione della MEX su 	Windows e Linux
+* pulire repository
+  * Sistemare le cartelle del repo per 	capire cosa pubblicare e aggiornare di conseguenza il README
+  * Dare una ricontrollata al codice di 	Roomsim
+  * aggiornare copyleft su header files 	roomsim
+* documentazione
+  * sfoltire documentazione
+  * preparare istruzioni per compilare le 	mex (per Windows c'è già il README)
