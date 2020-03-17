@@ -1,3 +1,0 @@
-﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: la directory intermedia (x64\Release\) contiene file condivisi da un altro progetto (libroomsim.vcxproj, roomsim.vcxproj). Tale condizione può comportare un comportamento di pulizia e ricompilazione non corretto.
-  SFMT.c
-LINK : fatal error LNK1561: il punto d'ingresso deve essere definito
