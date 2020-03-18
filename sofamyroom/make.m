@@ -31,87 +31,47 @@ function make(varargin)
 % date = '20090423';
 
 % Set default switches
-switches = { '-DMEX'
+ switches = {'-DMEX'
              '-DLOGLEVEL=0'
              '-DMEXP=19937'
-             '-Isource\libroomsim\include'
-             '-Isource\libfftw\Windows\x64\include'
-             '-Isource\libsfmt'
-             '-Isource'
-             '-Isource\libmysofa\Windows\x64\include'
+             ['-Isource' filesep 'libroomsim' filesep 'include']
+             %['-Isource' filesep 'libfftw' filesep 'Linux' filesep '64bit' filesep 'include']
+             %['-I/usr/include']
+             ['-Isource' filesep 'libsfmt']
+             %'-Isource'
+             %['-Isource' filesep 'libmysofa' filesep 'Linux' filesep '64bit' filesep 'include']
+             ['-Isource' filesep 'wavwriter' filesep 'include']
            };
-options = { '-Lsource\libfftw\Windows\x64\lib'
-            '-lfftw3-3'
-            '-Lsource\libmysofa\Windows\x64\lib\Release'
-            '-lmysofa.lib'
+options = { %['-Lsource' filesep 'libfftw' filesep 'Linux' filesep '64bit' filesep 'lib' filesep 'Release']
+            %['-Lusr/lib']
+            '-lfftw3'
+            %['-Lsource' filesep 'libmysofa' filesep 'Linux' filesep '64bit' filesep 'lib' filesep 'Release']
+            '-lmysofa'
           };
 output = 'roomsim';       
 
-mexfiles = { 'source\libroomsim\source\3D.c'
-             'source\libroomsim\source\dsp.c'
-             'source\libroomsim\source\interface.c'
-             'source\libroomsim\source\interp.c'
-             'source\libroomsim\source\roomsim.c'
-             'source\libroomsim\source\rng.c'
-             'source\libroomsim\source\sensor.c'
-             'source\libsfmt\SFMT.c'
-             'source\mexmain.c'
-             'source\build.c'
+mexfiles = { ['source' filesep 'libroomsim' filesep 'source' filesep '3D.c']
+             ['source' filesep  'libroomsim'  filesep  'source'  filesep  'dsp.c']
+             ['source' filesep  'libroomsim'  filesep  'source'  filesep  'interface.c']
+             ['source' filesep  'libroomsim'  filesep  'source'  filesep  'interp.c']
+             ['source' filesep  'libroomsim'  filesep  'source'  filesep  'roomsim.c']
+             ['source' filesep  'libroomsim'  filesep  'source'  filesep  'rng.c']
+             ['source' filesep  'libroomsim'  filesep  'source'  filesep  'sensor.c']
+             ['source' filesep  'libsfmt'  filesep  'SFMT.c']
+             ['source' filesep  'mexmain.c']
+             ['source' filesep  'build.c']
            };
-       
-% distribfiles = { 'roomsim.mexw32'
-%                  'roomsim.exe'
-%                  'libfftw3-3.dll'
-%                  'roomsim.m'
-%                  'sampleroomsetup.m'
-%                  'example.m'
-%                  'editabsorption.m'
-%                  'estimateroombreakfreq.m'
-%                  'estimateRT60.m'
-%                  'loadsurface.m'
-%                  'mit2hrtf.m'
-%                  'near.m'
-%                  'placesensor.m'
-%                  'plotabsorption.m'
-%                  'plotbinsignal.m'
-%                  'plotbrir.m'
-%                  'plotbrtf.m'
-%                  'plotcoordsystem.m'
-%                  'plotroom.m'
-%                  'plotRT60.m'
-%                  'plotsignal.m'
-%                  'readbrir.m'
-%                  'readsetup.m'
-%                  'roomsim_sd.m'
-%                  'rsound.m'
-%                  'schroederplot.m'
-%                  'selectabsorption.m'
-%                  'setcomplexity.m'
-%                  'spec.m'
-%                  'yprTs2r.m'
-%                  'yprTr2s.m'
-%                  'data\testsignal.mat'
-%                  'data\materials.mat'
-%                  'data\MIT\KEMARsmall.hrtf'
-%                };
-           
-% % handle single 'distrib' argument
-% if nargin==1 && ischar(varargin{1}) && strcmpi(varargin{1},'distrib')==1,
-%     addpath('source\Release');
-%     zip(['roomsim_v' version '_build' buildnr '_' date '.zip'],distribfiles);
-%     return;
-% end;
 
 % Process optional arguments
 for i = 1:nargin,
     switch varargin{i}
         case 'test'
-            switches{end+1} = '-DUNIT_TEST';
+            switches{end1} = '-DUNIT_TEST';
             output = 'roomsimtest';
         case 'debug'
-            switches{end+1} = '-g';
+            switches{end1} = '-g';
         otherwise
-            switches{end+1} = varargin{i};
+            switches{end1} = varargin{i};
     end;
 end;
 
@@ -127,9 +87,4 @@ fprintf('%s ', options{:});
 fprintf('\n');
 
 % Run MEX to build the desired target
-err = 0;
-try mex(switches{:},'-output',output,mexfiles{:},options{:}); catch err = 1; end;
-
-% Continue making the build 
-% if ~err && makebuild,
-% end;
+mex(switches{:}, options{:}, mexfiles{:}, '-output', output)
