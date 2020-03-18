@@ -24,7 +24,11 @@
 #include <math.h>
 #include <string.h>
 
-#include "fftw3.h"
+#ifdef __GNUC__
+#	include <fftw3.h>
+#else
+#	include "fftw3.h"
+#endif
 #include "defs.h"
 #include "dsp.h"
 #include "interp.h"

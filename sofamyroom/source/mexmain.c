@@ -81,7 +81,12 @@
    to mxFree in mexAtExit.
  */
 
-bool IsMexString(const mxArray *pm)
+/* system-dependent functions */
+#ifdef __GNUC__
+#		define stricmp     strcasecmp
+#endif
+
+/*bool IsMexString(const mxArray *pm)
 {
     const int *dimensions = mxGetDimensions(pm);
     
@@ -89,7 +94,7 @@ bool IsMexString(const mxArray *pm)
            mxGetNumberOfDimensions(pm)==2 &&
            dimensions[0]==1 && 
            dimensions[1]>0;
-}
+}*/
 
 #if !defined(UNIT_TEST)
 /* gateway function */
@@ -176,7 +181,7 @@ void mexFunction(
             
             /* append all remaining strings from the input */
             i = 2; n = strlen(cmd);
-            while ((i<nrhs) && (n<sizeof(cmd)-2) && IsMexString(prhs[i]))
+            while ((i<nrhs) && (n<sizeof(cmd)-2) /*&& IsMexString(prhs[i])*/)
             {
                 cmd[n++] = ' ';
                 mxGetString(prhs[i],cmd+n,sizeof(cmd)-1-n);
@@ -198,8 +203,8 @@ void mexFunction(
                 CmdClearAllSensors();
             else if (nrhs>2)
                 mexErrMsgTxt("too many arguments for CLEAR command");
-            else if (!IsMexString(prhs[1]))
-                mexErrMsgTxt("argument to CLEAR must be a string");
+            /*else if (!IsMexString(prhs[1]))
+                mexErrMsgTxt("argument to CLEAR must be a string");*/
             else
             {
                 mxGetString(prhs[1],cmd,sizeof(cmd)-1);
