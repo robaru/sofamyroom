@@ -30,24 +30,43 @@ function make(varargin)
 % buildnr = '2731';
 % date = '20090423';
 
+if ismac
+    fprintf("Platform not supported\n")
+    return
+end
+
 % Set default switches
  switches = {'-DMEX'
              '-DLOGLEVEL=0'
              '-DMEXP=19937'
              ['-Isource' filesep 'libroomsim' filesep 'include']
-             %['-Isource' filesep 'libfftw' filesep 'Linux' filesep '64bit' filesep 'include']
-             %['-I/usr/include']
              ['-Isource' filesep 'libsfmt']
-             %'-Isource'
-             %['-Isource' filesep 'libmysofa' filesep 'Linux' filesep '64bit' filesep 'include']
              ['-Isource' filesep 'wavwriter' filesep 'include']
            };
-options = { %['-Lsource' filesep 'libfftw' filesep 'Linux' filesep '64bit' filesep 'lib' filesep 'Release']
-            %['-Lusr/lib']
-            '-lfftw3'
-            %['-Lsource' filesep 'libmysofa' filesep 'Linux' filesep '64bit' filesep 'lib' filesep 'Release']
-            '-lmysofa'
+       
+if ispc
+    switches = [switches
+                ['-Isource' filesep 'libfftw' filesep 'Windows' filesep 'x64' filesep 'include']
+                ['-Isource' filesep 'libmysofa' filesep 'Windows' filesep 'x64' filesep 'include']
+                ];
+end
+
+options = {'-lmysofa'
           };
+
+if ispc
+    options = [options
+               ['-Lsource' filesep 'libfftw' filesep 'Windows' filesep 'x64' filesep 'lib']
+               ['-Lsource' filesep 'libmysofa' filesep 'Windows' filesep 'x64' filesep 'lib' filesep 'Release']
+               '-lfftw3-3.lib'
+            ];
+
+elseif isunix
+    options = [options
+               '-lfftw3'
+               ];
+end
+
 output = 'roomsim';       
 
 mexfiles = { ['source' filesep 'libroomsim' filesep 'source' filesep '3D.c']
@@ -63,7 +82,7 @@ mexfiles = { ['source' filesep 'libroomsim' filesep 'source' filesep '3D.c']
            };
 
 % Process optional arguments
-for i = 1:nargin,
+for i = 1:nargin
     switch varargin{i}
         case 'test'
             switches{end1} = '-DUNIT_TEST';
@@ -72,10 +91,10 @@ for i = 1:nargin,
             switches{end1} = '-g';
         otherwise
             switches{end1} = varargin{i};
-    end;
-end;
+    end
+end
 
-% remove roomsim from memory, if loaded
+% Remove roomsim from memory, if loaded
 clear roomsim;
 
 % Echo command to be executed
@@ -88,3 +107,15 @@ fprintf('\n');
 
 % Run MEX to build the desired target
 mex(switches{:}, options{:}, mexfiles{:}, '-output', output)
+
+%Copy libfftw3-3.dll into working directory
+if ispc
+    [status, msg] = copyfile(...
+        ['source' filesep 'libfftw' filesep 'Windows' filesep 'x64' filesep 'bin' filesep 'libfftw3-3.dll']...
+    );
+    if ~status
+        fprintf("An error occured while copying libfftw3-3.dll file: %s\n", msg)
+    else
+        fprintf("libfftw3-3.dll successfully copied.\n")
+    end
+end
