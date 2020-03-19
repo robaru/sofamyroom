@@ -26,14 +26,12 @@ function make(varargin)
 % along with ROOMSIM. If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% version = '1.00a';
-% buildnr = '2731';
-% date = '20090423';
-
 if ismac
     fprintf("Platform not supported\n")
     return
 end
+
+version = '1.0';
 
 % Set default switches
  switches = {'-DMEX'
@@ -85,12 +83,18 @@ mexfiles = { ['source' filesep 'libroomsim' filesep 'source' filesep '3D.c']
 for i = 1:nargin
     switch varargin{i}
         case 'test'
-            switches{end} = '-DUNIT_TEST';
+            switches = [switches
+                        '-DUNIT_TEST'
+                        ];
             output = 'roomsimtest';
         case 'debug'
-            switches{end} = '-g';
+            switches = [switches 
+                        '-g'
+                        ];
         otherwise
-            switches{end} = varargin{i};
+            switches = [switches 
+                        varargin{i}
+                        ];
     end
 end
 
@@ -106,7 +110,7 @@ fprintf('%s ', options{:});
 fprintf('\n');
 
 % Run MEX to build the desired target
-mex(switches{:}, options{:}, mexfiles{:}, '-output', output)
+mex(switches{:}, '-output', output, mexfiles{:}, options{:})
 
 % Copy libfftw3-3.dll into working directory
 if ispc
@@ -119,3 +123,34 @@ if ispc
         fprintf("libfftw3-3.dll successfully copied.\n")
     end
 end
+
+% Creating zip folder
+distribfiles = { 'roomsim.m'
+                 'sampleroomsetup.m'
+                 'editabsorption.m'
+                 'estimateroombreakfreq.m'
+                 'estimateRT60.m'
+                 'plotabsorption.m'
+                 'plotbrir.m'
+                 'plotcoordsystem.m'
+                 'plotroom.m'
+                 'readbrir.m'
+                 'readsetup.m'
+                 'rsound.m'
+                 'selectabsorption.m'
+                 'setcomplexity.m'
+                 'yprTs2r.m'
+                 'yprTr2s.m'
+                 [output '.' mexext]
+               };
+           
+if ispc
+    distribfiles = [ distribfiles
+                     'libfftw3-3.dll'
+                    ];
+end
+
+zip(['roomsim_v' version '_' date '.zip'], distribfiles)
+
+fprintf("Zip folder successfully created.\n")
+
