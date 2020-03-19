@@ -85,12 +85,12 @@ mexfiles = { ['source' filesep 'libroomsim' filesep 'source' filesep '3D.c']
 for i = 1:nargin
     switch varargin{i}
         case 'test'
-            switches{end1} = '-DUNIT_TEST';
+            switches{end} = '-DUNIT_TEST';
             output = 'roomsimtest';
         case 'debug'
-            switches{end1} = '-g';
+            switches{end} = '-g';
         otherwise
-            switches{end1} = varargin{i};
+            switches{end} = varargin{i};
     end
 end
 
@@ -108,7 +108,7 @@ fprintf('\n');
 % Run MEX to build the desired target
 mex(switches{:}, options{:}, mexfiles{:}, '-output', output)
 
-%Copy libfftw3-3.dll into working directory
+% Copy libfftw3-3.dll into working directory
 if ispc
     [status, msg] = copyfile(...
         ['source' filesep 'libfftw' filesep 'Windows' filesep 'x64' filesep 'bin' filesep 'libfftw3-3.dll']...
