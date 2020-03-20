@@ -81,7 +81,7 @@ if ispc
     options = [options
                ['-Lsource' filesep 'libfftw' filesep 'Windows' filesep 'x64' filesep 'lib']
                '-lfftw3-3.lib'
-              ];
+               ];
     if ~debug
         options = [options
                   ['-Lsource' filesep 'libmysofa' filesep 'Windows' filesep 'x64' filesep 'lib' filesep 'Release']
@@ -95,10 +95,21 @@ if ispc
     end
     
 elseif isunix
+    if ~debug
+        options = [options
+                  ['-Lsource' filesep 'libmysofa' filesep 'Linux' filesep '64bit' filesep 'lib' filesep 'Release']
+                  '-lmysofa'  
+                  ];
+    else
+        options = [options
+                  ['-Lsource' filesep 'libmysofa' filesep 'Linux' filesep '64bit' filesep 'lib' filesep 'Debug']
+                  '-lmysofad'
+                  ];
+    end
     options = [options
+               '-lz'
                '-lfftw3'
-               '-lmysofa'
-               ];
+              ];
 end
 
 mexfiles = { ['source' filesep 'libroomsim' filesep 'source' filesep '3D.c']
@@ -139,9 +150,8 @@ if ispc
     end
 end
 
-% Creating zip folder
-distribfiles = { 'roomsim.m'
-                 'sampleroomsetup.m'
+% Creating zip archive
+distribfiles = { 'sampleroomsetup.m'
                  'editabsorption.m'
                  'estimateroombreakfreq.m'
                  'estimateRT60.m'
@@ -167,5 +177,5 @@ end
 
 zip(['roomsim_v' version '_' date '.zip'], distribfiles)
 
-fprintf("Zip folder successfully created.\n")
+fprintf("Zip archive successfully created.\n")
 
