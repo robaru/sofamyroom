@@ -1,3 +1,11 @@
+addpath('../sofamyroom')
+sofa_path = './SOFA/API_MO';
+
+if ~exist(sofa_path, 'dir')
+    error('Please install SOFA toolbox! See instructions in ./SOFA/how_to_install.txt');             
+end
+
+addpath('./SOFA/API_MO')
 SOFAstart
 warning('off','SOFA:upgrade');
 
