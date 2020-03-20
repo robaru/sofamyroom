@@ -31,7 +31,11 @@ if ismac
     return
 end
 
+% Version
 version = '1.0';
+
+% MEX-file name
+output = 'roomsim';
 
 % Set default switches
  switches = {'-DMEX'
@@ -43,29 +47,59 @@ version = '1.0';
            };
        
 if ispc
-    switches = [switches
+    switches =  [switches
                 ['-Isource' filesep 'libfftw' filesep 'Windows' filesep 'x64' filesep 'include']
                 ['-Isource' filesep 'libmysofa' filesep 'Windows' filesep 'x64' filesep 'include']
                 ];
 end
 
-options = {'-lmysofa'
-          };
+% Process optional arguments
+debug = false;
+for i = 1:nargin
+    switch varargin{i}
+        case 'test'
+            switches = [switches
+                        '-DUNIT_TEST'
+                        ];
+            output = 'roomsimtest';
+        case 'debug'
+            switches = [switches 
+                        '-g'
+                        ];
+            debug = true;
+        otherwise
+            switches = [switches 
+                        varargin{i}
+                        ];
+    end
+end
+
+% Set options
+options = {};
 
 if ispc
     options = [options
                ['-Lsource' filesep 'libfftw' filesep 'Windows' filesep 'x64' filesep 'lib']
-               ['-Lsource' filesep 'libmysofa' filesep 'Windows' filesep 'x64' filesep 'lib' filesep 'Release']
                '-lfftw3-3.lib'
+              ];
+    if ~debug
+        options = [options
+                  ['-Lsource' filesep 'libmysofa' filesep 'Windows' filesep 'x64' filesep 'lib' filesep 'Release']
+                  '-lmysofa'
             ];
-
+    else
+        options = [options
+                  ['-Lsource' filesep 'libmysofa' filesep 'Windows' filesep 'x64' filesep 'lib' filesep 'Debug']
+                  '-lmysofad'
+                  ];
+    end
+    
 elseif isunix
     options = [options
                '-lfftw3'
+               '-lmysofa'
                ];
 end
-
-output = 'roomsim';       
 
 mexfiles = { ['source' filesep 'libroomsim' filesep 'source' filesep '3D.c']
              ['source' filesep  'libroomsim'  filesep  'source'  filesep  'dsp.c']
@@ -78,25 +112,6 @@ mexfiles = { ['source' filesep 'libroomsim' filesep 'source' filesep '3D.c']
              ['source' filesep  'mexmain.c']
              ['source' filesep  'build.c']
            };
-
-% Process optional arguments
-for i = 1:nargin
-    switch varargin{i}
-        case 'test'
-            switches = [switches
-                        '-DUNIT_TEST'
-                        ];
-            output = 'roomsimtest';
-        case 'debug'
-            switches = [switches 
-                        '-g'
-                        ];
-        otherwise
-            switches = [switches 
-                        varargin{i}
-                        ];
-    end
-end
 
 % Remove roomsim from memory, if loaded
 clear roomsim;
@@ -112,7 +127,7 @@ fprintf('\n');
 % Run MEX to build the desired target
 mex(switches{:}, '-output', output, mexfiles{:}, options{:})
 
-% Copy libfftw3-3.dll into working directory
+% Copy libfftw3-3.dll into working directory, Windows only
 if ispc
     [status, msg] = copyfile(...
         ['source' filesep 'libfftw' filesep 'Windows' filesep 'x64' filesep 'bin' filesep 'libfftw3-3.dll']...
