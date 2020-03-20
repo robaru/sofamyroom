@@ -93,13 +93,13 @@ void LinearInterpolate(const double *xi, const double *yi, int ilen, const doubl
     int ii = 0, oi = 0;
     
     /* left extrapolation */
-    while (xo[oi] < xb)
+    while (oi < olen && xo[oi] < xb)
         yo[oi++] = yb;
     
     /* interpolation */
-    while (xo[oi] < xe)
+    while (oi < olen && xo[oi] < xe)
     {
-        while (xo[oi] > xi[ii])
+        while (xo[oi] >= xi[ii])
             ii++;
         
         yo[oi] = ((xo[oi] - xi[ii-1]) / (xi[ii] - xi[ii-1])) * (yi[ii] - yi[ii-1]) + yi[ii-1];

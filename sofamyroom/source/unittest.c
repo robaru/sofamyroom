@@ -125,6 +125,10 @@ void testLinearInterpolation(void)
     
     double x2[] = {3, 4, 5, 6, 7};
     double r2[] = {3, 4, 5, 6, 7};
+
+    double y3[] = {6, 8, 10, 12, 14};
+    double x3[] = {3.5, 4.5, 5.5, 6.5, 6.9};
+    double r3[] = {7, 9, 11, 13, 13.8};
     
     double out[32];
     unsigned idx0[32], idx1[32];
@@ -138,6 +142,10 @@ void testLinearInterpolation(void)
 	CLEAROUTPUT;
     LinearInterpolate(x0,y0,DBLLEN(x0),x2,out,DBLLEN(x2));
 	ASSERTOUTPUT(out,r2);
+
+    CLEAROUTPUT;
+    LinearInterpolate(x0, y3, DBLLEN(x0), x3, out, DBLLEN(x3));
+    ASSERTOUTPUT(out, r3);
     
     /* repeat test using prepare/execute linear interpolation */
     memset(idx0,0,sizeof(idx0));        memset(idx1,0,sizeof(idx1));
