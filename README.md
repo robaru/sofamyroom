@@ -30,5 +30,6 @@
   * sfoltire documentazione
   * preparare istruzioni per compilare le mex (per Windows c'è già il README)
 * sistemare sofa file in una sola cartella in root
+* finire di sistemare demo con versione aggiornata dal paper
 
 
