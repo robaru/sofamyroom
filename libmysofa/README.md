@@ -1,5 +1,5 @@
 <div align="right">
-<a href="https://symonics.com/">
+<a href="https://mysofa.audio/">
 	<img alt="Symonics MySofa" width="320px" src="https://raw.githubusercontent.com/hoene/libmysofa/master/symonics-mysofa.png"/>
 </a>
 </div
@@ -18,11 +18,14 @@ stored according to the AES69-2015 standard [http://www.aes.org/publications/sta
 <a href="https://travis-ci.org/hoene/libmysofa">
 <img alt="Travis CI Status" src="https://travis-ci.org/hoene/libmysofa.svg?branch=master"/>
 </a>
+<a href="https://ci.appveyor.com/project/hoene/libmysofa-s142k">
+<img alt="AppVeyor Status" src="https://ci.appveyor.com/api/projects/status/mk86lx4ux2jn9tpo/branch/master?svg=true"/>
+</a>
 <a href="https://scan.coverity.com/projects/hoene-libmysofa">
 <img alt="Coverity Scan Build Status" src="https://scan.coverity.com/projects/13030/badge.svg"/>
 </a>
-<a href="https://ci.appveyor.com/project/hoene/libmysofa-s142k">
-<img alt="AppVeyor Status" src="https://ci.appveyor.com/api/projects/status/mk86lx4ux2jn9tpo/branch/master?svg=true"/>
+<a href="https://codecov.io/gh/hoene/libmysofa">
+  <img src="https://codecov.io/gh/hoene/libmysofa/branch/master/graph/badge.svg" />
 </a>
 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GUN8R6NUQCS3C" >
 <img alt="Donate" src="https://symonics.com/Donate-PayPal-green.svg"/>
@@ -106,6 +109,8 @@ float rightDelay;         // unit is sec.
 mysofa_getfilter_float(hrtf, x, y, z, leftIR, rightIR, &leftDelay, &rightDelay);
 ```
 
+using ``mysofa_getfilter_float_nointerp`` instead of ``mysofa_getfilter_float`` (same arguments), you can bypass the linear interpolation applied by ``mysofa_getfilter_float`` (weighted sum of nearest neighbors filters coefficients), and get the exact filter stored in the sofa file nearest to the [x,y,z] position requested.
+
 If you have spherical coordinates but you need Cartesian coordinates, call
 ```
 void mysofa_s2c(float values[3])
@@ -130,9 +135,7 @@ mysofa_close_cached(hrtf4);
 ...
 mysofa_cache_release_all();
 ```
-Then, all HRTFs having the same filename and sampling rate are stored only once in memory.
-
-If your program is using several threads, you must use appropriate synchronisation mechanisms so only a single thread can access the library at a given time.
+Then, all HRTFs having the same filename and sampling rate are stored only once in memory. If your program is using several threads, you must use appropriate synchronisation mechanisms so only a single thread can access the mysofa_open_cached and mysofa_close_cached functions at a given time.
 
 ## OS support
 
@@ -148,3 +151,4 @@ Libmysofa compiles for Linux operating systems, OSX and Windows. By default, eac
 ## Disclaimer
 
 The SOFA files are from https://www.sofaconventions.org/, Piotr Majdak <piotr@majdak.com>. The K-D tree algorithm is by John Tsiombikas <nuclear@member.fsf.org>. The resampler is by Jean-Marc Valin. The remaining source code is by Christian Hoene <christian.hoene@symonics.com>, <a href="https://symonics.com/">Symonics GmbH</a>, and available under BSD-3-Clause license. This work has been funded by German <a href="https://www.bmbf.de">Federal Ministry of Education and Research</a>, funding code 01IS14027A.
+
