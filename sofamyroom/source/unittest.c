@@ -135,21 +135,16 @@ void testLinearInterpolation(void)
     double weight0[32], weight1[32];
     int    i;
 
-	/*CLEAROUTPUT;
+	CLEAROUTPUT;
     LinearInterpolate(x0,y0,DBLLEN(x0),x1,out,DBLLEN(x1));
-	ASSERTOUTPUT(out,r1);*/
+	ASSERTOUTPUT(out,r1);
 
-	/*CLEAROUTPUT;
+	CLEAROUTPUT;
     LinearInterpolate(x0,y0,DBLLEN(x0),x2,out,DBLLEN(x2));
-	ASSERTOUTPUT(out,r2);*/
+	ASSERTOUTPUT(out,r2);
 
     CLEAROUTPUT;
     LinearInterpolate(x0, y3, DBLLEN(x0), x3, out, DBLLEN(x3));
-    for (int i = 0; i < 32; ++i)
-    {
-        printf("%.10f ", out[i]);
-    }
-    putchar('\n');
     ASSERTOUTPUT(out, r3);
     
     /* repeat test using prepare/execute linear interpolation */
