@@ -26,11 +26,6 @@ function make(varargin)
 % along with ROOMSIM. If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if ismac
-    fprintf("Platform not supported\n")
-    return
-end
-
 % Version
 version = '1.0';
 
@@ -43,7 +38,6 @@ output = 'roomsim';
              '-DMEXP=19937'
              ['-Isource' filesep 'libroomsim' filesep 'include']
              ['-Isource' filesep 'libsfmt']
-             ['-Isource' filesep 'wavwriter' filesep 'include']
            };
        
 if ispc
@@ -51,6 +45,17 @@ if ispc
                 ['-Isource' filesep 'libfftw' filesep 'Windows' filesep 'x64' filesep 'include']
                 ['-Isource' filesep 'libmysofa' filesep 'Windows' filesep 'x64' filesep 'include']
                 ];
+            
+elseif ismac
+    switches = [switches
+               ['-Isource' filesep 'libfftw' filesep 'MacOS' filesep '64bit' filesep 'include']
+               ['-Isource' filesep 'libmysofa' filesep 'MacOS' filesep '64bit' filesep 'include']
+               ];
+            
+elseif isunix
+    switches = [switches
+               ['-Isource' filesep 'libmysofa' filesep 'Linux' filesep '64bit' filesep 'include']
+               ];
 end
 
 % Process optional arguments
@@ -93,6 +98,26 @@ if ispc
                   '-lmysofad'
                   ];
     end
+    
+elseif ismac
+    if ~debug
+        options = [options
+                  ['-Lsource' filesep 'libmysofa' filesep 'MacOS' filesep '64bit' filesep 'lib' filesep 'Release']
+                  '-lmysofa'
+                  ['-Lsource' filesep 'libfftw' filesep 'MacOS' filesep '64bit' filesep 'lib' filesep 'Release']
+                  '-lfftw3'
+            ];
+    else
+        options = [options
+                  ['-Lsource' filesep 'libmysofa' filesep 'MacOS' filesep '64bit' filesep 'lib' filesep 'Debug']
+                  '-lmysofad'
+                  ['-Lsource' filesep 'libfftw' filesep 'MacOS' filesep '64bit' filesep 'lib' filesep 'Debug']
+                  '-lfftw3d'
+                  ];
+    end
+    options = [options
+              "-lz"
+               ];
     
 elseif isunix
     if ~debug
