@@ -104,6 +104,24 @@ void mexFunction(
 {
     CRoomSetup roomsetup;
     BRIR       *brir;
+
+    /**/
+    char stringa[256];
+    int dimensions;
+    mexPrintf("Number of nrhs %d \n", nrhs);
+    for (int i = 0; i < nrhs; ++i)
+    {
+        mxGetString(prhs[i], stringa, sizeof(stringa - 1));
+        dimensions = mxGetNumberOfDimensions(prhs[i]);
+        mexPrintf("Param: %s is char? %d Dimensions: %d == 2\n", stringa, mxIsChar(prhs[i]), dimensions);
+        int* dimension = mxGetDimensions(prhs[i]);
+        for (int j = 0; j < dimensions; ++j)
+        {
+            mexPrintf("Dimension: %d ----> %d\n", j, dimension[j]);
+        }
+    }
+
+    /**/
     
     /* accept call ROOMSIM(PAR) */
     if (nrhs==1 && mxIsStruct(prhs[0]))
