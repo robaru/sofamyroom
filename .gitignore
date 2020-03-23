@@ -15,3 +15,4 @@
 /sofamyroom/source/Visual Studio/.vs/
 /sofamyroom/source/Visual Studio/x64/
 *.DS_Store
+sofamyroom/source/build/*
