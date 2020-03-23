@@ -17,20 +17,25 @@ include_directories(
 	)
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
-	set(FFTW_NAME "libfftw3-3.lib")
+	set(FFTW_NAME "${CMAKE_SOURCE_DIR}/libfftw/${OS}/${PLATFORM}/lib/libfftw3-3.lib")
 	set(MYSOFA_NAME "mysofa*.lib")
 	set(MATH "")
 	set(LIBZ "")
 elseif(CMAKE_SYSTEM_NAME MATCHES Linux)
-	set(FFTW_NAME "${LIBFOLDER}/libfftw3.a")
-	set(MYSOFA_NAME "libmysofa.a")
+	set(FFTW_NAME "-lfftw3")
+	if(LIBFOLDER MATCHES Release)
+		set(MYSOFA_NAME "libmysofa.a")
+	elseif(LIBFOLDER MATCHES Debug)
+		set(MYSOFA_NAME "libmysofad.a")
+	endif()
 	set(MATH "m")
 	set(LIBZ "z")
 elseif(CMAKE_SYSTEM_NAME MATCHES Darwin)
-	set(FFTW_NAME "${LIBFOLDER}/libfftw3.a")
-	set(MYSOFA_NAME "libmysofa.a")
-	if(LIBFOLDER MATCHES Debug)
-    	set(FFTW_NAME "${LIBFOLDER}/libfftw3d.a")
+	if(LIBFOLDER MATCHES Release)
+		set(FFTW_NAME "${CMAKE_SOURCE_DIR}/libfftw/${OS}/${PLATFORM}/lib/${LIBFOLDER}/libfftw3.a")
+		set(MYSOFA_NAME "libmysofa.a")
+	elseif(LIBFOLDER MATCHES Debug)
+    		set(FFTW_NAME "${CMAKE_SOURCE_DIR}/libfftw/${OS}/${PLATFORM}/lib/{LIBFOLDER}/libfftw3d.a")
 		set(MYSOFA_NAME "libmysofad.a")
 	endif()
 	set(MATH "")
@@ -40,7 +45,7 @@ endif()
 target_link_libraries(libroomsim
 	"${MATH}"
 	libsfmt
-	"${CMAKE_SOURCE_DIR}/libfftw/${OS}/${PLATFORM}/lib/${FFTW_NAME}"
+	"${FFTW_NAME}"
 	"${CMAKE_SOURCE_DIR}/libmysofa/${OS}/${PLATFORM}/lib/${LIBFOLDER}/${MYSOFA_NAME}"
 	"${LIBZ}"
 	)
