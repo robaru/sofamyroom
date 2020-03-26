@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 
 project(roomsim C)
 
@@ -29,14 +29,6 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL Darwin)
 	set(PLATFORM "64bit")
 endif()
 
-set(CMAKE_C_FLAGS_UNITTEST "${CMAKE_C_FLAGS_DEBUG} -DUNITTEST")
-
-if(MSVC)
-	string(REPLACE "/MDd" "/MTd" CMAKE_C_FLAGS_DEBUG ${CMAKE_C_FLAGS_DEBUG})
-	string(REPLACE "/MD" "/MT" CMAKE_C_FLAGS_RELEASE ${CMAKE_C_FLAGS_RELEASE})
-	string(REPLACE "/MDd" "/MTd" CMAKE_C_FLAGS_UNITTEST ${CMAKE_C_FLAGS_UNITTEST})
-endif()
-
 add_subdirectory(libsfmt)
 add_subdirectory(libroomsim)
 add_subdirectory(wavwriter)
@@ -51,6 +43,9 @@ if(MSVC)
 	add_custom_command(TARGET roomsim POST_BUILD
                    	COMMAND ${CMAKE_COMMAND} -E copy_if_different
                    	"${CMAKE_SOURCE_DIR}/libfftw/${OS}/${PLATFORM}/bin/libfftw3-3.dll" $<TARGET_FILE_DIR:roomsim>)
+    set_property(TARGET roomsim PROPERTY
+  		MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<OR:$<CONFIG:Debug>,$<CONFIG:Unittest>>:Debug>")
+  	set(CMAKE_EXE_LINKER_FLAGS_UINTTEST ${CMAKE_EXE_LINKER_FLAGS_DEBUG})
 endif()
 
 if(GNU)
