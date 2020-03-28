@@ -6,6 +6,17 @@ if(CMAKE_SIZEOF_VOID_P MATCHES 4)
 	message(FATAL_ERROR "32 bit OSs are not supported")
 endif()
 
+if(CMAKE_SYSTEM_NAME MATCHES Windows)
+	set(OS "Windows")
+	set(PLATFORM "x64")
+elseif(CMAKE_SYSTEM_NAME MATCHES Linux)
+	set(OS "Linux")
+	set(PLATFORM "64bit")
+elseif(CMAKE_SYSTEM_NAME MATCHES Darwin)
+	set(OS "MacOS")
+	set(PLATFORM "64bit")
+endif()
+
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release;Unittest")
 
 if(GNU)
@@ -16,29 +27,6 @@ set(CMAKE_C_FLAGS_UNITTEST ${CMAKE_C_FLAGS_DEBUG})
 set(CMAKE_EXE_LINKER_FLAGS_UNITTEST ${CMAKE_EXE_LINKER_FLAGS_DEBUG})
 add_compile_definitions("$<$<CONFIG:Unittest>:UNITTEST>")
 
-if(CMAKE_SYSTEM_NAME MATCHES Windows)
-	set(OS "Windows")
-	set(PLATFORM "x64")
-	set(CMAKE_DEBUG_POSTFIX "d")
-elseif(CMAKE_SYSTEM_NAME MATCHES Linux)
-	set(OS "Linux")
-	set(PLATFORM "64bit")
-	set(CMAKE_DEBUG_POSTFIX "d")
-elseif(CMAKE_SYSTEM_NAME MATCHES Darwin)
-	set(OS "MacOS")
-	set(PLATFORM "64bit")
-	set(CMAKE_DEBUG_POSTFIX "d")
-endif()
-
-add_subdirectory(libsfmt)
-add_subdirectory(libroomsim)
-add_subdirectory(wavwriter)
-
-add_executable(roomsim
-	build.c
-	main.c
-	)
-
 if(MSVC)
 	add_custom_command(TARGET roomsim POST_BUILD
                    		COMMAND ${CMAKE_COMMAND} -E copy_if_different
@@ -47,10 +35,27 @@ if(MSVC)
   				MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<OR:$<CONFIG:Debug>,$<CONFIG:Unittest>>:Debug>")
 endif()
 
+add_subdirectory(libsfmt)
+add_subdirectory(libroomsim)
+add_subdirectory(wavwriter)
+
 include_directories(
 	"${CMAKE_SOURCE_DIR}/libroomsim/include"
 	"${CMAKE_SOURCE_DIR}/libmysofa/${OS}/${PLATFORM}/include"
 	"${CMAKE_SOURCE_DIR}/wavwriter/include"
+	)
+
+add_executable(roomsim
+	build.c
+	main.c
+	build.h
+	libroomsim.h
+	"${CMAKE_SOURCE_DIR}/libroomsim/include/defs.h"
+	"${CMAKE_SOURCE_DIR}/libroomsim/include/dsp.h"
+	"${CMAKE_SOURCE_DIR}/libroomsim/include/interface.h"
+	"${CMAKE_SOURCE_DIR}/libroomsim/include/interp.h"
+	"${CMAKE_SOURCE_DIR}/libroomsim/include/msg.h"
+	"${CMAKE_SOURCE_DIR}/libroomsim/include/mstruct.h"
 	)
 
 target_link_libraries(roomsim libroomsim wavwriter)
