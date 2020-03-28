@@ -1,4 +1,7 @@
-add_library(wavwriter STATIC "${CMAKE_CURRENT_SOURCE_DIR}/source/wavwriter.c")
+add_library(wavwriter STATIC 
+			"${CMAKE_CURRENT_SOURCE_DIR}/source/wavwriter.c"
+			"${CMAKE_CURRENT_SOURCE_DIR}/include/wavwriter.h"
+			)
 	
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
 
