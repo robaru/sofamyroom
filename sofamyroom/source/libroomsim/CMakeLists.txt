@@ -17,8 +17,9 @@ include_directories(
 	)
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
-	set(FFTW_NAME "${CMAKE_SOURCE_DIR}/libfftw/${OS}/${PLATFORM}/lib/libfftw3-3.lib")
-	set(MYSOFA_NAME "mysofa*.lib")
+	set(FFTW_PATH "${CMAKE_SOURCE_DIR}/libfftw/${OS}/${PLATFORM}/lib/libfftw3-3.lib")
+	set(MYSOFA_PATH 
+		"${CMAKE_SOURCE_DIR}/libmysofa/${OS}/${PLATFORM}/lib/$<IF:$<OR:$<CONFIG:Debug>,$<CONFIG:Release>>,$<IF:$<CONFIG:Release>,Release,Debug>,Debug>/mysofa$<$<OR:$<CONFIG:Debug>,$<CONFIG:Unittest>>:${CMAKE_DEBUG_POSTFIX}>${CMAKE_STATIC_LIBRARY_SUFFIX}")
 	set(MATH "")
 	set(LIBZ "")
 elseif(CMAKE_SYSTEM_NAME MATCHES Linux)
@@ -45,7 +46,7 @@ endif()
 target_link_libraries(libroomsim
 	"${MATH}"
 	libsfmt
-	"${FFTW_NAME}"
-	"${CMAKE_SOURCE_DIR}/libmysofa/${OS}/${PLATFORM}/lib/${LIBFOLDER}/${MYSOFA_NAME}"
+	"${FFTW_PATH}"
+	"${MYSOFA_PATH}"
 	"${LIBZ}"
 	)
