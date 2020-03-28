@@ -125,6 +125,7 @@
       <ExceptionHandling>false</ExceptionHandling>
       <AdditionalOptions>-DHAVE_STRUCT_TIMESPEC %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
