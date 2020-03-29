@@ -51,16 +51,6 @@
 #include <mex.h>
 #include <matrix.h>
 
-/* NOTE: I was unable to make the FFTW DLL work with LCC. Version 2.4 of LCC 
-   that is shipped with MATLAB does not support __declspec(dllimport), hence 
-   it can not generate calls to functions in one DLL from another DLL. Attempts 
-   to upgrade to LCC version 4.2 and linking to a static FFTW library were both 
-   unsuccessful. The only solution I found was to compile/link using a different
-   compiler, such as GCC (from MinGW or Cygwin, see http://gnumex.sourceforge.net),
-   Microsoft Visual Studio 6.0 or Visual Studio 2008 Express.
- */
-#include "fftw3.h"
-
 /* local includes */
 #include "build.h"
 #include "interface.h"
@@ -68,6 +58,7 @@
 #include "msg.h"
 #include "sensor.h"
 #include "types.h"
+#include "fftw3.h"
 
 /* disable warnings about depricated unsafe CRT functions */
 #ifdef _MSC_VER

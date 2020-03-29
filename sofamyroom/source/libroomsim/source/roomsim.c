@@ -83,9 +83,8 @@
 #include "types.h"
 #include "global.h"
 
-#ifdef GLOBAL_FOR_MYSOFA
-double g_fs = 0;
-#endif
+/* global variable to store sample rate of the setup */
+double g_fs = -1;
 
 /* disable warnings about unreferenced inline functions and unsafe CRT functions */
 #ifdef _MSC_VER
@@ -770,10 +769,8 @@ CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup)
 	/* allocate memory for internal simulation data structure */
 	CRoomsimInternal *pSimulation = (CRoomsimInternal *) MemMalloc(sizeof(CRoomsimInternal));
 
-#	ifdef GLOBAL_FOR_MYSOFA
 	/* copy setup variable to global variable */
 	g_fs = pSetup->options.fs;
-#	endif
 
 	/* copy setup variables to simulation structure */
 	pSimulation->fs				 = pSetup->options.fs;

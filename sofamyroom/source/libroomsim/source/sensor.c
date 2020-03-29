@@ -65,25 +65,10 @@ int SensorGetResponse(const CSensorDefinition *sensor, const XYZ *xyz, CSensorRe
 		
 		case ST_IMPULSERESPONSE:
 		{
-#			ifdef MYSOFA_H_INCLUDED
-			if (!sensor->interpolation)
-			{
-#			endif
-				if ((idx = sensor->probe.xyz2idx(sensor, xyz)) < 0)
-					return 0;
-				response->type = SR_IMPULSERESPONSE;
-				response->data.impulseresponse = &sensor->responsedata[idx * sensor->nSamples * sensor->nChannels];
-				return 1;
-#			ifdef MYSOFA_H_INCLUDED
-			}
-			else
-			{
 				sensor->probe.xyz2idx(sensor, xyz);
 				response->type = SR_IMPULSERESPONSE;
-				response->data.impulseresponse = sensor->interpResponseDataDouble;
+				response->data.impulseresponse = sensor->responsedata;
 				return 1;
-			}
-#			endif
 		}
 	}
 	return 0;
@@ -342,162 +327,44 @@ void sensor_unidirectional_init(const char *datafile, CSensorDefinition *definit
     definition->probe.loggain = sensor_unidirectional_probe;
 }
 
-#ifndef MYSOFA_H_INCLUDED
-/***** MIT KEMAR *******************************/
-
-#define SENSORMIT_NHRTFS  710
-
-#if 0
-typedef struct {
-    const double *data;
-	int hrtflen;
-} CMITdata;
-
-void sensor_MIT_exit(void *arg)
-{
-    /* MsgPrintf("MIT exit: array=%p\n", ((CMITdata *)arg)->data); */
-    MemFree((void *)((CMITdata *)arg)->data);
-    MemFree(arg);
-}
-#endif
-
-int sensor_MIT_probe(const CSensorDefinition *sensor, const XYZ *xyz)
-{
-	static const int MITprobe_nazs[]   = {56, 60, 72, 72, 72, 72, 72, 60, 56, 45, 36, 24, 12, 1};
-	static const int MITprobe_cumidx[] = {0, 56, 116, 188, 260, 332, 404, 476, 536, 592, 637, 673, 697, 709};
-
-    int elidx, naz, azidx, idx;
-    AZEL vp;
-
-	UNREFERENCED_PARAMETER(sensor);
-
-    /* MsgPrintf("MIT probe [%f,%f,%f],%p\n", xyz->x, xyz->y, xyz->z, arg); */
-    
-    /* convert vector to vertical-polar azimuth,elevation */
-    azel_vp(xyz,&vp);
-
-	/* validate elevation  */
-    if (vp.el<DEG2RAD(-45) || vp.el>DEG2RAD(90))
-        return -1;
-
-	/* negate azimuth and convert to 0...2 pi */
-	vp.az = -vp.az; if (vp.az<0) vp.az += TWOPI;
-    /* NOTE: negating required due to difference in azimuth convention */
-    /* MIT: positive azimuth = right; ROOMSIM: positive azimuth = left. */
-
-    /* determine idx of nearest response */
-    elidx = (int) floor((vp.el + DEG2RAD(45.0))/DEG2RAD(10.0));
-    naz   = MITprobe_nazs[elidx];
-    azidx = (int) (ROUND(naz * vp.az / TWOPI) % naz);
-    idx   = MITprobe_cumidx[elidx]+azidx;
-
-    /*MsgPrintf("MIT probe: az=%7.3f, el=%7.3f [%d,%d,%d]\n", vp.az/PI, vp.el/PI, azidx,elidx,idx); */
-
-    /* return nearest HRTF */
-	/*return &(((const double *)definition->responsedata)[idx * definition->nSamples * 2]); */
-    /*return &(((CMITdata *)arg)->data[idx * (((CMITdata *)arg)->hrtflen) * 2]); */
-	return idx;
-}
-
-void sensor_MIT_init(const char *datafile, CSensorDefinition *definition)
-{
-    char msg[256];
-	unsigned int hrtflen;
-	long len;
-    FILE *fid;
-	size_t res;
-
-	/* test that a datafile name is provided */
-	if (!datafile)
-		MsgErrorExit("no MIT datafile specified\n");
-
-    /* open HRTF file */
-    fid = fopen(datafile,"rb");
-    if (!fid)
-    {
-        sprintf(msg,"unable to open MIT KEMAR data file '%s'", datafile);
-        MsgErrorExit(msg);
-    }
-
-    /* determine file length */
-	if ( (fseek(fid,0,SEEK_END)!=0) || ((len=ftell(fid))==-1L) || (fseek(fid,0,SEEK_SET)!=0) )
-	{
-        sprintf(msg,"unable to determine length of MIT KEMAR data file '%s'", datafile);
-        MsgErrorExit(msg);
-	}
-
-	/* determine length of HRTFs */
-	hrtflen = (len/(SENSORMIT_NHRTFS*2*sizeof(double)));
-
-	/* verify that data file has the proper size */
-	if ( hrtflen * SENSORMIT_NHRTFS * 2 * sizeof(double) != (unsigned long) len )
-	{
-        sprintf(msg,"invalid size for MIT KEMAR data file '%s'", datafile);
-        MsgErrorExit(msg);
-	}
-
-    /* allocate memory for sensor response data */
-    definition->responsedata = MemMalloc(len);
-
-    /* read HRTF data and close HRTF file */
-	res = fread(definition->responsedata, sizeof(double), 2 * hrtflen * SENSORMIT_NHRTFS, fid);
-	fclose(fid);
-
-    /* if read unsuccessful, terminate */
-	if (res != 2 * hrtflen * SENSORMIT_NHRTFS)
-    {
-        sprintf(msg,"unable to read data from MIT KEMAR data file '%s' (error code %d)", datafile, res);
-        MsgErrorExit(msg);
-    }
-        
-    /* fill sensor definition structure */
-    definition->type          = ST_IMPULSERESPONSE;
-    definition->probe.xyz2idx = sensor_MIT_probe;
-    definition->fs            = 44100.0;
-    definition->nChannels     = 2;
-	definition->nEntries      = SENSORMIT_NHRTFS;
-    definition->nSamples      = hrtflen;
-
-	/* provide some feedback */
-	MsgPrintf("Successfully loaded MIT HRTFs (#pos=%d, #samples=%d, #ch=2, fs=44100)\n", 
-		SENSORMIT_NHRTFS, hrtflen);
-    MsgRelax;
-    
-#ifdef MEX
-    /* make response data memory persistent */
-    mexMakeMemoryPersistent(definition->responsedata);
-#endif
-}
-#else
 /***** SOFA *******************************/
-int sensor_SOFA_probe(const CSensorDefinition *sensor, const XYZ *xyz)
-{
-	float c[3];
-	int nearest;
-
-	UNREFERENCED_PARAMETER(sensor);
-
-	c[0] = (float)xyz->x;
-	c[1] = (float)xyz->y;
-	c[2] = (float)xyz->z;
-
-	nearest = mysofa_lookup(sensor->sofaHandle->lookup, c);
-
-	return nearest;
-}
-
-int sensor_SOFA_probe_interp(const CSensorDefinition *sensor, const XYZ *xyz)
+int sensor_SOFA_probe_nointerp(const CSensorDefinition* sensor, const XYZ* xyz)
 {
 	unsigned int i;
 
 	UNREFERENCED_PARAMETER(sensor);
 
-	mysofa_getfilter_float(sensor->sofaHandle, (float)xyz->x, (float)xyz->y, (float)xyz->z, sensor->interpResponseDataFloat, sensor->interpResponseDataFloat + sensor->sofaHandle->hrtf->N,
+	float x = (float)xyz->x;
+	float y = (float)xyz->y;
+	float z = (float)xyz->z;
+
+	mysofa_getfilter_float_nointerp(sensor->sofahandle, x, y, z, sensor->responsedatafloat, sensor->responsedatafloat + sensor->sofahandle->hrtf->N,
 		&sensor->delays[0], &sensor->delays[1]);
 
-	for (i = 0; i < sensor->sofaHandle->hrtf->R * sensor->sofaHandle->hrtf->N; ++i)
+	for (i = 0; i < sensor->sofahandle->hrtf->R * sensor->sofahandle->hrtf->N; ++i)
 	{
-		sensor->interpResponseDataDouble[i] = (double)sensor->interpResponseDataFloat[i];
+		sensor->responsedata[i] = (double)sensor->responsedatafloat[i];
+	}
+
+	return 0;
+}
+
+int sensor_SOFA_probe(const CSensorDefinition *sensor, const XYZ *xyz)
+{
+	unsigned int i;
+
+	UNREFERENCED_PARAMETER(sensor);
+
+	float x = (float)xyz->x;
+	float y = (float)xyz->y;
+	float z = (float)xyz->z;
+
+	mysofa_getfilter_float(sensor->sofahandle, x, y, z, sensor->responsedatafloat, sensor->responsedatafloat + sensor->sofahandle->hrtf->N,
+		&sensor->delays[0], &sensor->delays[1]);
+
+	for (i = 0; i < sensor->sofahandle->hrtf->R * sensor->sofahandle->hrtf->N; ++i)
+	{
+		sensor->responsedata[i] = (double)sensor->responsedatafloat[i];
 	}
 
 	return 0;
@@ -605,7 +472,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 
 	if (strlen(path) == strlen(datafile))
 	{
-		printf("no options provided, using default values\n");
+		MsgPrintf("no options provided in sensor description, using default values\n");
 	}
 	else
 	{
@@ -614,169 +481,160 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	}
 
 	/* memory allocation for SOFA data */
-	definition->sofaHandle = MemMalloc(sizeof(struct MYSOFA_EASY));
+	definition->sofahandle = MemMalloc(sizeof(struct MYSOFA_EASY));
 	
 	/* check memory allocation error*/
-	if (!definition->sofaHandle)
+	if (!definition->sofahandle)
 	{
-		sprintf(msg, "unable to allocate memory for SOFA data file '%s'", path);
+		err = MYSOFA_NO_MEMORY;
+		sprintf(msg, "unable to allocate memory for SOFA data file '%s' (error %d)", path, err);
 		MsgErrorExit(msg);
 	}
 
+	/* set all values of struct to their default "0" (to avoid freeing unallocated
+	 values in mysofa_free)*/
+	*(definition->sofahandle) = (struct MYSOFA_EASY){ 0 };
+
 	/* SOFA structure fields initialization */
-	definition->sofaHandle->lookup = NULL;
-	definition->sofaHandle->neighborhood = NULL;
-	definition->sofaHandle->fir = NULL;
+	definition->sofahandle->lookup = NULL;
+	definition->sofahandle->neighborhood = NULL;
+	definition->sofahandle->fir = NULL;
 
 	/* open SOFA file */
-	definition->sofaHandle->hrtf = mysofa_load(path, &err);
-	if (!definition->sofaHandle->hrtf) {
-		mysofa_close(definition->sofaHandle);
+	definition->sofahandle->hrtf = mysofa_load(path, &err);
+	if (!definition->sofahandle->hrtf) {
+		mysofa_close(definition->sofahandle);
 		sprintf(msg, "unable to load SOFA data file '%s' (error %d)", path, err);
 		MsgErrorExit(msg);
 	}
 
 	/* check SOFA data */
-	err = mysofa_check(definition->sofaHandle->hrtf);
+	err = mysofa_check(definition->sofahandle->hrtf);
 	if (err != MYSOFA_OK) {
-		mysofa_close(definition->sofaHandle);
+		mysofa_close(definition->sofahandle);
 		sprintf(msg, "error in SOFA hrtf data '%s' (error %d)", path, err);
 		MsgErrorExit(msg);
 	}
 
 	/* SOFA data resampling */
-	if (definition->resampling)
+	if (definition->resampling && g_fs > 0)
 	{
 		sprintf(msg, "resampling HRTF data... ");
-		MsgPrintf(msg);
-		err = mysofa_resample(definition->sofaHandle->hrtf, (float)g_fs);
+		MsgPrintf("%s", msg);
+		err = mysofa_resample(definition->sofahandle->hrtf, (float)g_fs);
 		if (err != MYSOFA_OK) {
-			mysofa_close(definition->sofaHandle);
-			sprintf(msg, "an error occurred during resampling of data\n (error %d)", err);
+			mysofa_close(definition->sofahandle);
+			sprintf(msg, "an error occurred during the resampling of HRTF data\n (error %d)", err);
 			MsgErrorExit(msg);
 		}
 		sprintf(msg, "complete\n");
-		MsgPrintf(msg);
+		MsgPrintf("%s", msg);
 	}
 
 	/* SOFA data normalization */
 	if (definition->normalization)
 	{
 		sprintf(msg, "normalizing HRTF data... ");
-		MsgPrintf(msg);
-		mysofa_loudness(definition->sofaHandle->hrtf);
+		MsgPrintf("%s", msg);
+		mysofa_loudness(definition->sofahandle->hrtf);
 		sprintf(msg, "complete\n");
-		MsgPrintf(msg);
+		MsgPrintf("%s", msg);
 	}
 
 	/* SOFA lookup initialization */
-	mysofa_tocartesian(definition->sofaHandle->hrtf);
+	mysofa_tocartesian(definition->sofahandle->hrtf);
 
-	definition->sofaHandle->lookup = mysofa_lookup_init(definition->sofaHandle->hrtf);
-	if (definition->sofaHandle->lookup == NULL) {
+	definition->sofahandle->lookup = mysofa_lookup_init(definition->sofahandle->hrtf);
+	if (!definition->sofahandle->lookup) {
 		err = MYSOFA_INTERNAL_ERROR;
-		mysofa_close(definition->sofaHandle);
+		mysofa_close(definition->sofahandle);
 		sprintf(msg, "unable to initialize lookup (error %d)", err);
 		MsgErrorExit(msg);
 	}
 
 	/* SOFA neighborhood initialization */
-	definition->sofaHandle->neighborhood = mysofa_neighborhood_init(definition->sofaHandle->hrtf, definition->sofaHandle->lookup);
-	if (definition->sofaHandle->neighborhood == NULL) {
+	definition->sofahandle->neighborhood = mysofa_neighborhood_init(definition->sofahandle->hrtf, definition->sofahandle->lookup);
+	if (!definition->sofahandle->neighborhood) {
 		err = MYSOFA_INTERNAL_ERROR;
-		mysofa_close(definition->sofaHandle);
+		mysofa_close(definition->sofahandle);
 		sprintf(msg, "unable to initialize neighborhood (error %d)", err);
 		MsgErrorExit(msg);
 	}
 
 	/* SOFA FIR initialization */
-	definition->sofaHandle->fir = malloc(definition->sofaHandle->hrtf->N * definition->sofaHandle->hrtf->R * sizeof(float));
-	if (definition->sofaHandle->fir == NULL) {
+	definition->sofahandle->fir = MemMalloc(definition->sofahandle->hrtf->N * definition->sofahandle->hrtf->R * sizeof(float));
+	if (!definition->sofahandle->fir) {
 		err = MYSOFA_INTERNAL_ERROR;
-		mysofa_close(definition->sofaHandle);
+		mysofa_close(definition->sofahandle);
 		sprintf(msg, "unable to initialize fir filter memory (error %d)", err);
 		MsgErrorExit(msg);
 	}
 
-	if (definition->interpolation)
+	/* allocate memory for sensor temporary float response data */
+	definition->responsedatafloat = MemMalloc(definition->sofahandle->hrtf->N * definition->sofahandle->hrtf->R * sizeof(float));
+
+	if (!definition->responsedatafloat)
 	{
-		/* allocate memory for sensor temporary interpolated response data */
-		definition->interpResponseDataFloat = MemMalloc(definition->sofaHandle->hrtf->N * definition->sofaHandle->hrtf->R * sizeof(float));
-
-		if (!definition->interpResponseDataFloat)
-		{
-			mysofa_close(definition->sofaHandle);
-			sprintf(msg, "unable to allocate memory for impulse responses");
-			MsgErrorExit(msg);
-		}
-
-		/* allocate memory for sensor interpolated response data */
-		definition->interpResponseDataDouble = MemMalloc(definition->sofaHandle->hrtf->N * definition->sofaHandle->hrtf->R * sizeof(double));
-
-		if (!definition->interpResponseDataDouble)
-		{
-			mysofa_close(definition->sofaHandle);
-			sprintf(msg, "unable to allocate memory for impulse responses");
-			MsgErrorExit(msg);
-		}
-
-		/* allocate memory for delays */
-		definition->delays = MemMalloc(definition->sofaHandle->hrtf->R * sizeof(float));
-
-		if (!definition->delays)
-		{
-			mysofa_close(definition->sofaHandle);
-			sprintf(msg, "unable to allocate memory for delays");
-			MsgErrorExit(msg);
-		}
-	}
-	
-	/* allocate memory for sensor response data */
-	definition->responsedata = MemMalloc(definition->sofaHandle->hrtf->DataIR.elements * sizeof(double));
-
-	/* check memory allocation error */
-	if (!definition->responsedata)
-	{
-		mysofa_close(definition->sofaHandle);
+		mysofa_close(definition->sofahandle);
 		sprintf(msg, "unable to allocate memory for impulse response");
 		MsgErrorExit(msg);
 	}
 
-	/* read HRTF data */
-	for (i = 0; i < definition->sofaHandle->hrtf->DataIR.elements; ++i)
-		definition->responsedata[i] = (double)definition->sofaHandle->hrtf->DataIR.values[i];
+	memset(definition->responsedatafloat, 0, definition->sofahandle->hrtf->N * definition->sofahandle->hrtf->R * sizeof(float));
+
+	/* allocate memory for delays */
+	definition->delays = MemMalloc(definition->sofahandle->hrtf->R * sizeof(float));
+
+	if (!definition->delays)
+	{
+		mysofa_close(definition->sofahandle);
+		sprintf(msg, "unable to allocate memory for delays");
+		MsgErrorExit(msg);
+	}
+	
+	/* allocate memory for sensor response data */
+	definition->responsedata = MemMalloc(definition->sofahandle->hrtf->N * definition->sofahandle->hrtf->R * sizeof(double));
+
+	/* check memory allocation error */
+	if (!definition->responsedata)
+	{
+		mysofa_close(definition->sofahandle);
+		sprintf(msg, "unable to allocate memory for impulse response");
+		MsgErrorExit(msg);
+	}
+
+	memset(definition->responsedata, 0, definition->sofahandle->hrtf->N* definition->sofahandle->hrtf->R * sizeof(double));
 
 	/* fill sensor definition structure */
 	definition->type = ST_IMPULSERESPONSE;
-	if (!definition->interpolation)
+	if (definition->interpolation)
 		definition->probe.xyz2idx = sensor_SOFA_probe;
 	else
-		definition->probe.xyz2idx = sensor_SOFA_probe_interp;
-	if (definition->resampling)
+		definition->probe.xyz2idx = sensor_SOFA_probe_nointerp;
+	if (definition->resampling && g_fs > 0)
 		definition->fs = g_fs;
 	else
-		definition->fs = definition->sofaHandle->hrtf->DataSamplingRate.values[0];
-	definition->nChannels = definition->sofaHandle->hrtf->R;
-	definition->nEntries = definition->sofaHandle->hrtf->M;
-	definition->nSamples = definition->sofaHandle->hrtf->N;
+		definition->fs = definition->sofahandle->hrtf->DataSamplingRate.values[0];
+	definition->nChannels = definition->sofahandle->hrtf->R;
+	definition->nEntries = definition->sofahandle->hrtf->M;
+	definition->nSamples = definition->sofahandle->hrtf->N;
+
+	MemFree(datafilecopy);
 
 	/* provide some feedback */
 	MsgPrintf("Successfully loaded SOFA HRTFs (#pos=%d, #samples=%d, #ch=%d, fs=%f)\n",
 		definition->nEntries, definition->nSamples, definition->nChannels, definition->fs);
 	MsgRelax;
-    
-    MemFree(datafilecopy);
-	
+    	
 #ifdef MEX
 	/* make response data memory persistent */
+	mexMakeMemoryPersistent(definition->sofahandle);
+	mexMakeMemoryPersistent(definition->sofahandle->fir);
+	mexMakeMemoryPersistent(definition->responsedatafloat);
 	mexMakeMemoryPersistent(definition->responsedata);
-	mexMakeMemoryPersistent(definition->sofaHandle);
-	mexMakeMemoryPersistent(definition->interpResponseDataFloat);
-	mexMakeMemoryPersistent(definition->interpResponseDataDouble);
 	mexMakeMemoryPersistent(definition->delays);
 #endif
 }
-#endif
 
 /********************************************** 
  * sensor list
@@ -791,11 +649,7 @@ CSensorListItem sensor[] = {
     {"subcardioid",     sensor_subcardioid_init     },
     {"supercardioid",	sensor_supercardioid_init   },
     {"unidirectional",  sensor_unidirectional_init  },
-#	ifndef MYSOFA_H_INCLUDED
-    {"MIT",             sensor_MIT_init             },
-#	else
-    {"SOFA",             sensor_SOFA_init             }
-#	endif
+    {"SOFA",            sensor_SOFA_init            }
 };
 int nSensors = sizeof(sensor) / sizeof(CSensorListItem);
 
@@ -947,18 +801,23 @@ void ClearSensor(CSensorDefinitionListItem *item)
 		MemFree(item->definition.sensordata);
 	if (item->definition.simulationlogweights)
 		MemFree(item->definition.simulationlogweights);
-#	ifdef MYSOFA_H_INCLUDED
-	mysofa_close(item->definition.sofaHandle);
-	if (item->definition.interpolation)
+
+	if (item->definition.sofahandle)
 	{
-		if (item->definition.interpResponseDataDouble)
-			MemFree(item->definition.interpResponseDataDouble);
-		if (item->definition.interpResponseDataFloat)
-			MemFree(item->definition.interpResponseDataFloat);
+		if (item->definition.responsedatafloat)
+			MemFree(item->definition.responsedatafloat);
 		if (item->definition.delays)
 			MemFree(item->definition.delays);
+		if (item->definition.sofahandle->fir)
+			MemFree(item->definition.sofahandle->fir);
+		if (item->definition.sofahandle->neighborhood)
+			mysofa_neighborhood_free(item->definition.sofahandle->neighborhood);
+		if (item->definition.sofahandle->lookup)
+			mysofa_lookup_free(item->definition.sofahandle->lookup);
+		if (item->definition.sofahandle->hrtf)
+			mysofa_free(item->definition.sofahandle->hrtf);
+		MemFree(item->definition.sofahandle);
 	}
-#	endif
     
     /* release memory associated with item */
     MemFree(item);
@@ -992,6 +851,7 @@ void CmdListSensors(void)
 
 void CmdLoadSensor(const char *description)
 {
+	g_fs = -1;
     LoadSensor(description);
 }
 
