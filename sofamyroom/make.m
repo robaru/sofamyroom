@@ -26,11 +26,19 @@ function make(varargin)
 % along with ROOMSIM. If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%Check MATLAB version
+[~, maxArraySize] = computer; 
+is64bitComputer = maxArraySize > 2^31;
+if ~is64bitComputer
+    fprintf("Building of Sofamyroom is not supported on 32-bit MATLAB\n");
+    return
+end
+
 % Version
 version = '1.0';
 
 % MEX-file name
-output = 'roomsim';
+output = 'sofamyroom';
 
 % Set default switches
  switches = {'-DMEX'
@@ -66,7 +74,7 @@ for i = 1:nargin
             switches = [switches
                         '-DUNIT_TEST'
                         ];
-            output = 'roomsimtest';
+            output = 'sofamyroomtest';
         case 'debug'
             switches = [switches 
                         '-g'
@@ -149,8 +157,8 @@ mexfiles = { ['source' filesep 'libroomsim' filesep 'source' filesep '3D.c']
              ['source' filesep  'build.c']
            };
 
-% Remove roomsim from memory, if loaded
-clear roomsim;
+% Remove sofamyroom from memory, if loaded
+clear sofamyroom;
 
 % Echo command to be executed
 fprintf('mex '); 
@@ -200,7 +208,7 @@ if ispc
                     ];
 end
 
-zip(['roomsim_v' version '_' date '.zip'], distribfiles)
+zip(['sofamyroom_v' version '_' date '.zip'], distribfiles)
 
 fprintf("Zip archive successfully created.\n")
 
