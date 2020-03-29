@@ -168,7 +168,7 @@ You can also build it in Unittest mode, to check the validity of SofaMyRoom func
 
 # License
 
-SofaMyRoom is covered by EUPL. 
+SofaMyRoom is covered by EUPL.
 
 * Roomsim - GNU GPL;
 * `libmysofa` - See `LICENSE` on `libmysofa` project page;
