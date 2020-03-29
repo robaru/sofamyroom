@@ -62,11 +62,7 @@ void Roomsetup(CRoomSetup *par)
 	};
 	static const CSensor receiver[] = {
 		/*{{1,2,1}, {0,PI/2,0}, "cardioid"} */
-		//{{5.0,7.0,1.0}, {0,0,0}, "MIT ../../../../data/MIT/KEMARsmall.hrtf"}
-		//{{5.0,7.0,1.0}, {0,0,0}, "SOFA ../../../../data/SOFA/MIT_KEMAR_normal_pinna.sofa", TRUE}
-		{{1.0,2.0,1.0}, {0,0,0}, "SOFA ./data/SOFA/MIT_KEMAR_large_pinna.sofa"}
-		//{{1.0,2.0,1.0}, {0,0,0}, "SOFA ../../../../data/SOFA/MIT_KEMAR_COMPACT_FULL.sofa"}
-
+		{{1.0,2.0,1.0}, {0,0,0}, "SOFA ../../data/SOFA/MIT_KEMAR_normal_pinna.sofa interp=1"}
 	};
 	FILE *fid;
 	int i;
@@ -75,19 +71,19 @@ void Roomsetup(CRoomSetup *par)
 	par->options.responseduration	  = 0.5;
 	par->options.bandsperoctave		  = 1;
 	par->options.referencefrequency   = 125;
-	par->options.airabsorption		  = TRUE;
-	par->options.distanceattenuation  = TRUE;
-	par->options.subsampleaccuracy    = TRUE;
+	par->options.airabsorption		  = true;
+	par->options.distanceattenuation  = true;
+	par->options.subsampleaccuracy    = true;
 	par->options.highpasscutoff		  = 0;
-	par->options.verbose			  = TRUE;
+	par->options.verbose			  = true;
 
-	par->options.simulatespecular	  = TRUE;
+	par->options.simulatespecular	  = true;
 	par->options.reflectionorder[0]   = 3;
 	par->options.reflectionorder[1]   = 3;
 	par->options.reflectionorder[2]   = 3;
 
 #define RAYORDER 10
-	par->options.simulatediffuse      = TRUE;
+	par->options.simulatediffuse      = true;
 	par->options.numberofrays         = 20*RAYORDER*RAYORDER;
 	par->options.rayenergyfloordB     = -80;
 	par->options.diffusetimestep      = 0.010;
@@ -114,6 +110,10 @@ void Roomsetup(CRoomSetup *par)
 	/* Receiver(s) */
 	par->receiver	= receiver;
 	par->nReceivers = sizeof(receiver)/sizeof(receiver[0]);
+
+	/* Output */
+	par->options.outputname = "brir";
+	par->options.saveaswav = true;
 
 	/* read absorption and diffusion data if exists */
 	fid = fopen("abscoeff.txt","r");
@@ -145,13 +145,13 @@ int main(int argc, char **argv)
 	CFileSetup filesetup;
 	char	   filename[256];
 	Wave	   w;
-	float      *samples;
+	float      *sample;
 
 	printf("ROOMSIM v" ROOMSIM_VERSION ", built %s %s\n", builddate, buildtime);
 
 	if (argc<=1)
 	{
-		MsgPrintf("Usage: roomsim setup\n");
+		MsgPrintf("Usage: sofamyroom setup\n");
 		return 0;
 	}
 
@@ -163,15 +163,13 @@ int main(int argc, char **argv)
 		MsgErrorExit(msg);
 	}
 
-	//PrintSetup(&filesetup.root); 
+	PrintSetup(&filesetup.root); 
 	LoadCRoomSetup(&filesetup.root,&setup);
 	//Roomsetup(&setup);
 	ValidateSetup(&setup);
 
 	/* run the simulator */
     response = Roomsim(&setup);
-
-	samples = (float *) malloc(response[0].nChannels * sizeof(float));
 
 #define FWVAR(v) fwrite(&(v),sizeof(v),1,fid)
 #define FWDBLARR(v,c) fwrite(v,sizeof((v)[0]),c,fid)
@@ -205,9 +203,17 @@ int main(int argc, char **argv)
 	}
 	else
 	{
+		sample = (float*)malloc(response[0].nChannels * sizeof(float));
+
+		if (!sample)
+		{
+			MsgPrintf("Unable to allocate memory for writing the WAVE file\n");
+			return 1;
+		}
+
 		for (i = 0; i < setup.nSources*setup.nReceivers; i++)
 		{
-			sprintf(filename, "%s_%d.wav", setup.options.outputname, i);
+			sprintf(filename, "%s - receiver_%d.wav", setup.options.outputname, i);
 
 			MsgPrintf("Writing output file '%s'\n", filename);
 
@@ -217,14 +223,16 @@ int main(int argc, char **argv)
 			{
 				for (k = 0; k < response[i].nChannels; ++k)
 				{
-					samples[k] = (float)response[i].sample[j + response[i].nSamples * k];
+					sample[k] = (float)response[i].sample[j + response[i].nSamples * k];
 				}
-				waveAddSampleFloat(&w, samples);
+				waveAddSampleFloat(&w, sample);
 			}
 			waveToFile(&w, filename);
 			waveDestroy(&w);
 
 		}
+
+		free(sample);
 	}
     
 	/* release BRIR memory */
@@ -232,8 +240,6 @@ int main(int argc, char **argv)
 
 	/* release sensors */
 	ClearAllSensors();
-
-	free(samples);
 
 #ifdef DEBUG
 	printf("Press return to exit...\n");

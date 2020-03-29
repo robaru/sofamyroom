@@ -20,6 +20,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ROOMSIM. If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************/
+#include <stdbool.h>
 
 /* clear existing definitions */
 #undef STRUCTBEGIN
@@ -43,16 +44,7 @@
 
 #  ifdef MEX
 #    include <matrix.h>
-#  else
-#	ifndef __bool_true_false_are_defined
-	 typedef int bool;
-#    define TRUE  1
-#    define FALSE 0
-#	else
-#	 define TRUE true
-#	 define FALSE false
-#	endif
-#  endif
+#endif
 
 #define STRUCTBEGIN(n)                  typedef struct {
 #define STRUCTEND(n)                    } n;
@@ -418,7 +410,7 @@ STRUCTEND ( COptions )
 STRUCTBEGIN ( CSensor )
     FIELDDOUBLEARRAY ( location, 3    )
     FIELDDOUBLEARRAY ( orientation, 3 )
-    FIELDSTRING      ( description    )
+    FIELDSTRING      ( description    )	
 STRUCTEND ( CSensor )
 
 STRUCTBEGIN ( CRoomSetup )

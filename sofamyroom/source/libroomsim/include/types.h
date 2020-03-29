@@ -118,14 +118,10 @@ struct CSensorDefinition {
 	double *simulationlogweights;
 
 	/* for SOFA HRTFs */
-#	ifdef MYSOFA_H_INCLUDED
-	struct MYSOFA_EASY *sofaHandle;
-	double *interpResponseDataDouble;
-	float  *interpResponseDataFloat;
+	struct MYSOFA_EASY *sofahandle;
+	float  *responsedatafloat;
 	float  *delays; //delays[0] -> left
 	bool   interpolation, normalization, resampling;
-#	endif
-
 } ;
 
 typedef struct 
