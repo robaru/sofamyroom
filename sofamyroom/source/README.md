@@ -125,7 +125,8 @@ You can use CMake to generate a Makefile for SofaMyRoom. Open a new Terminal win
 
 ```bash
 $ cd sofamyroom/source/build
-$ cmake .. -G"Unix Makefiles" -DCMAKE_BULD_TYPE=BUILD_TYPE
+$ cmake .. -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=BUILD_TYPE
+$ make
 ```
 `BUILD_TYPE` can be `Debug`, `Release` or `Unittest`. Before building the project, the following libraries 
 may be needed:
