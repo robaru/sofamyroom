@@ -65,10 +65,11 @@ int SensorGetResponse(const CSensorDefinition *sensor, const XYZ *xyz, CSensorRe
 		
 		case ST_IMPULSERESPONSE:
 		{
-				sensor->probe.xyz2idx(sensor, xyz);
-				response->type = SR_IMPULSERESPONSE;
-				response->data.impulseresponse = sensor->responsedata;
-				return 1;
+			if (sensor->probe.response(sensor, xyz) < 0)
+				return 0;
+			response->type = SR_IMPULSERESPONSE;
+			response->data.impulseresponse = sensor->responsedata;
+			return 1;
 		}
 	}
 	return 0;
@@ -457,22 +458,29 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 
 	/* test that a datafile name is provided */
 	if (!datafile)
+	{
 		MsgErrorExit("no SOFA datafile specified\n");
+	}
+    
+    /* getting options */
+	datafilecopy = (char *)MemMalloc((strlen(datafile) + 1) * sizeof(char));
+	if (!datafilecopy)
+	{
+		sprintf(msg, "unable to allocate memory space for datafile string\n");
+		MsgPrintf("%s", msg);
+	}
+    strcpy(datafilecopy, datafile);
 
 	/* setting options to default values */
 	definition->interpolation = false;
 	definition->normalization = false;
 	definition->resampling = false;
-    
-    /* getting options */
-	datafilecopy = (char *)MemMalloc((strlen(datafile) + 1) * sizeof(char));
-    strcpy(datafilecopy, datafile);
 
 	path = strtok(datafilecopy, " ");
-
 	if (strlen(path) == strlen(datafile))
 	{
-		MsgPrintf("no options provided in sensor description, using default values\n");
+		sprintf(msg, "no options provided in sensor description, using default values\n");
+		MsgPrintf("%s", msg);
 	}
 	else
 	{
@@ -482,12 +490,11 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 
 	/* memory allocation for SOFA data */
 	definition->sofahandle = MemMalloc(sizeof(struct MYSOFA_EASY));
-	
-	/* check memory allocation error*/
 	if (!definition->sofahandle)
 	{
 		err = MYSOFA_NO_MEMORY;
 		sprintf(msg, "unable to allocate memory for SOFA data file '%s' (error %d)", path, err);
+		MemFree(datafilecopy);
 		MsgErrorExit(msg);
 	}
 
@@ -502,19 +509,26 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 
 	/* open SOFA file */
 	definition->sofahandle->hrtf = mysofa_load(path, &err);
-	if (!definition->sofahandle->hrtf) {
+	if (!definition->sofahandle->hrtf) 
+	{
 		mysofa_close(definition->sofahandle);
 		sprintf(msg, "unable to load SOFA data file '%s' (error %d)", path, err);
+		MemFree(datafilecopy);
 		MsgErrorExit(msg);
 	}
 
 	/* check SOFA data */
 	err = mysofa_check(definition->sofahandle->hrtf);
-	if (err != MYSOFA_OK) {
+	if (err != MYSOFA_OK) 
+	{
 		mysofa_close(definition->sofahandle);
 		sprintf(msg, "error in SOFA hrtf data '%s' (error %d)", path, err);
+		MemFree(datafilecopy);
 		MsgErrorExit(msg);
 	}
+
+	/* free datafilecopy, not needed anymore */
+	MemFree(datafilecopy);
 
 	/* SOFA data resampling */
 	if (definition->resampling && g_fs > 0)
@@ -522,7 +536,8 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 		sprintf(msg, "resampling HRTF data... ");
 		MsgPrintf("%s", msg);
 		err = mysofa_resample(definition->sofahandle->hrtf, (float)g_fs);
-		if (err != MYSOFA_OK) {
+		if (err != MYSOFA_OK) 
+		{
 			mysofa_close(definition->sofahandle);
 			sprintf(msg, "an error occurred during the resampling of HRTF data\n (error %d)", err);
 			MsgErrorExit(msg);
@@ -545,7 +560,8 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	mysofa_tocartesian(definition->sofahandle->hrtf);
 
 	definition->sofahandle->lookup = mysofa_lookup_init(definition->sofahandle->hrtf);
-	if (!definition->sofahandle->lookup) {
+	if (!definition->sofahandle->lookup) 
+	{
 		err = MYSOFA_INTERNAL_ERROR;
 		mysofa_close(definition->sofahandle);
 		sprintf(msg, "unable to initialize lookup (error %d)", err);
@@ -554,7 +570,8 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 
 	/* SOFA neighborhood initialization */
 	definition->sofahandle->neighborhood = mysofa_neighborhood_init(definition->sofahandle->hrtf, definition->sofahandle->lookup);
-	if (!definition->sofahandle->neighborhood) {
+	if (!definition->sofahandle->neighborhood) 
+	{
 		err = MYSOFA_INTERNAL_ERROR;
 		mysofa_close(definition->sofahandle);
 		sprintf(msg, "unable to initialize neighborhood (error %d)", err);
@@ -563,7 +580,8 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 
 	/* SOFA FIR initialization */
 	definition->sofahandle->fir = MemMalloc(definition->sofahandle->hrtf->N * definition->sofahandle->hrtf->R * sizeof(float));
-	if (!definition->sofahandle->fir) {
+	if (!definition->sofahandle->fir) 
+	{
 		err = MYSOFA_INTERNAL_ERROR;
 		mysofa_close(definition->sofahandle);
 		sprintf(msg, "unable to initialize fir filter memory (error %d)", err);
@@ -572,7 +590,6 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 
 	/* allocate memory for sensor temporary float response data */
 	definition->responsedatafloat = MemMalloc(definition->sofahandle->hrtf->N * definition->sofahandle->hrtf->R * sizeof(float));
-
 	if (!definition->responsedatafloat)
 	{
 		mysofa_close(definition->sofahandle);
@@ -584,7 +601,6 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 
 	/* allocate memory for delays */
 	definition->delays = MemMalloc(definition->sofahandle->hrtf->R * sizeof(float));
-
 	if (!definition->delays)
 	{
 		mysofa_close(definition->sofahandle);
@@ -594,8 +610,6 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	
 	/* allocate memory for sensor response data */
 	definition->responsedata = MemMalloc(definition->sofahandle->hrtf->N * definition->sofahandle->hrtf->R * sizeof(double));
-
-	/* check memory allocation error */
 	if (!definition->responsedata)
 	{
 		mysofa_close(definition->sofahandle);
@@ -608,18 +622,24 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	/* fill sensor definition structure */
 	definition->type = ST_IMPULSERESPONSE;
 	if (definition->interpolation)
-		definition->probe.xyz2idx = sensor_SOFA_probe;
+	{
+		definition->probe.response = sensor_SOFA_probe;
+	}
 	else
-		definition->probe.xyz2idx = sensor_SOFA_probe_nointerp;
+	{
+		definition->probe.response = sensor_SOFA_probe_nointerp;
+	}
 	if (definition->resampling && g_fs > 0)
+	{
 		definition->fs = g_fs;
+	}
 	else
+	{
 		definition->fs = definition->sofahandle->hrtf->DataSamplingRate.values[0];
+	}
 	definition->nChannels = definition->sofahandle->hrtf->R;
 	definition->nEntries = definition->sofahandle->hrtf->M;
 	definition->nSamples = definition->sofahandle->hrtf->N;
-
-	MemFree(datafilecopy);
 
 	/* provide some feedback */
 	MsgPrintf("Successfully loaded SOFA HRTFs (#pos=%d, #samples=%d, #ch=%d, fs=%f)\n",

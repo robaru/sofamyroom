@@ -61,14 +61,14 @@ typedef void (*CSensorInitFunction)(const char *, CSensorDefinition*);
 typedef double (*CSensorProbeLogGainFunction)(const CSensorDefinition*, const XYZ*);
 typedef int (*CSensorProbeXyz2IdxFunction)(const CSensorDefinition*, const XYZ*);
 /*typedef const double *(*CSensorProbeWeightsFunction)(const XYZ*, void *); */
-/*typedef const double *(*CSensorProbeResponseFunction)(const XYZ*, void *); */
+typedef const int (*CSensorProbeResponseFunction)(const XYZ*, void *);
 
 typedef union CSensorProbeFunction
 {
     CSensorProbeLogGainFunction  loggain;
 	CSensorProbeXyz2IdxFunction	 xyz2idx;
     /*CSensorProbeWeightsFunction  weights; */
-    /*CSensorProbeResponseFunction response; */
+    CSensorProbeResponseFunction response;
 } CSensorProbeFunction;
 
 typedef struct CSensorResponse

@@ -163,7 +163,7 @@ int main(int argc, char **argv)
 		MsgErrorExit(msg);
 	}
 
-	PrintSetup(&filesetup.root); 
+	//PrintSetup(&filesetup.root); 
 	LoadCRoomSetup(&filesetup.root,&setup);
 	//Roomsetup(&setup);
 	ValidateSetup(&setup);
