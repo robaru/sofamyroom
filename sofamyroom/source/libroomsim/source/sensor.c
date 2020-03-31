@@ -65,7 +65,7 @@ int SensorGetResponse(const CSensorDefinition *sensor, const XYZ *xyz, CSensorRe
 		
 		case ST_IMPULSERESPONSE:
 		{
-			if (sensor->probe.response(sensor, xyz) < 0)
+			if (sensor->probe.xyz2idx(sensor, xyz) < 0)
 				return 0;
 			response->type = SR_IMPULSERESPONSE;
 			response->data.impulseresponse = sensor->responsedata;
@@ -623,11 +623,11 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	definition->type = ST_IMPULSERESPONSE;
 	if (definition->interpolation)
 	{
-		definition->probe.response = sensor_SOFA_probe;
+		definition->probe.xyz2idx = sensor_SOFA_probe;
 	}
 	else
 	{
-		definition->probe.response = sensor_SOFA_probe_nointerp;
+		definition->probe.xyz2idx = sensor_SOFA_probe_nointerp;
 	}
 	if (definition->resampling && g_fs > 0)
 	{
