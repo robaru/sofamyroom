@@ -347,7 +347,7 @@ void getMysofaErrorString(int error, char *buffer)
 		break;
 	case 10003: sprintf(buffer, "MYSOFA_READ_ERROR");
 		break;
-	case 10004: sprintf(buffer, " MYSOFA_INVALID_ATTRIBUTES");
+	case 10004: sprintf(buffer, "MYSOFA_INVALID_ATTRIBUTES");
 		break;
 	case 10005: sprintf(buffer, "MYSOFA_INVALID_DIMENSIONS");
 		break;
@@ -374,20 +374,52 @@ void getMysofaErrorString(int error, char *buffer)
 
 }
 
-int sensor_SOFA_probe_nointerp(const CSensorDefinition* sensor, const XYZ* xyz)
+int sensor_SOFA_probe_multichannel(const CSensorDefinition* sensor, const XYZ* xyz)
 {
+	float c[3];
+	int nearest, size;
 	unsigned int i;
 
 	UNREFERENCED_PARAMETER(sensor);
 
-	float x = (float)xyz->x;
-	float y = (float)xyz->y;
-	float z = (float)xyz->z;
+	c[0] = (float)xyz->x;
+	c[1] = (float)xyz->y;
+	c[2] = (float)xyz->z;
 
-	mysofa_getfilter_float_nointerp(sensor->sofahandle, x, y, z, sensor->responsedatafloat, sensor->responsedatafloat + sensor->sofahandle->hrtf->N,
+	nearest = mysofa_lookup(sensor->sofahandle->lookup, c);
+	size = sensor->sofahandle->hrtf->N * sensor->sofahandle->hrtf->R;
+
+	if (nearest)
+	{
+		printf("%f %f %f %d ", c[0], c[1], c[2], nearest);
+	}
+
+	for (i = 0; i < size; ++i)
+	{
+		sensor->responsedata[i] = (double) sensor->sofahandle->hrtf->DataIR.values[nearest * size + i];
+	}
+
+	return nearest;
+}
+
+int sensor_SOFA_probe_nointerp(const CSensorDefinition* sensor, const XYZ* xyz)
+{
+	float c[3];
+	int size;
+	unsigned int i;
+
+	UNREFERENCED_PARAMETER(sensor);
+
+	c[0] = (float)xyz->x;
+	c[1] = (float)xyz->y;
+	c[2] = (float)xyz->z;
+
+	size = sensor->sofahandle->hrtf->R * sensor->sofahandle->hrtf->N;
+
+	mysofa_getfilter_float_nointerp(sensor->sofahandle, c[0], c[1], c[2], sensor->responsedatafloat, sensor->responsedatafloat + sensor->sofahandle->hrtf->N,
 		&sensor->delays[0], &sensor->delays[1]);
 
-	for (i = 0; i < sensor->sofahandle->hrtf->R * sensor->sofahandle->hrtf->N; ++i)
+	for (i = 0; i < size; ++i)
 	{
 		sensor->responsedata[i] = (double)sensor->responsedatafloat[i];
 	}
@@ -397,18 +429,22 @@ int sensor_SOFA_probe_nointerp(const CSensorDefinition* sensor, const XYZ* xyz)
 
 int sensor_SOFA_probe(const CSensorDefinition *sensor, const XYZ *xyz)
 {
+	float c[3];
+	int size;
 	unsigned int i;
 
 	UNREFERENCED_PARAMETER(sensor);
 
-	float x = (float)xyz->x;
-	float y = (float)xyz->y;
-	float z = (float)xyz->z;
+	c[0] = (float)xyz->x;
+	c[1] = (float)xyz->y;
+	c[2] = (float)xyz->z;
 
-	mysofa_getfilter_float(sensor->sofahandle, x, y, z, sensor->responsedatafloat, sensor->responsedatafloat + sensor->sofahandle->hrtf->N,
+	size = sensor->sofahandle->hrtf->R * sensor->sofahandle->hrtf->N;
+
+	mysofa_getfilter_float(sensor->sofahandle, c[0], c[1], c[2], sensor->responsedatafloat, sensor->responsedatafloat + sensor->sofahandle->hrtf->N,
 		&sensor->delays[0], &sensor->delays[1]);
 
-	for (i = 0; i < sensor->sofahandle->hrtf->R * sensor->sofahandle->hrtf->N; ++i)
+	for (i = 0; i < size; ++i)
 	{
 		sensor->responsedata[i] = (double)sensor->responsedatafloat[i];
 	}
@@ -615,11 +651,11 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	/* SOFA data normalization */
 	if (definition->normalization)
 	{
-		sprintf(msg, "normalizing HRTF data... ");
-		MsgPrintf("%s", msg);
+		//sprintf(msg, "normalizing HRTF data... ");
+		//MsgPrintf("%s", msg);
 		mysofa_loudness(definition->sofahandle->hrtf);
-		sprintf(msg, "completed\n");
-		MsgPrintf("%s", msg);
+		//sprintf(msg, "completed\n");
+		//MsgPrintf("%s", msg);
 	}
 
 	sprintf(msg, "allocating and initializing sensor memory...");
@@ -696,7 +732,11 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 
 	/* fill sensor definition structure */
 	definition->type = ST_IMPULSERESPONSE;
-	if (definition->interpolation)
+	if (definition->sofahandle->hrtf->R > 2) //R > 2
+	{
+		definition->probe.xyz2idx = sensor_SOFA_probe_multichannel;
+	}
+	else if (definition->interpolation) //R <= 2
 	{
 		definition->probe.xyz2idx = sensor_SOFA_probe;
 	}
@@ -704,6 +744,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	{
 		definition->probe.xyz2idx = sensor_SOFA_probe_nointerp;
 	}
+
 	if (definition->resampling && g_fs > 0)
 	{
 		definition->fs = g_fs;
@@ -712,12 +753,13 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	{
 		definition->fs = definition->sofahandle->hrtf->DataSamplingRate.values[0];
 	}
+
 	definition->nChannels = definition->sofahandle->hrtf->R;
 	definition->nEntries = definition->sofahandle->hrtf->M;
 	definition->nSamples = definition->sofahandle->hrtf->N;
 
 	/* provide some feedback */
-	MsgPrintf("Successfully loaded SOFA HRTFs (#pos=%d, #samples=%d, #ch=%d, fs=%f)\n",
+	MsgPrintf("Successfully loaded SOFA HRTFs (#pos=%d, #samples=%d, #ch=%d, fs=%.2f)\n",
 		definition->nEntries, definition->nSamples, definition->nChannels, definition->fs);
 	MsgRelax;
     	
@@ -951,6 +993,7 @@ void CmdListSensors(void)
 
 void CmdLoadSensor(const char *description)
 {
+	/* workaround for MATLAB */
 	g_fs = -1;
     LoadSensor(description);
 }
