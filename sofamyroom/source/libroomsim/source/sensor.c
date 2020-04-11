@@ -374,34 +374,6 @@ void getMysofaErrorString(int error, char *buffer)
 
 }
 
-int sensor_SOFA_probe_multichannel(const CSensorDefinition* sensor, const XYZ* xyz)
-{
-	float c[3];
-	int nearest, size;
-	unsigned int i;
-
-	UNREFERENCED_PARAMETER(sensor);
-
-	c[0] = (float)xyz->x;
-	c[1] = (float)xyz->y;
-	c[2] = (float)xyz->z;
-
-	nearest = mysofa_lookup(sensor->sofahandle->lookup, c);
-	size = sensor->sofahandle->hrtf->N * sensor->sofahandle->hrtf->R;
-
-	if (nearest)
-	{
-		printf("%f %f %f %d ", c[0], c[1], c[2], nearest);
-	}
-
-	for (i = 0; i < size; ++i)
-	{
-		sensor->responsedata[i] = (double) sensor->sofahandle->hrtf->DataIR.values[nearest * size + i];
-	}
-
-	return nearest;
-}
-
 int sensor_SOFA_probe_nointerp(const CSensorDefinition* sensor, const XYZ* xyz)
 {
 	float c[3];
@@ -669,7 +641,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	{
 		err = MYSOFA_INTERNAL_ERROR;
 		getMysofaErrorString(err, mysofaerror);
-		ClearSofaSensor(definition);(definition->sofahandle);
+		ClearSofaSensor(definition);
 		sprintf(msg, "unable to initialize lookup (error %d: %s)", err, mysofaerror);
 		MsgErrorExit(msg);
 	}
@@ -680,7 +652,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	{
 		err = MYSOFA_INTERNAL_ERROR;
 		getMysofaErrorString(err, mysofaerror);
-		ClearSofaSensor(definition);(definition->sofahandle);
+		ClearSofaSensor(definition);
 		sprintf(msg, "unable to initialize neighborhood (error %d: %s)", err, mysofaerror);
 		MsgErrorExit(msg);
 	}
@@ -691,7 +663,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	{
 		err = MYSOFA_INTERNAL_ERROR;
 		getMysofaErrorString(err, mysofaerror);
-		ClearSofaSensor(definition);(definition->sofahandle);
+		ClearSofaSensor(definition);
 		sprintf(msg, "unable to initialize fir filter memory (error %d: %s)", err, mysofaerror);
 		MsgErrorExit(msg);
 	}
@@ -700,7 +672,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	definition->responsedatafloat = MemMalloc(definition->sofahandle->hrtf->N * definition->sofahandle->hrtf->R * sizeof(float));
 	if (!definition->responsedatafloat)
 	{
-		ClearSofaSensor(definition);(definition->sofahandle);
+		ClearSofaSensor(definition);
 		sprintf(msg, "unable to allocate memory for impulse response");
 		MsgErrorExit(msg);
 	}
@@ -711,7 +683,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	definition->delays = MemMalloc(definition->sofahandle->hrtf->R * sizeof(float));
 	if (!definition->delays)
 	{
-		ClearSofaSensor(definition);(definition->sofahandle);
+		ClearSofaSensor(definition);
 		sprintf(msg, "unable to allocate memory for delays");
 		MsgErrorExit(msg);
 	}
@@ -720,7 +692,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	definition->responsedata = MemMalloc(definition->sofahandle->hrtf->N * definition->sofahandle->hrtf->R * sizeof(double));
 	if (!definition->responsedata)
 	{
-		ClearSofaSensor(definition);(definition->sofahandle);
+		ClearSofaSensor(definition);
 		sprintf(msg, "unable to allocate memory for impulse response");
 		MsgErrorExit(msg);
 	}
@@ -734,7 +706,9 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	definition->type = ST_IMPULSERESPONSE;
 	if (definition->sofahandle->hrtf->R > 2) //R > 2
 	{
-		definition->probe.xyz2idx = sensor_SOFA_probe_multichannel;
+		ClearSofaSensor(definition);
+		sprintf(msg, "multichannel sensors are not yet supported\n");
+		MsgErrorExit(msg);
 	}
 	else if (definition->interpolation) //R <= 2
 	{
