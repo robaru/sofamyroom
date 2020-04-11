@@ -18,3 +18,5 @@
 /sofamyroom/source/build/*
 !/sofamyroom/source/build/.empty
 /sofamyroom/data/SOFA/DRIR_SBS_VSA_194OSC_SBC.sofa
+sofamyroom/data/SOFA/DRIR_SBS_VSA_194OSC_PAC.sofa
+sofamyroom/data/SOFA/Kayser2009_Anechoic.sofa
