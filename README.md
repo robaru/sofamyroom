@@ -9,6 +9,11 @@
 
 ## TODO - RELEASE
 ### DANIELE
+* branch multichannel, aggiornare README con foto log
+* EUPL: aggiornare copyleft su header files	Roomsim
+* capire se ci sono problemi ad estendere il ricevitore a più di due canali
+
+#### DONE
 * buildsystem
   * barbatrucchi per farlo girare su linux: compilare libmysofa, generare deb e installarlo; rimuovere 	tutti i stricmp da mexmain.c
   * Aggiornare libmysofa alla nuova versione
@@ -18,8 +23,6 @@
 * pulire repository
   * Sistemare le cartelle del repo per capire cosa pubblicare e aggiornare di conseguenza il README
   * Dare una ricontrollata al codice di	Roomsim
-  * EUPL: aggiornare copyleft su header files	Roomsim
-* capire se ci sono problemi ad estendere il ricevitore a più di due canali
 
 ### ROBERTO
 * dataset generation
