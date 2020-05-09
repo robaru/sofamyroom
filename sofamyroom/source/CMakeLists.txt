@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 
 project(sofamyroom C)
 
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+
 if(CMAKE_SIZEOF_VOID_P MATCHES 4)
 	message(FATAL_ERROR "32 bit OSs are not supported")
 endif()
