@@ -27,9 +27,9 @@ set(CMAKE_C_FLAGS_UNITTEST ${CMAKE_C_FLAGS_DEBUG})
 set(CMAKE_EXE_LINKER_FLAGS_UNITTEST ${CMAKE_EXE_LINKER_FLAGS_DEBUG})
 add_compile_definitions("$<$<CONFIG:Unittest>:UNITTEST>")
 
-add_subdirectory(libsfmt)
-add_subdirectory(libroomsim)
-add_subdirectory(wavwriter)
+add_subdirectory("libsfmt")
+add_subdirectory("libroomsim")
+add_subdirectory("wavwriter")
 
 include_directories(
 	"${CMAKE_SOURCE_DIR}/libroomsim/include"
@@ -58,5 +58,7 @@ if(MSVC)
   				MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<OR:$<CONFIG:Debug>,$<CONFIG:Unittest>>:Debug>")
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT sofamyroom)
 endif()
+
+add_subdirectory ("docs")
 
 target_link_libraries(sofamyroom libroomsim wavwriter)
