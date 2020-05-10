@@ -61,6 +61,8 @@ if(MSVC)
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT sofamyroom)
 endif()
 
-add_subdirectory ("docs")
-
 target_link_libraries(sofamyroom libroomsim wavwriter)
+
+if(BUILD_DOCS MATCHES TRUE)
+	add_subdirectory ("docs")
+endif()
