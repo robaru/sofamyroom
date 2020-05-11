@@ -7,7 +7,8 @@ energy = @(x) sum(abs(x).^2);
 
 %% ROOMSIM setup
 fprintf('Loading ROOMSIM params ...\n')
-% The mex file supplied works with MATLAB installed on 64-bit linux distro only. If on windows or mac, contact me. I can explain how to handle that case.
+% The mex file supplied works with MATLAB installed on 64-bit linux distro only.
+%If on windows or mac, contact me. I can explain how to handle that case.
 %roomsim load omnidirectional;   % loads the receiver model
 %roomsim load omnidirectional;   % loads the source model
 
@@ -16,7 +17,6 @@ fprintf('done!\n\n')
 n_freq_abs = length(roomsim_params.room.surface.frequency);
 
 for sample = 1:n_rirs
-    
     fprintf('Processing %d/%d\n',sample,n_rirs);
     
     % Compute impulse responses

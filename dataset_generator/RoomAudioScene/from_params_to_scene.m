@@ -42,12 +42,6 @@ vast.diff_wall_ceiling = repmat(wall_diff, n_rirs, 1);
 % % Absorption
 wall_abs = uniform(n_rirs, params.min_walls_abs, params.max_walls_abs);
 picnic_abs = uniform(n_rirs, params.min_picnic_abs, params.max_picnic_abs);
-% vast.abs_wall_north   = repmat(wall_abs,  [1,6]);
-% vast.abs_wall_east    = repmat(wall_abs,  [1,6]);
-% vast.abs_wall_west    = repmat(wall_abs,  [1,6]);
-% vast.abs_wall_south   = repmat(wall_abs,  [1,6]);
-% vast.abs_wall_floor   = repmat(picnic_abs,[1,6]);
-% vast.abs_wall_ceiling = repmat(wall_abs,  [1,6]);
 vast.abs_wall_north   = repmat(wall_abs,  [1,n_bands]);
 vast.abs_wall_east    = repmat(wall_abs,  [1,n_bands]);
 vast.abs_wall_west    = repmat(wall_abs,  [1,n_bands]);
