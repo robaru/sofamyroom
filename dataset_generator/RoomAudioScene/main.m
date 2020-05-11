@@ -61,7 +61,6 @@ function [annotations, rirs] = main(n_rirs, path_to_config_file)
 end
 
 function [vast, rirs] = vasttable_init(n_rirs, params)
-
     vast = table();
 
     %% General parameters
