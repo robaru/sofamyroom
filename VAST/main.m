@@ -1,5 +1,4 @@
 function [annotations, rirs] = main(n_rirs, path_to_config_file)
-
     if nargin == 0
        n_rirs = 2;
        path_to_config_file = 0;

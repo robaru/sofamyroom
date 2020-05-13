@@ -1,5 +1,5 @@
 function tests = vast_test_suite
-tests = functiontests(localfunctions);
+    tests = functiontests(localfunctions);
 end
 
 
