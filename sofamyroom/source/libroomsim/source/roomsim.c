@@ -1832,9 +1832,13 @@ BRIR *Roomsim(const CRoomSetup *pSetup)
 void ValidateSetup(CRoomSetup *pSetup)
 {
 	VALIDATE(pSetup->room.surface.nRowsAbsorption == 6, "surface absorption not defined for 6 surfaces");
-	VALIDATE(pSetup->room.surface.nRowsDiffusion == 6, "surface diffusion not defined for 6 surfaces");
 	VALIDATE(pSetup->room.surface.nColsAbsorption == pSetup->room.surface.nBands,
 		"surface absorption not defined for all surface frequency bands");
-	VALIDATE(pSetup->room.surface.nColsDiffusion == pSetup->room.surface.nBands,
-		"surface diffusion not defined for all surface frequency bands");
+
+	if (pSetup->options.simulatediffuse)
+	{
+		VALIDATE(pSetup->room.surface.nRowsDiffusion == 6, "surface diffusion not defined for 6 surfaces");
+		VALIDATE(pSetup->room.surface.nColsDiffusion == pSetup->room.surface.nBands,
+			"surface diffusion not defined for all surface frequency bands");
+	}
 }
