@@ -129,7 +129,7 @@ int main(int argc, char **argv)
 	Wave	   w;
 	float      *sample;
 
-	printf("ROOMSIM v" ROOMSIM_VERSION ", built %s %s\n", builddate, buildtime);
+	printf(SOFAMYROOM_NAME " v" SOFAMYROOM_VERSION ", built %s %s\n", builddate, buildtime);
 
 	if (argc<=1)
 	{
