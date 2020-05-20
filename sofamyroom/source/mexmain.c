@@ -151,7 +151,7 @@ void mexFunction(
         /* parse command string */
         if (stricmp(cmd,"version")==0)
         {
-            mexPrintf("ROOMSIM v" ROOMSIM_VERSION ", built %s %s\n", builddate, buildtime);
+            mexPrintf("SofaMyRoom - built %s %s\n", builddate, buildtime);
         }
         else if (stricmp(cmd,"list")==0)
         {
