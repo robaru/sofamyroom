@@ -50,7 +50,7 @@ function [vast_params, roomsim_params] = load_parameters(n_experience)
 			    vast_params.min_walls_abs  = 0.5;
 			    vast_params.max_walls_abs  = 1;
                 vast_params.use_multiple_diffusion = 0;
-			    vast_params.diffuse = [0.0109,0.0075,0.0511,0.0668,0.1472,0.2878,0.002]; %aggiunto l'ultimo
+			    vast_params.diffuse = [0.0109,0.0075,0.0511,0.0668,0.1472,0.2878,0.002];
 			    % loading basic parameters of the room
 			    %    room settings
 			    roomsim_params.room.humidity               = 0.42;         % relative humidity (0,...,1)
@@ -80,8 +80,8 @@ function [vast_params, roomsim_params] = load_parameters(n_experience)
                 roomsim_params.options.outputname           = 'output';
                 roomsim_params.options.saveaswav            = true;
                 % appending more parameters in variable 'roomsim_params'
-			    roomsim_params.receiver(1).description     = 'SOFA MIT_KEMAR_large_pinna.sofa resampling=true';
-			    roomsim_params.receiver(2).description     = 'SOFA MIT_KEMAR_large_pinna.sofa resampling=true';
+			    roomsim_params.receiver(1).description     = 'SOFA ../sofamyroom/data/SOFA/MIT_KEMAR_large_pinna.sofa resampling=true';
+			    roomsim_params.receiver(2).description     = 'SOFA ../sofamyroom/data/SOFA/MIT_KEMAR_large_pinna.sofa resampling=true';
 			    roomsim_params.receiver(1).orientation     = [ 0, 0, 0 ];
 			    roomsim_params.receiver(2).orientation     = [ 0, 0, 0 ];
 			    roomsim_params.source(1).orientation       = [ 0, 0, 0 ];

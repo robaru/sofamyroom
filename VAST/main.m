@@ -19,7 +19,7 @@ function [annotations, rirs] = main(n_rirs, path_to_config_file)
     % all the parameters should be written/stored in a .mat
     % configuration files.
     fprintf('Reading config file... ')
-    [params, roomsim_params] = load_parameters(path_to_config_file);
+    [params, sofamyroom_params] = load_parameters(path_to_config_file);
     fprintf(' done!\n\n')
 
     % SUFFIX FOR FILENAME
@@ -49,7 +49,7 @@ function [annotations, rirs] = main(n_rirs, path_to_config_file)
 
     %% 3. From auditory scenes to room impulse responses
     fprintf('Generating RIRs form all the scenes ... ')
-    rirs = from_scenes_to_rirs(annotations, rirs, params, roomsim_params);
+    rirs = from_scenes_to_rirs(annotations, rirs, params, sofamyroom_params);
     fprintf(' done.\n')
 
     %% 4. save results in the result directory

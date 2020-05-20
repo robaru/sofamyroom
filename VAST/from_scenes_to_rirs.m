@@ -1,37 +1,37 @@
-function rirs = from_scenes_to_rirs(vast, rirs, params, roomsim_params, verbose)
+function rirs = from_scenes_to_rirs(vast, rirs, params, sofamyroom_params, verbose)
 do_plot = false;
 
 n_rirs = height(vast);
 
 energy = @(x) sum(abs(x).^2);
 
-%% ROOMSIM setup
-fprintf('Loading ROOMSIM params ...\n')
+%% sofamyroom setup
+fprintf('Loading sofamyroom params ...\n')
 % The mex file supplied works with MATLAB installed on 64-bit linux distro only.
 %If on windows or mac, contact me. I can explain how to handle that case.
-%roomsim load omnidirectional;   % loads the receiver model
-%roomsim load omnidirectional;   % loads the source model
+%sofamyroom load omnidirectional;   % loads the receiver model
+%sofamyroom load omnidirectional;   % loads the source model
 
 fprintf('done!\n\n')
 
-n_freq_abs = length(roomsim_params.room.surface.frequency);
+n_freq_abs = length(sofamyroom_params.room.surface.frequency);
 
 for sample = 1:n_rirs
     fprintf('Processing %d/%d\n',sample,n_rirs);
     
     % Compute impulse responses
-    roomsim_params.room.dimension = vast.RoomSize(sample,:);
+    sofamyroom_params.room.dimension = vast.RoomSize(sample,:);
     % Receiver params
     sensor1 = vast.Sensor1Position(sample,:);
     sensor2 = vast.Sensor2Position(sample,:);
     assert(all(size(sensor1) == [1,3]));
     assert(all(size(sensor2) == [1,3]));
-    roomsim_params.receiver(1).location = sensor1;
-    roomsim_params.receiver(2).location = sensor2;
+    sofamyroom_params.receiver(1).location = sensor1;
+    sofamyroom_params.receiver(2).location = sensor2;
     % Source params
     source = vast.SourceLoc(sample,:);
     assert(all(size(source) == [1,3]));
-    roomsim_params.source(1).location = source;
+    sofamyroom_params.source(1).location = source;
     % Walls profile
     wall_abs = ...
         [ vast.abs_wall_north(sample,:);
@@ -41,7 +41,7 @@ for sample = 1:n_rirs
         vast.abs_wall_floor(sample,:);
         vast.abs_wall_ceiling(sample,:)];
     assert(all(size(wall_abs) == [6,n_freq_abs]));
-    roomsim_params.room.surface.absorption = wall_abs;
+    sofamyroom_params.room.surface.absorption = wall_abs;
     % Diffusion profiles
     wall_diff = [vast.diff_wall_north(sample,:);
         vast.diff_wall_east(sample,:);
@@ -50,14 +50,14 @@ for sample = 1:n_rirs
         vast.diff_wall_floor(sample,:);
         vast.diff_wall_ceiling(sample,:)];
     assert(all(size(wall_diff) == [6,n_freq_abs]))
-    roomsim_params.room.surface.diffusion = wall_diff;
+    sofamyroom_params.room.surface.diffusion = wall_diff;
     
     if params.do_real_rirs
         % Real Impulse Response generation
-        curr_rirs = check_rirs(roomsim(roomsim_params));
+        curr_rirs = check_rirs(sofamyroom(sofamyroom_params));
         % Get Rt60 values
-        RtParams.Fs = roomsim_params.options.fs;
-        RtParams.FreqBin = roomsim_params.room.surface.frequency;
+        RtParams.Fs = sofamyroom_params.options.fs;
+        RtParams.FreqBin = sofamyroom_params.room.surface.frequency;
         [vast.FreqRT60(sample,:), vast.GlobalRT60(sample)] ...
             = Rir2Rt60(mean(curr_rirs,2),RtParams);
         
@@ -66,13 +66,13 @@ for sample = 1:n_rirs
     end
     
     % direct path
-    dp_roomsim_params = roomsim_params;
-    dp_roomsim_params.options.reflectionorder = [ 0 0 0 ]; % maximum specular reflection order (x,y,z)
-    rirs_dp = check_rirs(roomsim(dp_roomsim_params));
+    dp_sofamyroom_params = sofamyroom_params;
+    dp_sofamyroom_params.options.reflectionorder = [ 0 0 0 ]; % maximum specular reflection order (x,y,z)
+    rirs_dp = check_rirs(sofamyroom(dp_sofamyroom_params));
     % early reflection
-    er_roomsim_params = roomsim_params;
-    er_roomsim_params.options.reflectionorder = [ 1 1 1 ]; % maximum specular reflection order (x,y,z)
-    rirs_dp_er = check_rirs(roomsim(er_roomsim_params));
+    er_sofamyroom_params = sofamyroom_params;
+    er_sofamyroom_params.options.reflectionorder = [ 1 1 1 ]; % maximum specular reflection order (x,y,z)
+    rirs_dp_er = check_rirs(sofamyroom(er_sofamyroom_params));
     % late reverberation
     rirs_lr = curr_rirs - rirs_dp_er;
     % early reflection
@@ -103,11 +103,11 @@ for sample = 1:n_rirs
     % % Generating synthetic RIR (no diffusion, lower reflexion order)
     if params.do_syth_rirs
         % first echo
-        ideal_roomsim_params = roomsim_params;
-        ideal_roomsim_params.options.reflectionorder = [ 1 1 1 ]; % maximum specular reflection order (x,y,z)
-        ideal_roomsim_params.options.simulatediffuse = false;    % change this to false if user does not want to simulate diffuse reflections
-        ideal_roomsim_params.room.surface.absorption([1,2,3,4,6],:) = 1; % make only the direct path and first echoes
-        curr_rirs = check_rirs(roomsim(ideal_roomsim_params));
+        ideal_sofamyroom_params = sofamyroom_params;
+        ideal_sofamyroom_params.options.reflectionorder = [ 1 1 1 ]; % maximum specular reflection order (x,y,z)
+        ideal_sofamyroom_params.options.simulatediffuse = false;    % change this to false if user does not want to simulate diffuse reflections
+        ideal_sofamyroom_params.room.surface.absorption([1,2,3,4,6],:) = 1; % make only the direct path and first echoes
+        curr_rirs = check_rirs(sofamyroom(ideal_sofamyroom_params));
         rirs.RIRSynth1(sample,:) = curr_rirs(:,1);
         rirs.RIRSynth2(sample,:) = curr_rirs(:,2);
     end
