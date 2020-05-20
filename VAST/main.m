@@ -4,17 +4,8 @@ function [annotations, rirs] = main(n_rirs, path_to_config_file)
        path_to_config_file = 0;
     end
 
-    %% ARGUMENT FOR THE COMPILED VERSION
-    if (isdeployed)
-        % if it is compiled read the argument as...
-        n_rirs = eval(n_rirs);
-        JobID = [getenv('OAR_JOB_ID')];
-    else
-        % if it is running in a matlab session
-        JobID = num2str(randi([0 1000],1));
-        verbose = 1;
-    end
-
+    JobID = num2str(randi([0 1000],1));
+    
     %% 0. IMPORT VARIABLES from CONFIG FILE
     % all the parameters should be written/stored in a .mat
     % configuration files.
