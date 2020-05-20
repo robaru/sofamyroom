@@ -1,30 +1,10 @@
 function make(varargin)
-% MAKE Build roomsim project
-%   MAKE without arguments builds the roomsim project and updates the
-%   ROOMSIM function in MATLAB.
+% MAKE Build sofamyroom project
+%   MAKE without arguments builds the sofamyroom project and updates the
+%   sofamyroom function in MATLAB.
 %
-%   MAKE TEST builds the unit tests of the roomsim project and updates the
-%   ROOMSIMTEST function in MATLAB.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Author: Steven Schimmel, stevenmschimmel@gmail.com
-% Copyright 2009, University of Zurich
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% This file is part of ROOMSIM.
-%
-% ROOMSIM is free software: you can redistribute it and/or modify
-% it under the terms of the GNU General Public License as published by
-% the Free Software Foundation, either version 3 of the License, or
-% (at your option) any later version. 
-%
-% ROOMSIM is distributed in the hope that it will be useful,
-% but WITHOUT ANY WARRANTY; without even the implied warranty of
-% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-% GNU General Public License for more details.
-%
-% You should have received a copy of the GNU General Public License
-% along with ROOMSIM. If not, see <http://www.gnu.org/licenses/>.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   MAKE TEST builds the unit tests of the sofamyroom project and updates the
+%   sofamyroomTEST function in MATLAB.
 
 %Check MATLAB version
 [~, maxArraySize] = computer; 
