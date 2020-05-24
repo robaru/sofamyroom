@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 
 project(sofamyroom C)
 
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+
 if(CMAKE_SIZEOF_VOID_P MATCHES 4)
 	message(FATAL_ERROR "32 bit OSs are not supported")
 endif()
@@ -27,9 +29,9 @@ set(CMAKE_C_FLAGS_UNITTEST ${CMAKE_C_FLAGS_DEBUG})
 set(CMAKE_EXE_LINKER_FLAGS_UNITTEST ${CMAKE_EXE_LINKER_FLAGS_DEBUG})
 add_compile_definitions("$<$<CONFIG:Unittest>:UNITTEST>")
 
-add_subdirectory(libsfmt)
-add_subdirectory(libroomsim)
-add_subdirectory(wavwriter)
+add_subdirectory("libsfmt")
+add_subdirectory("libroomsim")
+add_subdirectory("wavwriter")
 
 include_directories(
 	"${CMAKE_SOURCE_DIR}/libroomsim/include"
@@ -60,3 +62,7 @@ if(MSVC)
 endif()
 
 target_link_libraries(sofamyroom libroomsim wavwriter)
+
+if(BUILD_DOCS MATCHES TRUE)
+	add_subdirectory ("docs")
+endif()
