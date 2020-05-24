@@ -734,7 +734,7 @@ void InitSimulationWeights(CRoomsimInternal *pSimulation, CSensorDefinition *pSe
 
 }
 
-CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup)
+CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup, sfmt_t *sfmt)
 {
     char msg[256];
     int  i, s, r;
@@ -915,7 +915,7 @@ CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup)
     }
 
 	/* initialize random number generator */
-	RngInit();
+	RngInit(sfmt);
 
 	return pSimulation;
 }
@@ -1206,7 +1206,7 @@ void MakeUnitVector(XYZ *xyz)
 	xyz->z /= norm;
 }
 
-void RoomsimDiffuse(const CRoomSetup *pSetup, CRoomsimInternal *pSimulation)
+void RoomsimDiffuse(const CRoomSetup *pSetup, CRoomsimInternal *pSimulation, sfmt_t *sfmt)
 {
 	XYZ     *ray;
 
@@ -1538,7 +1538,7 @@ TEMP */
 				 */
 					
 					/* select random unit vector from lambert distribution */
-					RngLambert(&rd);
+					RngLambert(sfmt, &rd);
 					switch (surfaceofimpact)
 					{
 					case 0: temp = rd.x; rd.x =  rd.z; rd.z = temp; rs.x = -rs.x; break;
@@ -1661,7 +1661,7 @@ TEMP */
 #endif /* LOGTAIL */
 
 				/* generate noise signal */
-				RngFill_uint32(pSimulation->noise, (nRecvCh*length+3)&-4);
+				RngFill_uint32(sfmt, pSimulation->noise, (nRecvCh*length+3)&-4);
 
 #ifdef LOGTAIL
 				fwrite(pSimulation->noise,sizeof(pSimulation->noise[0]),nRecvCh*length,fidtail);
@@ -1791,8 +1791,12 @@ TEMP */
 
 BRIR *Roomsim(const CRoomSetup *pSetup)
 {
+	/* This structure holds the state of SFMT, a library that
+	   generates random numbers */
+	sfmt_t sfmt;
+
 	/* prepare internal room simulation data structure */
-	CRoomsimInternal *pSimulation = RoomsimInit(pSetup);
+	CRoomsimInternal *pSimulation = RoomsimInit(pSetup, &sfmt);
     
 	if (pSetup->options.simulatespecular)
 	{
@@ -1820,7 +1824,7 @@ BRIR *Roomsim(const CRoomSetup *pSetup)
     		MsgPrintf("Simulating diffuse reflections (%d rays)...\n", pSetup->options.numberofrays);
             MsgRelax; /* let MATLAB process events */
         }
-		RoomsimDiffuse(pSetup, pSimulation);
+		RoomsimDiffuse(pSetup, pSimulation, &sfmt);
 	}
 
 	/* release internal data structure, return BRIR */

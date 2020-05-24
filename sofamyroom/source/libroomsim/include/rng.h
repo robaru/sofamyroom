@@ -28,9 +28,9 @@
 #include "SFMT.h"
 
 /*double RandomUniform(void); */
-void RngInit(void);
-void RngLambert(XYZ *xyz);
+void RngInit(sfmt_t *sfmt);
+void RngLambert(sfmt_t *sfmt, XYZ *xyz);
 
-#define RngFill_uint32(array,size) RngInit();fill_array32(array,size)
+#define RngFill_uint32(sfmt,array,size) RngInit(sfmt);sfmt_fill_array32(sfmt,array,size)
 
 #endif /* RNG_H_19239561826387126831623 */
