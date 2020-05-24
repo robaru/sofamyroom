@@ -48,9 +48,9 @@ uint32_t RandomGet(CRNG *rng)
 
 */
 
-void RngInit(void)
+void RngInit(sfmt_t *sfmt)
 {
-	init_gen_rand(0xdeaf0bad);
+    sfmt_init_gen_rand(sfmt, 0xdeaf0bad);
 }
 
 void RngSeed(void)
@@ -58,17 +58,17 @@ void RngSeed(void)
 }
 
 /*#define UNIFORM(a,b) (RandomUniform() * ((b)-(a)) + (a)) */
-#define UNIFORM(a,b) ((double)(gen_rand32() * ( ((b)-(a)) / 4294967295.0 ) + (a)))
-#define UNIFORM01	 ((double)(gen_rand32() * ( 1.0 / 4294967295.0 )))
+#define UNIFORM(a,b,c) ((double)(sfmt_genrand_uint32(c) * ( ((b)-(a)) / 4294967295.0 ) + (a)))
+#define UNIFORM01(a)	 ((double)(sfmt_genrand_uint32(a) * ( 1.0 / 4294967295.0 )))
 
-void RngLambert(XYZ *xyz)
+void RngLambert(sfmt_t *sfmt, XYZ *xyz)
 {
 	double s;
 	do
 	{
-		xyz->x = UNIFORM(-0.7,0.7);
-		xyz->y = UNIFORM(-0.7,0.7);
-		xyz->z = UNIFORM01;
+		xyz->x = UNIFORM(-0.7,0.7,sfmt);
+		xyz->y = UNIFORM(-0.7,0.7,sfmt);
+		xyz->z = UNIFORM01(sfmt);
 		s = xyz->x*xyz->x + xyz->y*xyz->y + xyz->z*xyz->z;
 	} while (s*s > xyz->z);
 }
