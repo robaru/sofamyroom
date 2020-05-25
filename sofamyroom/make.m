@@ -26,6 +26,7 @@ output = 'sofamyroom';
              '-DMEXP=19937'
              ['-Isource' filesep 'libroomsim' filesep 'include']
              ['-Isource' filesep 'libsfmt']
+             ['-Isource' filesep 'wavwriter' filesep 'include']
            };
        
 if ispc
@@ -135,6 +136,7 @@ mexfiles = { ['source' filesep 'libroomsim' filesep 'source' filesep '3D.c']
              ['source' filesep  'libsfmt'  filesep  'SFMT.c']
              ['source' filesep  'mexmain.c']
              ['source' filesep  'build.c']
+             ['source' filesep  'wavwriter' filesep 'source' filesep 'wavwriter.c']
            };
 
 % Remove sofamyroom from memory, if loaded
