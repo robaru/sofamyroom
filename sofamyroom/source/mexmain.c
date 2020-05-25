@@ -88,6 +88,7 @@ bool IsMexString(const mxArray *pm)
 }
 
 #if !defined(UNIT_TEST)
+
 /* gateway function */
 void mexFunction(
         int nlhs, mxArray *plhs[], 
@@ -105,7 +106,7 @@ void mexFunction(
         LoadCRoomSetup(prhs[0],0,&roomsetup);
         
         /** @todo Implement VerifyRoomsim(), verifying parameter validity. */
-
+        ValidateSetup(&roomsetup);
         brir = Roomsim(&roomsetup);
         
         /** @todo Create proper output (cell) array */
@@ -232,3 +233,4 @@ void mexFunction(
     }
 }
 #endif /* defined(UNIT_TEST) */
+
