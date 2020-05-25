@@ -174,8 +174,3 @@ SofaMyRoom is covered by EUPL.
 * Roomsim - GNU GPL;
 * `libmysofa` - See `LICENSE` on `libmysofa` project page;
 * `wavwriter` - Not provided by the author.
-
-# LIBSFMT Errors after updating library files
-* libroomsim.lib(roomsim.obj) : error LNK2019: unresolved external symbol fill_array32 referenced in function RoomsimDiffuse
-* libroomsim.lib(rng.obj) : error LNK2019: unresolved external symbol init_gen_rand referenced in function RngInit
-* libroomsim.lib(rng.obj) : error LNK2019: unresolved external symbol gen_rand32 referenced in function RngLambert
