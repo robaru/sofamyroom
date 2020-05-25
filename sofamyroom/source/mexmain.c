@@ -2,24 +2,6 @@
  * @file mexmain.c
  * @brief Main file for MEX interface with MATLAB.
  **********************************************************************//*
- * Author: Steven Schimmel, stevenmschimmel@gmail.com
- * Copyright 2009, University of Zurich
- *************************************************************************
- * This file is part of ROOMSIM.
- *
- * ROOMSIM is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version. 
- *
- * ROOMSIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with ROOMSIM. If not, see <http://www.gnu.org/licenses/>.
- *************************************************************************/
 
 
 /****** NOTES *********************************************************//**
@@ -59,6 +41,8 @@
 #include "sensor.h"
 #include "types.h"
 #include "fftw3.h"
+#include "wavwriter.h"
+
 
 /* disable warnings about depricated unsafe CRT functions */
 #ifdef _MSC_VER
@@ -108,35 +92,74 @@ void mexFunction(
         /** @todo Implement VerifyRoomsim(), verifying parameter validity. */
         ValidateSetup(&roomsetup);
         brir = Roomsim(&roomsetup);
-        
-        /** @todo Create proper output (cell) array */
-        if (nlhs>0)
+
+        if (roomsetup.options.saveaswav)
         {
-            if ((roomsetup.nSources == 1) && (roomsetup.nReceivers == 1))
+            char	   filename[256];
+            Wave	   w;
+            float      *sample;
+            
+            sample = (float*)malloc(brir[0].nChannels * sizeof(float));
+
+            if (!sample)
             {
-                if (roomsetup.options.verbose)
-                {
-                    MsgPrintf("Creating output: %dx%d array\n", brir[0].nSamples, brir[0].nChannels);
-                    MsgRelax;
-                }
-                
-                plhs[0] = mxCreateDoubleMatrix(brir[0].nSamples, brir[0].nChannels, mxREAL);
-                mxFree(mxGetPr(plhs[0]));
-                mxSetPr(plhs[0],brir[0].sample);
+                MsgPrintf("Unable to allocate memory for writing the WAVE file\n");
+                return;
             }
-            else
+
+            for (int i = 0; i < roomsetup.nSources*roomsetup.nReceivers; i++)
             {
-                int i;
-                mxArray *h;
-                
-                mexPrintf("Creating output: %dx%d cell matrix\n", roomsetup.nSources, roomsetup.nReceivers);
-                plhs[0] = mxCreateCellMatrix(roomsetup.nSources, roomsetup.nReceivers);
-                for (i=0; i<roomsetup.nSources*roomsetup.nReceivers; i++)
+                sprintf(filename, "%s - receiver_%d.wav", roomsetup.options.outputname, i);
+
+                MsgPrintf("Writing output file '%s'\n", filename);
+
+                w = makeWave(3, (int)brir[i].fs, (short int)brir[i].nChannels, (short int)32);
+                waveSetDuration(&w, (float)brir[i].nSamples / brir[i].fs);
+                for (int j = 0; j < brir[i].nSamples; ++j)
                 {
-                    h = mxCreateDoubleMatrix(brir[i].nSamples, brir[i].nChannels, mxREAL);
-                    mxFree(mxGetPr(h)); 
-                    mxSetPr(h,brir[i].sample);
-                    mxSetCell(plhs[0],i,h);
+                    for (int k = 0; k < brir[i].nChannels; ++k)
+                    {
+                        sample[k] = (float)brir[i].sample[j + brir[i].nSamples * k];
+                    }
+                    waveAddSampleFloat(&w, sample);
+                }
+                waveToFile(&w, filename);
+                waveDestroy(&w);
+            }
+
+            free(sample);
+        }
+        else {
+            /** @todo Create proper output (cell) array */
+            if (nlhs>0)
+            {
+
+                if ((roomsetup.nSources == 1) && (roomsetup.nReceivers == 1))
+                {
+                    if (roomsetup.options.verbose)
+                    {
+                        MsgPrintf("Creating output: %dx%d array\n", brir[0].nSamples, brir[0].nChannels);
+                        MsgRelax;
+                    }
+
+                    plhs[0] = mxCreateDoubleMatrix(brir[0].nSamples, brir[0].nChannels, mxREAL);
+                    mxFree(mxGetPr(plhs[0]));
+                    mxSetPr(plhs[0],brir[0].sample);
+                }
+                else
+                {
+                    int i;
+                    mxArray *h;
+
+                    mexPrintf("Creating output: %dx%d cell matrix\n", roomsetup.nSources, roomsetup.nReceivers);
+                    plhs[0] = mxCreateCellMatrix(roomsetup.nSources, roomsetup.nReceivers);
+                    for (i=0; i<roomsetup.nSources*roomsetup.nReceivers; i++)
+                    {
+                        h = mxCreateDoubleMatrix(brir[i].nSamples, brir[i].nChannels, mxREAL);
+                        mxFree(mxGetPr(h)); 
+                        mxSetPr(h,brir[i].sample);
+                        mxSetCell(plhs[0],i,h);
+                    }
                 }
             }
         }
