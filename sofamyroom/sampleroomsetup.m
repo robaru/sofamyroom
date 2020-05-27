@@ -32,7 +32,7 @@ room.temperature            = 20;           % room temperature (celsius)
 %
 %    surface absorption/diffusion coefficients
 %
-room.surface.frequency      = [  125       250       500       1000      2000      4000   ];
+room.surface.frequency      = [  125       250       500       1000      2000      4000];
 room.surface.absorption     = [  0.1000    0.0500    0.0600    0.0700    0.1000    0.1000;
                                  0.1400    0.3500    0.5300    0.7500    0.7000    0.6000;
                                  0.1000    0.0500    0.0600    0.0700    0.1000    0.1000;
@@ -72,7 +72,7 @@ options.reflectionorder     = [ 10 10 10 ];         % maximum specular reflectio
 %
 %    diffuse reflections simulation options
 %
-options.simulatediffuse     = true;                 % simulate diffuse reflections?
+options.simulatediffuse     = false;                 % simulate diffuse reflections?
 options.numberofrays        = 2000;                 % number of rays in simulation (20*K^2)
 options.diffusetimestep     = 0.010;                % time resolution in diffuse energy histogram (seconds)
 options.rayenergyfloordB    = -80;                  % ray energy threshold (dB, with respect to initial energy)
@@ -83,7 +83,7 @@ options.uncorrelatednoise   = true;                 % use uncorrelated poisson a
 %    output options
 %
 options.outputname			= 'output';           	% name of the output file
-options.saveaswav	        = true;                 % format of the ouput file
+options.saveaswav	        = false;                 % format of the ouput file
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -99,5 +99,5 @@ source(1).description        = 'subcardioid';       % source type
 %
 receiver(1).location         = [ 3 5 1.2 ];         % location of receiver (x,y,z; meters)
 receiver(1).orientation      = [ 0 0 0 ];           % orientation of receiver (yaw,pitch,roll; degrees)
-receiver(1).description      = 'SOFA ../../../../data/SOFA/MIT_KEMAR_normal_pinna.sofa';  % receiver type
+receiver(1).description      = 'SOFA data/SOFA/MIT_KEMAR_normal_pinna.sofa';  % receiver type
 
