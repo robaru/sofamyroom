@@ -1,4 +1,4 @@
-function [ SubsetVAST ] = SubVASTGeneration(RoomSize, RoomName, CeilingAbsorb, FloorAbsorb, WallsAbsorb, SourcePos, ReceiveLoc, Diffuse, SofaPath, SaveWAV)
+function [ SubsetVAST ] = SubVASTGeneration(RoomSize, RoomName, CeilingAbsorb, FloorAbsorb, WallsAbsorb, GridDistance, ReceiveLoc, Diffuse, SofaPath, SaveWAV)
 %SubVASTGeneration Provides a VAST structure with impulse responses
 %corresponding to the sources inside the domain of 'RoomSize' at the
 %distance 'GridDistance' from the receiver which is at the 'ReceiveLoc'
@@ -9,22 +9,28 @@ function [ SubsetVAST ] = SubVASTGeneration(RoomSize, RoomName, CeilingAbsorb, F
 %   Absorb:
 %   Diffuse:
 %
+%   AUTHOR: Antoine Deleforge and Clément Gaultier,
+%       PANAMA Research Group, Inria, France
+%       http://thevastproject.inria.fr/dataset/
 
-JobID = num2str(randi(1000));
-    
+
 %% Paths and folders
 
-ResDir = ['./Results/Room' RoomName '/'];
+ResDir = ['./Room' RoomName '/'];
 
 if ~isfolder(ResDir)
     mkdir(ResDir)
 end
 
+%% Sampled points generation
+EquatorStep = 60;
+% CartCoord and SphereCoord are in the receiver referential
+[CartCoord, SpherCoord] = SphereSampling(GridDistance, EquatorStep);
 
 % Referential shifting from receiver to room
-CartCoord(1,:) = SourcePos(1,:) + ReceiveLoc(1); % x
-CartCoord(2,:) = SourcePos(2,:) + ReceiveLoc(2); % y
-CartCoord(3,:) = SourcePos(3,:) + ReceiveLoc(3); % z
+CartCoord(1,:) = CartCoord(1,:) + ReceiveLoc(1); % x
+CartCoord(2,:) = CartCoord(2,:) + ReceiveLoc(2); % y
+CartCoord(3,:) = CartCoord(3,:) + ReceiveLoc(3); % z
 
 %% Inside domain validity check
 
@@ -85,7 +91,7 @@ SofaMyRoomParam.options.diffusetimestep     = 0.010;                % time resol
 SofaMyRoomParam.options.rayenergyfloordB    = -80;                  % ray energy threshold (dB, with respect to initial energy)
 SofaMyRoomParam.options.uncorrelatednoise   = true;                 % use uncorrelated poisson arrivals for binaural impulse responses?
 
-SofaMyRoomParam.options.outputname			= 'output';           	% name of the output file
+SofaMyRoomParam.options.outputname			= 'brir';           	% name of the output file
 SofaMyRoomParam.options.saveaswav	        = SaveWAV;                 % format of the ouput file
 
 % appending more parameters in variable 'SofaMyRoomParam'
@@ -104,7 +110,8 @@ SofaMyRoomParam.room.surface.absorption = [repmat(WallsAbsorb,4,1); FloorAbsorb;
 assert(size(SofaMyRoomParam.room.surface.absorption,2) == length(SubsetVAST.GlobalParams.FreqBin))
 %% Impulse response generation
 
-for source = 1:1:RIRNumber
+for source = 1:RIRNumber
+    fprintf("BRIR %i/%i\n", source, RIRNumber)
     % Compute impulse responses
     SofaMyRoomParam.source(1).location = ValidCartCoord(:,source);
     ImpRes=sofamyroom(SofaMyRoomParam);
@@ -154,8 +161,7 @@ SubsetVAST.Room.Diffusion = repmat(Diffuse',1,RIRNumber);
 
 %% Saving the mat file
 
-FileName = [ResDir 'RoomName_' RoomName ...
-    '_RecLoc_' num2str(ReceiveLoc) '.mat'];
+FileName = sprintf("%s%s.mat", ResDir, RoomName);
 
 FileName(isspace(FileName)) = [];
 
