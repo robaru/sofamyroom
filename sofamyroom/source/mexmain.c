@@ -233,7 +233,10 @@ void mexFunction(
     }
     else
     {
-        mexErrMsgTxt("syntax error");
+        mexPrintf("SofaMyRoom - built %s %s\n", builddate, buildtime);
+        mexPrintf("No argument provided!\n");
+        mexPrintf("Arguments available: version, list, load, clear, whos\n");
+        mexPrintf("i.e. sofamyroom list\n");
     }
 }
 
