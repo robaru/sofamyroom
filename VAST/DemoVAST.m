@@ -43,17 +43,17 @@ Diffuse = [0.1    0.1     0.1     0.1     0.1     0.1     0.1];
 % download sofa file 
 SofaPath = 'database/hrtf_ci1.sofa';
 RoomName = 'room_sofa1';
-VAST1 = SubVASTGeneration(Fs, RoomSize, RoomName, CeilingAbsorb, ...
+VAST1 = VASTGeneration(Fs, RoomSize, RoomName, CeilingAbsorb, ...
                  FloorAbsorb, WallsAbsorb, ReceiverPos, Diffuse, SofaPath);
 
 SofaPath = 'database/mit_kemar_normal_pinna.sofa';
 RoomName = 'room_sofa2';
-VAST2 = SubVASTGeneration(Fs, RoomSize, RoomName, CeilingAbsorb, ...
+VAST2 = VASTGeneration(Fs, RoomSize, RoomName, CeilingAbsorb, ...
                  FloorAbsorb, WallsAbsorb, ReceiverPos, Diffuse, SofaPath);
 
 SofaPath = 'database/subject_003.sofa';
 RoomName = 'room_sofa3';
-VAST3 = SubVASTGeneration(Fs, RoomSize, RoomName, CeilingAbsorb, ...
+VAST3 = VASTGeneration(Fs, RoomSize, RoomName, CeilingAbsorb, ...
                  FloorAbsorb, WallsAbsorb, ReceiverPos, Diffuse, SofaPath);
 
 
@@ -76,7 +76,7 @@ function checkSOFAtoolbox()
         fprintf('Removing zip...\n')
         delete(file_zip)
         
-        sprintf('Done!\n')
+        fprintf('Done!\n')
     else
         error(['In order to run this demo you need to download' ...
         ' the SOFA toolbox from https://github.com/sofacoustics/API_MO']) 
