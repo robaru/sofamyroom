@@ -24,7 +24,7 @@ function [absorption,description] = selectabsorption(h)
 
 % determine figure, axes, plot handles from h
 htype = get(h,'type');
-switch htype,
+switch htype
     case 'figure'
         haxes = findobj(h,'type','axes');
         haxes = haxes(1);
@@ -39,7 +39,7 @@ switch htype,
     case 'line'
         hplot = h;
         haxes = get(h,'parent');
-end;
+end
 
 % bring figure to foreground
 hpfig = get(haxes,'parent');
@@ -49,8 +49,7 @@ figure(hpfig);
 orgdata = get(hplot,'ydata');
 
 % load material database
-material = [];
-load('data/materials');
+load('data/materials', 'material');
 
 % convert materials to single cell array
 m = cell(length(material),3);
@@ -62,9 +61,9 @@ m = cell(length(material),3);
 type = unique(m(:,1));
 % determine wall type indices
 typeidx = cell(length(type),1);
-for i = 1:length(type),
-    typeidx{i} = strmatch(type{i},m(:,1));
-end;
+for i = 1:length(type)
+    typeidx{i} = find(strcmpi(m(:,1), type{i}));
+end
 
 % create new figure
 FIGW = 400; FIGH = 300;
@@ -91,59 +90,56 @@ ud.orgdata = orgdata;
 uicontrol('style','text',...
           'units','pixels',...
           'position',[10 FIGH-30 FIGW-20 20],...
-          'backgroundcolor',col(3,:),...
           'string','Type:',...
           'horizontalalign','left');
 uicontrol('style','text',...
           'units','pixels',...
           'position',[10 FIGH-75 FIGW-20 20],...
-          'backgroundcolor',col(3,:),...
           'string','Material:',...
           'horizontalalign','left');
 ud.hpopup = uicontrol('style','popupmenu',...
           'units','pixels',...
           'position',[10 FIGH-45 FIGW-20 20],...
-          'backgroundcolor',col(2,:),...
           'callback',@callback_popup,...
           'string',type);
 ud.hlistbox = uicontrol('style','listbox',...
           'units','pixels',...
           'position',[10 40 FIGW-20 FIGH-110],...
-          'backgroundcolor',col(2,:),...
           'callback',@callback_listbox,...
           'string',m(typeidx{1},2));
 uicontrol('style','pushbutton',...
           'units','pixels',...
           'position',[10 10 80 20],...
-          'backgroundcolor',col(3,:),...
           'callback',@callback_ok,...
           'string','OK');
 uicontrol('style','pushbutton',...
           'units','pixels',...
           'position',[100 10 80 20],...
-          'backgroundcolor',col(3,:),...
           'callback',@callback_cancel,...
           'string','Cancel');
 
 % find best material fit to orgdata
 dmin = 1000; didx = [];
-for i = 1:size(m,1),
+for i = 1:size(m,1)
     d = sum((m{i,3}-orgdata).^2);
-    if d<dmin, dmin=d; didx=i; end;
-end;
+    if d<dmin, dmin=d; didx=i; end
+end
 
 % link userdata to figure
 guidata(hfig,ud);
 
 % found a reasonable fit?
-if ~isempty(didx),
-    tidx = strmatch(m{didx,1},type);
-    midx = strmatch(m{didx,2},m(typeidx{tidx},2));
+if ~isempty(didx)
+    tidx = find(strcmpi(m{didx,1}, type));
+%     STARTSWITH(m{didx,1},type);
+%     midx = STARTSWITH(m{didx,2},m(typeidx{tidx},2));
+    midx = find(strcmpi(m{didx,2}, m(typeidx{tidx},2)));
+
     set(ud.hpopup,'value',tidx);
     callback_popup(ud.hpopup,[]);
     set(ud.hlistbox,'value',midx);
     callback_listbox(ud.hlistbox,[]);
-end;
+end
 
 % wait for user response
 waitfor(hfig,'userdata');
@@ -152,41 +148,41 @@ waitfor(hfig,'userdata');
 ud = get(hfig,'userdata');
 
 % prepare output
-if isempty(ud),
+if isempty(ud)
     absorption = [];
     description = [];
 else
     idx = typeidx{ud(1)}(ud(2));
     absorption = m{idx,3};
     description = m{idx,2};
-end;
+end
 
 % close figure
 close(hfig);
 return;
 
-function callback_listbox(gcbo,arg2)
+function callback_listbox(gcbo)
 sel = get(gcbo,'value');
-if isempty(sel), return; end;
+if isempty(sel), return; end
 sel = sel(1);
 ud = guidata(gcbo);
 t = get(ud.hpopup,'value');
 mnr = ud.typeidx{t}(sel);
 set(ud.hplot,'ydata',ud.m{mnr,3});
 
-function callback_popup(gcbo,arg2)
+function callback_popup(gcbo)
 sel = get(gcbo,'value');
 ud = guidata(gcbo);
 set(ud.hlistbox,'string',ud.m(ud.typeidx{sel},2),'value',1);
 callback_listbox(ud.hlistbox,[]);
 
-function callback_ok(gcbo,arg2)
+function callback_ok(gcbo)
 ud = guidata(gcbo);
 tsel = get(ud.hpopup,'value');
 msel = get(ud.hlistbox,'value');
 set(gcf,'userdata',[tsel msel]);
 
-function callback_cancel(gcbo,arg2)
+function callback_cancel(gcbo)
 ud = guidata(gcbo);
 set(ud.hplot,'ydata',ud.orgdata);
 set(gcf,'userdata',[]);

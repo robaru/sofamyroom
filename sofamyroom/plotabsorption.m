@@ -23,7 +23,7 @@ function h = plotabsorption(absfreq,abscoef)
 % along with ROOMSIM. If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if nargin==1,
+if nargin==1
     name = {'X0 (back wall)'
             'X1 (front wall)'
             'Y0 (right wall)'
@@ -31,26 +31,26 @@ if nargin==1,
             'Z0 (floor)'
             'Z1 (ceiling)'};
     param = absfreq;
-    for i = 1:6,
+    for i = 1:6
         subplot(3,2,i);
         plotabsorption(param.room.surface.frequency,...
             param.room.surface.absorption(i,:));
         try
             d = param.room.surface.description{i};
-            if length(d)>30, d=[d(1:30) '...']; end;
+            if length(d)>30, d=[d(1:30) '...']; end
             title({name{i},d});
         catch
             title(name{i});
-        end;
-        if i<5, 
+        end
+        if i<5
             xlabel([]); 
             set(gca,'xticklabel',[]); 
-        end;
-        if rem(i,2)==0,
+        end
+        if rem(i,2)==0
             ylabel([]);
             set(gca,'yticklabel',[]); 
-        end;
-    end;
+        end
+    end
 else
     newplot
     h = semilogx(absfreq,abscoef,'b-x','linewidth',2,'markersize',10);
@@ -58,4 +58,4 @@ else
     grid on
     xlabel('Frequency (Hz)');
     ylabel('Absorption'); 
-end;
+end

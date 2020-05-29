@@ -1,4 +1,4 @@
-function h = plotcoordsystem(xyz,ypr,u)
+function h = plotcoordsystem(xyz,ypr,u, c)
 % internal function that plots a 3d coordinate system to indicate a 
 % sensor position and orientation in a room
 
@@ -22,12 +22,12 @@ function h = plotcoordsystem(xyz,ypr,u)
 % along with ROOMSIM. If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if nargin==0, xyz = 1; end;
-if nargin<=1,
+if nargin==0, xyz = 1; end
+if nargin<=1
     u = xyz;
     xyz = [0 0 0]';
     ypr = [0 0 0]';
-end;
+end
 
 v = [0 u 0 0 0 0;
      0 0 0 u 0 0;
@@ -35,7 +35,8 @@ v = [0 u 0 0 0 0;
      1 1 1 1 1 1];
 v = yprTs2r(ypr,xyz) * v;
 hold on;
-h = plot3(reshape(v(1,:),2,3),reshape(v(2,:),2,3),reshape(v(3,:),2,3));
-set(h(1),'color','r');
-set(h(2),'color','g');
-set(h(3),'color','b');
+h = plot3(reshape(v(1,:),2,3),reshape(v(2,:),2,3),reshape(v(3,:),2,3), 'LineWidth', 3);
+set(h(1),'color',[c, 0.9]);
+set(h(2),'color',[0.6, 0.6, 0.6, 0.7]);
+set(h(3),'color',[0.6, 0.6, 0.6, 0.7]);
+

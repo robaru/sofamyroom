@@ -32,6 +32,6 @@ par = evalc(name);
 clear par filename d n name;
 vars = whos;
 par = [];
-for i = 1:length(vars),
+for i = 1:length(vars)
     par.(vars(i).name) = eval(vars(i).name);
-end;
+end
