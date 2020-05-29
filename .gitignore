@@ -22,3 +22,4 @@ sofamyroom/data/SOFA/DRIR_SBS_VSA_194OSC_PAC.sofa
 sofamyroom/data/SOFA/Kayser2009_Anechoic.sofa
 /sofamyroom/source/out/build/x64-Debug
 /.vs
+/sofamyroom/*.mexa64

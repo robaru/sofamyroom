@@ -13,9 +13,14 @@ function [ CartCoord, SpherCoord ] = SphereSampling( Radius, EquatorStep)
 %   CartCoord : cartezian coordinates 3xN double
 %   SpherCoord : spherical coordinates 3xN double
 %
-%   AUTHOR: Antoine Deleforge and Clément Gaultier,
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% AUTHORS: Antoine Deleforge and Clément Gaultier,
 %       PANAMA Research Group, Inria, France
 %       http://thevastproject.inria.fr/dataset/
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 rng('shuffle');
 
