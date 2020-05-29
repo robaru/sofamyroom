@@ -1,4 +1,4 @@
-function [ SubsetVAST ] = SubVASTGeneration(RoomSize, RoomNb, CeilingAbsorb, FloorAbsorb, WallsAbsorb, GridDistance, ReceiveLoc, Diffuse, SaveWAV)
+function [ SubsetVAST ] = SubVASTGeneration(RoomSize, RoomName, CeilingAbsorb, FloorAbsorb, WallsAbsorb, SourcePos, ReceiveLoc, Diffuse, SofaPath, SaveWAV)
 %SubVASTGeneration Provides a VAST structure with impulse responses
 %corresponding to the sources inside the domain of 'RoomSize' at the
 %distance 'GridDistance' from the receiver which is at the 'ReceiveLoc'
@@ -14,27 +14,21 @@ JobID = num2str(randi(1000));
     
 %% Paths and folders
 
-ResDir = ['./Results/Room' RoomNb '/'];
+ResDir = ['./Results/Room' RoomName '/'];
 
 if ~isfolder(ResDir)
     mkdir(ResDir)
 end
 
 
-%% Sampled points generation
-EquatorStep = 9;
-% CartCoord and SphereCoord are in the receiver referential
-[CartCoord, SpherCoord] = SphereSampling(GridDistance, EquatorStep);
-
 % Referential shifting from receiver to room
-CartCoord(1,:) = CartCoord(1,:) + ReceiveLoc(1); % x
-CartCoord(2,:) = CartCoord(2,:) + ReceiveLoc(2); % y
-CartCoord(3,:) = CartCoord(3,:) + ReceiveLoc(3); % z
+CartCoord(1,:) = SourcePos(1,:) + ReceiveLoc(1); % x
+CartCoord(2,:) = SourcePos(2,:) + ReceiveLoc(2); % y
+CartCoord(3,:) = SourcePos(3,:) + ReceiveLoc(3); % z
 
 %% Inside domain validity check
 
 % Room Dimensions
-%RoomSize = [3.5,5,2.50];
 RWidth = RoomSize(1);
 RLength = RoomSize(2);
 RHeight = RoomSize(3);
@@ -54,14 +48,7 @@ SubsetVAST.GlobalParams.RIRLengthSamples = SubsetVAST.GlobalParams.RIRLengthTime
 RIRNumber = length(ValidCartCoord);            
 SubsetVAST = VASTinit(SubsetVAST,RIRNumber);
 
-%% SofaMyRoom setup
-
-% The mex file supplied works with MATLAB installed on 64-bit linux distro only. If on windows or mac, contact me. I can explain how to handle that case.
-sofamyroom load omnidirectional;	% loads the receiver model
-sofamyroom load SOFA ../hrtf/mit_kemar_normal_pinna.sofa;	% loads the source model
-
 %% Creating parameter variable 'SofaMyRoomParam'
-
 % loading basic parameters of the room
 
 %
@@ -105,11 +92,11 @@ SofaMyRoomParam.options.saveaswav	        = SaveWAV;                 % format of
 SofaMyRoomParam.room.dimension	             = RoomSize;
 SofaMyRoomParam.receiver(1).location       	 = ReceiveLoc;
 SofaMyRoomParam.receiver(1).orientation		 = [ 0, 0, 0 ];
-SofaMyRoomParam.receiver(1).description     	 = 'SOFA ../hrtf/mit_kemar_normal_pinna.sofa';
+SofaMyRoomParam.receiver(1).description     	 = sprintf('SOFA %s interp=1 norm=1', SofaPath);
 SofaMyRoomParam.source(1).orientation			 = [ 0, 0, 0 ];
 SofaMyRoomParam.source(1).description		     = 'omnidirectional';
 SofaMyRoomParam.room.surface.diffusion = repmat(Diffuse,6,1);	% diffusion profiles for all 6 surfaces % Diffuse
-SofaMyRoomParam.options.simulatediffuse = false;	% change this to false if user does not want to simulate diffuse reflections
+SofaMyRoomParam.options.simulatediffuse = true;	% change this to false if user does not want to simulate diffuse reflections
 SofaMyRoomParam.options.fs = SubsetVAST.Receiver.HRTF.Fs; % Different from SubsetVAST.Global.SamplingFrequency because of the KEMARSmall.hrtf file
 SofaMyRoomParam.options.responseduration = SubsetVAST.GlobalParams.RIRLengthTime;
 SofaMyRoomParam.room.surface.absorption = [repmat(WallsAbsorb,4,1); FloorAbsorb; CeilingAbsorb]; % Absorb
@@ -167,11 +154,72 @@ SubsetVAST.Room.Diffusion = repmat(Diffuse',1,RIRNumber);
 
 %% Saving the mat file
 
-FileName = [ResDir 'JobID_' JobID '_Grid_' num2str(GridDistance)...
+FileName = [ResDir 'RoomName_' RoomName ...
     '_RecLoc_' num2str(ReceiveLoc) '.mat'];
 
 FileName(isspace(FileName)) = [];
 
 save(FileName, 'SubsetVAST');
+
+
+function [RT60,estimator] = Room2RT60(param,estimator)
+% Calculate a room reverberation time (RT60) using a Sabine or Norris-Eyring estimate.
+% estimator is of type character and is one of:'Sabine','SabineAir','SabineAirHiAbs','Norris_Eyring'
+% Ref. http://www.teicontrols.com/notes/AcousticsEE363N/EngineeringAcoustics.pdf
+
+if nargin==1, estimator = ''; end
+
+% extract room dimensions from parameter structure
+Rx = param.room.dimension(1);
+Ry = param.room.dimension(2);
+Rz = param.room.dimension(3);
+
+% extract absorption data from parameter structure
+AC = param.room.surface.absorption';
+AF = param.room.surface.frequency';
+
+% calculate frequency dependent air absorption
+AirAbs = 5.5E-4*(0.50/param.room.humidity)*(AF/1000).^(1.7); % m_air
+% calculate speed of sound (m/s) 
+SpeedOfSound = round(331*sqrt(1+0.0036*param.room.temperature)); 
+
+Volume = Rx * Ry * Rz; % V
+AreaXY = Rx * Ry;  % Sxy
+AreaXZ = Rx * Rz;
+AreaYZ = Ry * Rz;
+
+SurfaceArea = 2 * (AreaXY + AreaXZ + AreaYZ); % S
+EffAbsArea = AreaYZ * (AC(:,1) + AC(:,2)) + ...
+             AreaXZ * (AC(:,3) + AC(:,4)) + ...
+             AreaXY * (AC(:,5) + AC(:,6)); % Se
+MeanAbs = EffAbsArea / SurfaceArea; % a_bar
+
+MeanAirAbs = mean(AirAbs); % m
+% compute mean free path = average distance between successive reflections (Ref A4)
+MeanFreePath = 4 * Volume / SurfaceArea; % MFP
+
+% prepare output
+RT60 = zeros(size(AF));
+
+% detect anechoic case and return all zeros RT60
+if abs(1 - MeanAbs) < eps, return; end
+
+switch estimator
+    case 'Sabine'
+        % Sabine equation
+        RT60 = (55.25/SpeedOfSound)*Volume./EffAbsArea; 
+
+    case 'SabineAir'
+        % Sabine equation (SI units) adjusted for air
+        RT60 = (55.25/SpeedOfSound)*Volume./(4*AirAbs * Volume + EffAbsArea); 
+
+    case 'SabineAirHiAbs'
+        % Sabine equation (SI units) adjusted for air and high absorption
+        RT60 = (55.25/SpeedOfSound)*Volume./(4*AirAbs * Volume + EffAbsArea .* (1+MeanAbs/2)); 
+
+    otherwise
+        % Norris-Eyring estimate adjusted for air absorption
+        RT60 = (55.25/SpeedOfSound)*Volume./(4*AirAbs * Volume - SurfaceArea * log(1-MeanAbs+eps));
+        estimator = 'Norris-Eyring';
 end
 
