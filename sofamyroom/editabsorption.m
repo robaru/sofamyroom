@@ -23,11 +23,10 @@ function paramout = editabsorption(param)
 % You should have received a copy of the GNU General Public License
 % along with ROOMSIM. If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 % if no output specified, editing is pointless
-if nargout==0, 
+if nargout==0
     warning('no output specified'); 
-end;
+end
 
 name = {'X0 (back wall)' , ...
          'X1 (front wall)', ...
@@ -41,7 +40,7 @@ hfig = figure('menubar','none',...
               'name','Edit absorption (double click graph to select material)',...
               'numbertitle','off');
 hdata = zeros(1,6);
-for i = 1:6,
+for i = 1:6
     subplot(3,2,i);
     hdata(i) = plotabsorption(...
           param.room.surface.frequency,...
@@ -51,8 +50,8 @@ for i = 1:6,
         title({name{i},param.room.surface.description{i}});
     catch
         title({name{i},''});
-    end;
-end;
+    end
+end
 
 % add OK/Cancel button
 uicontrol('style','pushbutton',...
@@ -70,31 +69,31 @@ waitfor(hfig,'userdata');
 % extract new data on OK
 switch get(hfig,'userdata')
     case 'ok'
-        for i = 1:6,
+        for i = 1:6
             a = get(hdata(i),'ydata');
             t = get(get(get(hdata(i),'parent'),'title'),'string');
             d = t{2};
             param.room.surface.absorption(i,:) = a;
             param.room.surface.description{i} = d;
-        end;
-end;
+        end
+end
 
 % close figure
 delete(hfig);
 drawnow;
-if nargout>0, paramout = param; end;
+if nargout>0, paramout = param; end
 
 %------------------------------------------------------------
 function callback_buttondown(gcbo,arg2)
 % respond to double-click on axes
-if ~strcmp(get(gcf,'selectiontype'),'open'), return; end;
+if ~strcmp(get(gcf,'selectiontype'),'open'), return; end
 [a,d] = selectabsorption(gcbo);
-if ~isempty(a),
+if ~isempty(a)
     htitle = get(gcbo,'title');
     s = get(htitle,'string');
     s{2} = d;
     set(htitle,'string',s);
-end;
+end
 
 %------------------------------------------------------------
 function callback_ok(gcbo,arg2)

@@ -41,14 +41,14 @@ V = [0 0 0; Rx 0 0; Rx Ry 0; 0 Ry 0; 0 0 Rz; Rx 0 Rz; Rx Ry Rz; 0 Ry Rz];
 % define room faces (x0,x1,y0,y1,z0,z1)
 F = [1 4 8 5; 2 3 7 6; 1 2 6 5; 4 3 7 8; 1 2 3 4; 5 6 7 8];
 % define face colours
-C = [1   0   0  ;  % x0 : red
+C = [0   0   1  ;  % x0 : red
      0   0   1  ;  % x1 : blue
-     1   0   1  ;  % y0 : cyan
-     0   1   0  ;  % y1 : green
+     0   0   1  ;  % y0 : cyan
+     0   0   1  ;  % y1 : green
      0.5 0.5 0.5;  % z0 : grey
      1   1   1  ]; % z1 : white
 % define face transparency (0=clear, 1=opaque)
-A = [0.25; 0.25; 0.25; 0.25; 0.75; 0];
+A = [0.1; 0.1; 0.1; 0.1; 0.8; 0];
 
 % draw room
 patch('Faces',F,'Vertices',V,...
@@ -60,41 +60,44 @@ patch('Faces',F,'Vertices',V,...
       'EdgeColor','none');
 
 % outline the floor (save handle for legend)
-plot3([0  0],  [0  Ry], [0 0],'r',...
-      [Rx Rx], [0  Ry], [0 0],'b',...
-      [0  Rx], [0  0],  [0 0],'m',...
-      [0  Rx], [Ry Ry], [0 0],'g'); 
+plot3([0  0],  [0  Ry], [0 0],'k',...
+      [Rx Rx], [0  Ry], [0 0],'k',...
+      [0  Rx], [0  0],  [0 0],'k',...
+      [0  Rx], [Ry Ry], [0 0],'k'); 
               
 % outline the vertical edges
-plot3([Rx Rx], [0  0],  [0 Rz],'m',...
-      [0  0],  [0  0],  [0 Rz],'m',...
-      [0  0],  [Ry Ry], [0 Rz],'g',...
-      [Rx Rx], [Ry Ry], [0 Rz],'g'); 
+plot3([Rx Rx], [0  0],  [0 Rz],'k',...
+      [0  0],  [0  0],  [0 Rz],'k',...
+      [0  0],  [Ry Ry], [0 Rz],'k',...
+      [Rx Rx], [Ry Ry], [0 Rz],'k'); 
 
 % outline the ceiling 
-plot3([0  Rx], [0  0],  [Rz Rz],'m',...
-      [0  0],  [0  Ry], [Rz Rz],'r',...
-      [0  Rx], [Ry Ry], [Rz Rz],'g',...
-      [Rx Rx], [0  Ry], [Rz Rz],'b');
+plot3([0  Rx], [0  0],  [Rz Rz],'k',...
+      [0  0],  [0  Ry], [Rz Rz],'k',...
+      [0  Rx], [Ry Ry], [Rz Rz],'k',...
+      [Rx Rx], [0  Ry], [Rz Rz],'k');
 
 %---------------------------------------------------
 % draw source
 S = param.source;
 Nsources = length(S);
 
+orientation_length = max(param.room.dimension)*0.07;
+
 % draw source location and orientation
+source_color = [0.6350, 0.0780, 0.1840];
 Hsource = zeros(1,Nsources);
-for i = 1:Nsources,
+for i = 1:Nsources
     l = S(i).location;
     o = S(i).orientation;
-    plotcoordsystem(l,o,1/4);
-    Hsource(i) = plot3(l(1),l(2),l(3),'o','MarkerEdgeColor','k','MarkerFaceColor','g');
+    plotcoordsystem(l,o,orientation_length, source_color);
+    Hsource(i) = plot3(l(1),l(2),l(3),'o','MarkerSize', 16, 'MarkerEdgeColor',source_color,'MarkerFaceColor',source_color);
     l = yprTs2r(o,l) * [-1 -1 -1 16]'/16;
-    text(l(1),l(2),l(3),['S_' num2str(i)]);
-end;
+    text(l(1)+0.2,l(2)+0.2,l(3)+0.2,['S_' num2str(i)]);
+end
 
 % create legend label for source(s)
-sourcelabel = 'Source'; if Nsources>1, sourcelabel = 'Sources'; end;
+sourcelabel = 'Source'; if Nsources>1, sourcelabel = 'Sources'; end
 
 %---------------------------------------------------------
 % draw receiver
@@ -103,23 +106,24 @@ Nreceivers = length(P);
 
 % draw receiver location and orientation
 Hreceiver = zeros(1,Nreceivers);
-for i = 1:Nreceivers,
+receiver_color = [0, 0.4470, 0.7410];
+for i = 1:Nreceivers
     l = P(i).location;
     o = P(i).orientation;
-    plotcoordsystem(l,o,1/4);
-    Hreceiver(i) = plot3(l(1),l(2),l(3),'o','MarkerEdgeColor','k','MarkerFaceColor','m');
+    plotcoordsystem(l,o,orientation_length, receiver_color);
+    Hreceiver(i) = plot3(l(1),l(2),l(3),'o','MarkerSize', 16, 'MarkerEdgeColor', receiver_color,'MarkerFaceColor', receiver_color);
     l = yprTs2r(o,l) * [-1 -1 -1 16]'/16;
-    text(l(1),l(2),l(3),['R_' num2str(i)]);
-end;
+    text(l(1)+0.2,l(2)+0.2,l(3)+0.2,['R_' num2str(i)]);
+end
 
 %----------------------------------------------------------
 % format axis
 prevwarnstate = warning('off');
 axis equal;
 axis([0 Rx 0 Ry 0 Rz]);
-xlabel('Depth (x, meters)'); 
-ylabel('Width (y, meters)'); 
-zlabel('Height (z, meters)');
+xlabel('Depth (x, [m])'); 
+ylabel('Width (y, [m])'); 
+zlabel('Height (z, [m])');
 title(sprintf('Room, %s and Receiver Geometry', sourcelabel));
 view(3);
 set(gca,'xtick',0:Rx,'ytick',0:Ry,'ztick',0:Rz);

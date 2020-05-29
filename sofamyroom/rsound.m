@@ -27,18 +27,22 @@ function y = rsound(y,fs,h)
 % along with ROOMSIM. If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if size(h,1)==1 || size(h,1)==2, h = h'; end;
-if size(h,2)~=1 && size(h,2)~=2, 
+if size(h,1)==1 || size(h,1)==2, h = h'; end
+
+if size(h,2)~=1 && size(h,2)~=2
     error('room impulse response not monaural or binaural');
-end;
+end
+
 y = y(:); y(end+size(h,1)) = 0;
 yl = fftfilt(h(:,1),y);
-if size(h,2)==1,
+
+if size(h,2)==1
     y = yl;
 else
     y = [yl fftfilt(h(:,2),y)];
-end;
-if nargout==0,
+end
+
+if nargout==0
     wavplay(y,fs);
     clear y;
-end;
+end
