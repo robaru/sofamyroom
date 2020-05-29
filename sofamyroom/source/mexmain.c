@@ -108,7 +108,7 @@ void mexFunction(
 
             for (int i = 0; i < roomsetup.nSources*roomsetup.nReceivers; i++)
             {
-                sprintf(filename, "%s - receiver_%d.wav", roomsetup.options.outputname, i);
+                sprintf(filename, "%s-receiver_%d.wav", roomsetup.options.outputname, i);
 
                 MsgPrintf("Writing output file '%s'\n", filename);
 
