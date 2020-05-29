@@ -18,9 +18,14 @@ function [ VAST ] = VASTinit( varargin)
 %   VAST: 1x1 struct containing the default fields for the dataset
 %   initialization
 %
-% AUTHOR: Antoine Deleforge and Clément Gaultier,
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% AUTHORS: Antoine Deleforge and Clément Gaultier,
 %       PANAMA Research Group, Inria, France
 %       http://thevastproject.inria.fr/dataset/
+% adapted by Roberto Barumerli, barumerli@dei.unipd.it
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if nargin < 1
     VAST = [];

@@ -9,10 +9,14 @@ function [ SubsetVAST ] = SubVASTGeneration(RoomSize, RoomName, CeilingAbsorb, F
 %   Absorb:
 %   Diffuse:
 %
-%   AUTHOR: Antoine Deleforge and Clément Gaultier,
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% AUTHORS: Antoine Deleforge and Clément Gaultier,
 %       PANAMA Research Group, Inria, France
 %       http://thevastproject.inria.fr/dataset/
-
+% adapted by Roberto Barumerli, barumerli@dei.unipd.it
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Paths and folders
 
@@ -98,7 +102,7 @@ SofaMyRoomParam.options.saveaswav	        = SaveWAV;                 % format of
 SofaMyRoomParam.room.dimension	             = RoomSize;
 SofaMyRoomParam.receiver(1).location       	 = ReceiveLoc;
 SofaMyRoomParam.receiver(1).orientation		 = [ 0, 0, 0 ];
-SofaMyRoomParam.receiver(1).description     	 = sprintf('SOFA %s interp=1 norm=1', SofaPath);
+SofaMyRoomParam.receiver(1).description     	 = sprintf('SOFA %s interp=1 norm=1 resampling=1', SofaPath);
 SofaMyRoomParam.source(1).orientation			 = [ 0, 0, 0 ];
 SofaMyRoomParam.source(1).description		     = 'omnidirectional';
 SofaMyRoomParam.room.surface.diffusion = repmat(Diffuse,6,1);	% diffusion profiles for all 6 surfaces % Diffuse

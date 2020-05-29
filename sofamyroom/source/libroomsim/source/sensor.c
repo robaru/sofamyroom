@@ -929,7 +929,7 @@ void ClearAllSensors(void)
 
 void MexAtExitCallback(void)
 {
-    MsgPrintf("ROOMSIM exiting...\n");
+    MsgPrintf("SofaMyRoom exiting...\n");
     ClearAllSensors();
 }
 

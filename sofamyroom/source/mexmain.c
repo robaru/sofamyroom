@@ -81,15 +81,14 @@ void mexFunction(
     CRoomSetup roomsetup;
     BRIR       *brir;
     
-    /* accept call ROOMSIM(PAR) */
+    /* accept call sofamyroom(par) */
     if (nrhs==1 && mxIsStruct(prhs[0]))
     {
         if (mxGetNumberOfElements(prhs[0])!=1) mexErrMsgTxt("structure array unexpected as first input argument");
 
-        /* load parameters from first argument into roomsim structure */
+        /* load parameters from first argument into sofamyroom structure */
         LoadCRoomSetup(prhs[0],0,&roomsetup);
         
-        /** @todo Implement VerifyRoomsim(), verifying parameter validity. */
         ValidateSetup(&roomsetup);
         brir = Roomsim(&roomsetup);
 
