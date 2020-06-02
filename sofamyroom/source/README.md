@@ -163,6 +163,24 @@ You can also build it in Unittest mode, to check the validity of SofaMyRoom func
 ```matlab
 >> make test
 ```
+
+## Building the documentation
+You can optionally build the documentation files from the source code. Documentation files are built using [Doxygen](https://www.doxygen.nl/index.html), 
+[Sphinx](https://www.sphinx-doc.org/en/stable/) and [Breathe](https://github.com/michaeljones/breathe).
+First of all, you need to install all of the required software. Please refer to the installation guides of each software in order
+to know the steps to install them on your machine. We recommend to use the package manager `pip3` to install Sphinx and Breathe.
+
+When the installation is complete, you need to enable the building of the documentation files. When using CMake, you need
+to add the following to the CMake command:
+```
+-DBUILD_DOCS=TRUE
+```
+For example, if you are using CMake to generate a Visual Studio solution, the complete command is:
+```
+> cmake .. -G"Visual Studio 16 2019" -DBUILD_DOCS=TRUE
+```
+If the option is not specified, documentation generation is skipped when building SofaMyRoom. Please note that if fyou don't need to build the documentation files, you don't need to install the aforementioned software.
+ 
 # Known issues
 
 * The 32-bit version built using Debug configuration on Ubuntu Linux crashes due to a segmentation fault cause by `libmysofa` (file `src/hdf/dataobject.c`, function `log(" REFERENCE %lu %lX %s\n", reference, dataobject, buffer)`, line 551).
