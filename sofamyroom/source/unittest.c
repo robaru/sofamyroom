@@ -28,6 +28,7 @@
 #include "dsp.h"
 #include "interp.h"
 #include "msg.h"
+#include "libroomsim/source/sensor.c"
 
 /* disable warnings about depricated unsafe CRT functions */
 #ifdef _MSC_VER
@@ -211,6 +212,159 @@ void testFreqzLogMagnitude(void)
 	ASSERTOUTPUT(out,r1);
 }
 
+/*******************************************************************************/
+#define PI 3.14159265358979323846
+
+void Roomsetup(CRoomSetup* par)
+{
+    static double surfacefrequency[] = { 125, 250, 500, 1000, 2000, 4000 };
+    static double surfaceabsorption[] =
+    { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,/*  125 Hz */
+      1.0, 1.0, 1.0, 1.0, 1.0, 1.0, /*  250 Hz */
+      1.0, 1.0, 1.0, 1.0, 1.0, 1.0, /*  500 Hz */
+      1.0, 1.0, 1.0, 1.0, 1.0, 1.0, /* 1000 Hz */
+      1.0, 1.0, 1.0, 1.0, 1.0, 1.0, /* 2000 Hz */
+      1.0, 1.0, 1.0, 1.0, 1.0, 1.0, /* 4000 Hz */
+    };
+    static double surfacediffusion[] =
+    { 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, /*  125 Hz */
+      0.5, 0.5, 0.5, 0.5, 0.5, 0.5, /*  250 Hz */
+      0.5, 0.5, 0.5, 0.5, 0.5, 0.5, /*  500 Hz */
+      0.5, 0.5, 0.5, 0.5, 0.5, 0.5, /* 1000 Hz */
+      0.5, 0.5, 0.5, 0.5, 0.5, 0.5, /* 2000 Hz */
+      0.5, 0.5, 0.5, 0.5, 0.5, 0.5, /* 4000 Hz */
+    };
+    static const CSensor source[] = {
+        {{500,500,500}, {180,0,0}, "unidirectional"}
+    };
+    static const CSensor receiver[] = {
+        {{500,500,500}, {0,0,0}, "SOFA ../../data/SOFA/MIT_KEMAR_normal_pinna.sofa"}
+    };
+    FILE* fid;
+    int i;
+
+    par->options.fs = 44100;
+    par->options.responseduration = 0.5;
+    par->options.bandsperoctave = 1;
+    par->options.referencefrequency = 125;
+    par->options.airabsorption = false;
+    par->options.distanceattenuation = false;
+    par->options.subsampleaccuracy = true;
+    par->options.highpasscutoff = 0;
+    par->options.verbose = true;
+
+    par->options.simulatespecular = true;
+    par->options.reflectionorder[0] = 10;
+    par->options.reflectionorder[1] = 10;
+    par->options.reflectionorder[2] = 10;
+
+#define RAYORDER 10
+    par->options.simulatediffuse = false;
+    par->options.numberofrays = 20 * RAYORDER * RAYORDER;
+    par->options.rayenergyfloordB = -80;
+    par->options.diffusetimestep = 0.010;
+
+    par->room.dimension[0] = 1000;
+    par->room.dimension[1] = 1000;
+    par->room.dimension[2] = 1000;
+    par->room.humidity = 0.42;
+    par->room.temperature = 20;
+
+    par->room.surface.frequency = surfacefrequency;
+    par->room.surface.nBands = sizeof(surfacefrequency) / sizeof(surfacefrequency[0]);
+    par->room.surface.absorption = surfaceabsorption;
+    par->room.surface.nRowsAbsorption = par->room.surface.nBands;
+    par->room.surface.nColsAbsorption = sizeof(surfaceabsorption) / sizeof(surfaceabsorption[0]) / par->room.surface.nBands;
+    par->room.surface.diffusion = surfacediffusion;
+    par->room.surface.nRowsDiffusion = par->room.surface.nBands;
+    par->room.surface.nColsDiffusion = sizeof(surfacediffusion) / sizeof(surfacediffusion[0]) / par->room.surface.nBands;
+
+    /* Source(s) */
+    par->source = source;
+    par->nSources = sizeof(source) / sizeof(source[0]);
+
+    /* Receiver(s) */
+    par->receiver = receiver;
+    par->nReceivers = sizeof(receiver) / sizeof(receiver[0]);
+
+    /* Output */
+    par->options.outputname = "brir";
+    par->options.saveaswav = true;
+
+    /* read absorption and diffusion data if exists */
+    fid = fopen("abscoeff.txt", "r");
+    if (fid)
+    {
+        printf("using absorption coefficients from 'abscoeff.txt'\n");
+        for (i = 0; i < par->room.surface.nBands * 6; i++)
+            fscanf(fid, "%lf", &surfaceabsorption[i]);
+        fclose(fid);
+    }
+    fid = fopen("difcoeff.txt", "r");
+    if (fid)
+    {
+        printf("using diffusion coefficients from 'difcoeff.txt'\n");
+        for (i = 0; i < par->room.surface.nBands * 6; i++)
+            fscanf(fid, "%lf", &surfacediffusion[i]);
+        fclose(fid);
+    }
+}
+
+void testEmptyRoom(void)
+{
+    CRoomSetup setup;
+    BRIR* response;
+    CSensorDefinition definition;
+    int error;
+    XYZ xyz = { 0 };
+    int i;
+
+    double brirEnergy = 0;
+    double hrtfEnergy = 0;
+
+    double  brirLogmag[] = { 0, 0, 0, 0, 0, 0 };
+    double  hrtfLogmag[] = { 0, 0, 0, 0, 0, 0 };
+
+    double frequencies[] = { 125, 250, 500, 1000, 2000, 4000 };
+
+    MsgPrintf("Running simulator...\n");
+    Roomsetup(&setup);
+    ValidateSetup(&setup);
+    response = Roomsim(&setup);
+    FreqzLogMagnitude (response->sample, response->nSamples, frequencies, setup.room.surface.nBands, &brirLogmag);
+
+    MsgPrintf("Extracting HRTF from SOFA file...");
+    sensor_SOFA_init("../../data/SOFA/MIT_KEMAR_normal_pinna.sofa", &definition);
+    sensor_SOFA_probe_nointerp(&definition, &xyz);
+    FreqzLogMagnitude (definition.responsedata, definition.nSamples, frequencies, setup.room.surface.nBands, &hrtfLogmag);
+
+    for (i = 0; i < setup.room.surface.nBands; i++)
+        frequencies[i] *= 2 * PI / setup.options.fs;
+
+    for (int i = 0; i < setup.room.surface.nBands; ++i)
+    {
+        if (!EPSEQ(brirLogmag[i], hrtfLogmag[i]))
+         {
+             char msg[64];
+             sprintf(msg, "incorrect logmag output (%d,%.10f,%.10f)", i, brirLogmag[i], hrtfLogmag[i]);
+             ERROR(msg);
+         }
+    }
+
+    for (int i = 0; i < response->nChannels * response->nSamples; ++i)
+    {
+        brirEnergy += (response->sample[i] * response->sample[i]);
+        hrtfEnergy += (definition.responsedata[i] * definition.responsedata[i]);
+    }
+
+    if (!EPSEQ(brirEnergy, hrtfEnergy))
+    {
+        char msg[64];
+        sprintf(msg, "incorrect energy output (%.10f,%.10f)", brirEnergy, hrtfEnergy);
+        ERROR(msg);
+    }
+}
+
 typedef struct {
     char *name;
     void (*run)(void);
@@ -221,5 +375,6 @@ CUnittest unittest[] = {
     { "linear interpolation",                   testLinearInterpolation },
     { "minimum phase FIR filter design",        testMinPhaseFIR         },
 	{ "freqz log magnitude frequency response", testFreqzLogMagnitude   },
+    { "empty room",                             testEmptyRoom   },
 };
 int nUnittests = sizeof(unittest) / sizeof(CUnittest);
