@@ -54,6 +54,7 @@ for i = 1:nargin
         case 'test'
             switches = [switches
                         '-DUNIT_TEST'
+                        '-g'
                         ];
             output = 'sofamyroomtest';
         case 'debug'
@@ -174,7 +175,6 @@ distribfiles = { 'sampleroomsetup.m'
                  'plotbrir.m'
                  'plotcoordsystem.m'
                  'plotroom.m'
-                 'readbrir.m'
                  'readsetup.m'
                  'rsound.m'
                  'selectabsorption.m'
@@ -193,4 +193,3 @@ end
 zip(['sofamyroom_v' version '_' date '.zip'], distribfiles)
 
 fprintf("Zip archive successfully created.\n")
-
