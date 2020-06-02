@@ -28,7 +28,8 @@
 #include "dsp.h"
 #include "interp.h"
 #include "msg.h"
-#include "libroomsim/source/sensor.c"
+#include "sensor.h"
+#include "libroomsim.h"
 
 /* disable warnings about depricated unsafe CRT functions */
 #ifdef _MSC_VER
@@ -238,7 +239,13 @@ void Roomsetup(CRoomSetup* par)
         {{500,500,500}, {180,0,0}, "unidirectional"}
     };
     static const CSensor receiver[] = {
-        {{500,500,500}, {0,0,0}, "SOFA ../../data/SOFA/MIT_KEMAR_normal_pinna.sofa"}
+        {{500,500,500}, {0,0,0}, 
+#	ifndef MEX
+		"SOFA ../../data/SOFA/MIT_KEMAR_normal_pinna.sofa"
+#	else
+		"SOFA data/SOFA/MIT_KEMAR_normal_pinna.sofa"
+#	endif
+		}
     };
     FILE* fid;
     int i;
@@ -313,8 +320,9 @@ void Roomsetup(CRoomSetup* par)
 void testEmptyRoom(void)
 {
     CRoomSetup setup;
-    BRIR* response;
-    CSensorDefinition definition;
+    BRIR* brir;
+    CSensorDefinition *definition;
+    CSensorResponse response;
     int error;
     XYZ xyz = { 0 };
     int i;
@@ -330,16 +338,23 @@ void testEmptyRoom(void)
     MsgPrintf("Running simulator...\n");
     Roomsetup(&setup);
     ValidateSetup(&setup);
-    response = Roomsim(&setup);
-    FreqzLogMagnitude (response->sample, response->nSamples, frequencies, setup.room.surface.nBands, &brirLogmag);
-
-    MsgPrintf("Extracting HRTF from SOFA file...");
-    sensor_SOFA_init("../../data/SOFA/MIT_KEMAR_normal_pinna.sofa", &definition);
-    sensor_SOFA_probe_nointerp(&definition, &xyz);
-    FreqzLogMagnitude (definition.responsedata, definition.nSamples, frequencies, setup.room.surface.nBands, &hrtfLogmag);
+    brir = Roomsim(&setup);
 
     for (i = 0; i < setup.room.surface.nBands; i++)
         frequencies[i] *= 2 * PI / setup.options.fs;
+
+    FreqzLogMagnitude (brir->sample, brir->nSamples, frequencies, setup.room.surface.nBands, &brirLogmag[0]);
+
+    MsgPrintf("Extracting HRTF from SOFA file...");
+    definition = LoadSensor(
+#	ifndef MEX
+		"SOFA ../../data/SOFA/MIT_KEMAR_normal_pinna.sofa"
+#	else
+		"SOFA data/SOFA/MIT_KEMAR_normal_pinna.sofa"
+#	endif
+    );
+    SensorGetResponse(definition, &xyz, &response);
+    FreqzLogMagnitude (response.data.impulseresponse, definition->nSamples, frequencies, setup.room.surface.nBands, &hrtfLogmag[0]);
 
     for (int i = 0; i < setup.room.surface.nBands; ++i)
     {
@@ -351,10 +366,10 @@ void testEmptyRoom(void)
          }
     }
 
-    for (int i = 0; i < response->nChannels * response->nSamples; ++i)
+    for (int i = 0; i < brir->nChannels * brir->nSamples; ++i)
     {
-        brirEnergy += (response->sample[i] * response->sample[i]);
-        hrtfEnergy += (definition.responsedata[i] * definition.responsedata[i]);
+        brirEnergy += (brir->sample[i] * brir->sample[i]);
+        hrtfEnergy += (response.data.impulseresponse[i] * response.data.impulseresponse[i]);
     }
 
     if (!EPSEQ(brirEnergy, hrtfEnergy))
@@ -363,6 +378,8 @@ void testEmptyRoom(void)
         sprintf(msg, "incorrect energy output (%.10f,%.10f)", brirEnergy, hrtfEnergy);
         ERROR(msg);
     }
+
+    //Release Memory
 }
 
 typedef struct {
