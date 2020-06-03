@@ -59,7 +59,8 @@ if(MSVC)
     set_property(TARGET sofamyroom libsfmt libroomsim wavwriter PROPERTY
   				MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<OR:$<CONFIG:Debug>,$<CONFIG:Unittest>>:Debug>DLL")
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT sofamyroom)
-	set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS} /LTCG")
+	set_property(TARGET sofamyroom libsfmt libroomsim wavwriter PROPERTY LINK_FLAGS_RELEASE "/INCREMENTAL:NO")
+	set_property(TARGET sofamyroom libsfmt libroomsim wavwriter PROPERTY LINK_FLAGS_RELEASE "/LTCG")
 endif()
 
 target_link_libraries(sofamyroom libroomsim wavwriter)
