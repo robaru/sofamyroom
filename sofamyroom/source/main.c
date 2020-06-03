@@ -60,64 +60,36 @@ int main(int argc, char **argv)
 
 	fid = NULL;
 
-	if (!setup.options.saveaswav)
+	sample = (float*)malloc(response[0].nChannels * sizeof(float));
+
+	if (!sample)
 	{
-		sprintf(filename, "%s.brir", setup.options.outputname);
-
-		fid = fopen(filename, "wb");
-
-		if (fid) 
-		{ 
-			MsgPrintf("Writing output file '%s'\n", filename);
-
-			FWVAR(setup.nSources);
-			FWVAR(setup.nReceivers);
-
-			for (i = 0; i < setup.nSources*setup.nReceivers; i++)
-			{
-				FWVAR(response[i].fs);
-				FWVAR(response[i].nChannels);
-				FWVAR(response[i].nSamples);
-				FWDBLARR(response[i].sample, response[i].nChannels * response[i].nSamples);
-			}
-			fclose(fid);
-		}
-		else
-			MsgPrintf("unable to open '%s'\n", filename);
+		MsgPrintf("Unable to allocate memory for writing the WAVE file\n");
+		return 1;
 	}
-	else
+
+	for (i = 0; i < setup.nSources*setup.nReceivers; i++)
 	{
-		sample = (float*)malloc(response[0].nChannels * sizeof(float));
+		sprintf(filename, "%s - receiver_%d.wav", setup.options.outputname, i);
 
-		if (!sample)
+		MsgPrintf("Writing output file '%s'\n", filename);
+
+		w = makeWave(3, (int)response[i].fs, (short int)response[i].nChannels, (short int)32);
+		waveSetDuration(&w, (float)response[i].nSamples / response[i].fs);
+		for (j = 0; j < response[i].nSamples; ++j)
 		{
-			MsgPrintf("Unable to allocate memory for writing the WAVE file\n");
-			return 1;
-		}
-
-		for (i = 0; i < setup.nSources*setup.nReceivers; i++)
-		{
-			sprintf(filename, "%s - receiver_%d.wav", setup.options.outputname, i);
-
-			MsgPrintf("Writing output file '%s'\n", filename);
-
-			w = makeWave(3, (int)response[i].fs, (short int)response[i].nChannels, (short int)32);
-			waveSetDuration(&w, (float)response[i].nSamples / response[i].fs);
-			for (j = 0; j < response[i].nSamples; ++j)
+			for (k = 0; k < response[i].nChannels; ++k)
 			{
-				for (k = 0; k < response[i].nChannels; ++k)
-				{
-					sample[k] = (float)response[i].sample[j + response[i].nSamples * k];
-				}
-				waveAddSampleFloat(&w, sample);
+				sample[k] = (float)response[i].sample[j + response[i].nSamples * k];
 			}
-			waveToFile(&w, filename);
-			waveDestroy(&w);
-
+			waveAddSampleFloat(&w, sample);
 		}
+		waveToFile(&w, filename);
+		waveDestroy(&w);
 
-		free(sample);
 	}
+
+	free(sample);
     
 	/* release BRIR memory */
 	ReleaseBRIR(response);
