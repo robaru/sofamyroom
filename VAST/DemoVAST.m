@@ -25,9 +25,6 @@ end
 % load SOFA library
 SOFAstart
 
-% save BRIR into separated stereo WAVE files
-SaveWAV = true;
-
 %% Demo VAST
 % common parameters
 Fs = 16e3;
