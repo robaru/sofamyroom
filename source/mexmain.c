@@ -92,7 +92,7 @@ void mexFunction(
         ValidateSetup(&roomsetup);
         brir = Roomsim(&roomsetup);
 
-        if (roomsetup.options.saveaswav)
+        if (roomsetup.options.mex_saveaswav)
         {
             char	   filename[256];
             Wave	   w;
