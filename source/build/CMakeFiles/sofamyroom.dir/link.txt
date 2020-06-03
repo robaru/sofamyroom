@@ -1,0 +1,1 @@
+/usr/bin/cc -O3 -DNDEBUG   CMakeFiles/sofamyroom.dir/build.c.o CMakeFiles/sofamyroom.dir/main.c.o  -o sofamyroom libroomsim/liblibroomsim.a wavwriter/libwavwriter.a libsfmt/liblibsfmt.a -lfftw3 ../libmysofa/Linux/64bit/lib/Release/libmysofa.a -lz -lm 

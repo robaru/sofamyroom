@@ -1,0 +1,2 @@
+/usr/bin/ar qc libwavwriter.a  CMakeFiles/wavwriter.dir/source/wavwriter.c.o
+/usr/bin/ranlib libwavwriter.a
