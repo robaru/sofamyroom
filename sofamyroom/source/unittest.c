@@ -1,25 +1,7 @@
 /*********************************************************************//**
  * @file unittest.c
  * @brief Unit test routines.
- **********************************************************************//*
- * Author: Steven Schimmel, stevenmschimmel@gmail.com
- * Copyright 2009, University of Zurich
- *************************************************************************
- * This file is part of ROOMSIM.
- *
- * ROOMSIM is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version. 
- *
- * ROOMSIM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with ROOMSIM. If not, see <http://www.gnu.org/licenses/>.
- *************************************************************************/
+ **********************************************************************/
 
 #include <math.h>
 #include <string.h>
@@ -345,7 +327,7 @@ void testEmptyRoom(void)
 
     FreqzLogMagnitude (brir->sample, brir->nSamples, frequencies, setup.room.surface.nBands, &brirLogmag[0]);
 
-    MsgPrintf("Extracting HRTF from SOFA file...");
+    MsgPrintf("Extracting HRTF from SOFA file...\n");
     definition = LoadSensor(
 #	ifndef MEX
 		"SOFA ../../data/SOFA/MIT_KEMAR_normal_pinna.sofa"
@@ -353,7 +335,9 @@ void testEmptyRoom(void)
 		"SOFA data/SOFA/MIT_KEMAR_normal_pinna.sofa"
 #	endif
     );
-    SensorGetResponse(definition, &xyz, &response);
+    if (!SensorGetResponse(definition, &xyz, &response))
+        MsgErrorExit("didn't get response from sensor");
+
     FreqzLogMagnitude (response.data.impulseresponse, definition->nSamples, frequencies, setup.room.surface.nBands, &hrtfLogmag[0]);
 
     for (int i = 0; i < setup.room.surface.nBands; ++i)
@@ -369,7 +353,11 @@ void testEmptyRoom(void)
     for (int i = 0; i < brir->nChannels * brir->nSamples; ++i)
     {
         brirEnergy += (brir->sample[i] * brir->sample[i]);
-        hrtfEnergy += (response.data.impulseresponse[i] * response.data.impulseresponse[i]);
+    }
+
+    for (int i = 0; i < definition->nChannels * definition->nSamples; ++i)
+    {
+        hrtfEnergy += (definition->responsedata[i] * definition->responsedata[i]);
     }
 
     if (!EPSEQ(brirEnergy, hrtfEnergy))
@@ -379,7 +367,8 @@ void testEmptyRoom(void)
         ERROR(msg);
     }
 
-    //Release Memory
+    ReleaseBRIR(brir);
+    CmdClearAllSensors();
 }
 
 typedef struct {
