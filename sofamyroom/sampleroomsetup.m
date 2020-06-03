@@ -63,7 +63,6 @@ options.uncorrelatednoise   = true;                 % use uncorrelated poisson a
 %    output options
 %
 options.outputname			= 'output';           	% name of the output file
-options.saveaswav	        = false;                 % format of the ouput file
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %

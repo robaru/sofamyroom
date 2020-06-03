@@ -386,7 +386,6 @@ STRUCTBEGIN ( COptions )
 	FIELDBOOL	  ( uncorrelatednoise   )
 
 	FIELDSTRING	  ( outputname			)
-	FIELDBOOL	  ( saveaswav			)
 STRUCTEND ( COptions )
 
 STRUCTBEGIN ( CSensor )
