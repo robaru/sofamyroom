@@ -189,7 +189,7 @@ For example, if you are using CMake to generate a Visual Studio solution, the co
 ```
 cmake .. -G"Visual Studio 16 2019" -DBUILD_DOCS=TRUE
 ```
-If the option is not specified, documentation generation is skipped when building SofaMyRoom. Please note that if fyou don't need to build the documentation files, you don't need to install the aforementioned software.
+If the option is not specified, documentation generation is skipped when building SofaMyRoom. Please note that if you don't need to build the documentation files, you don't need to install the aforementioned software.
 
 A useful tutorial on how to use Doxygen in combination with Sphinx and CMAKE is available [here](https://devblogs.microsoft.com/cppblog/clear-functional-c-documentation-with-sphinx-breathe-doxygen-cmake/).
 
