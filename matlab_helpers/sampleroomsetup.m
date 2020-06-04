@@ -63,6 +63,8 @@ options.uncorrelatednoise   = true;                 % use uncorrelated poisson a
 %    output options
 %
 options.outputname			= 'output';           	% name of the output file
+mex_saveaswav               = false;                % enable or disable saving the results of sofamyroom on disk
+                                                    % when using MATLAB
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
