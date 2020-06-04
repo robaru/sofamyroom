@@ -66,5 +66,5 @@ endif()
 target_link_libraries(sofamyroom libroomsim wavwriter)
 
 if(BUILD_DOCS MATCHES TRUE)
-	add_subdirectory ("docs")
+	add_subdirectory ("docsrc")
 endif()
