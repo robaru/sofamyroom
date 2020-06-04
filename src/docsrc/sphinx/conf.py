@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 project = 'SofaMyRoom'
 copyright = 'EUPL v1.2, 2020'
-author = 'Roberto barumerlDaniele Bianchi'
+author = 'Roberto Barumerli Daniele Bianchi'
 
 
 # -- General configuration ---------------------------------------------------

@@ -11,9 +11,9 @@ Thanks to the virtual acoustic space traveling (VAST), it is possible to systema
 ## Table of Contents
 
    * [Installing SofaMyRoom](#installing-sofamyroom)
-         * [Installation on Windows](#installation-on-windows)
-         * [Installation on Ubuntu Linux](#installation-on-ubuntu-linux)
-         * [Installation on MacOS](#installation-on-macos)
+	 * [Installation on Windows](#installation-on-windows)
+	 * [Installation on Ubuntu Linux](#installation-on-ubuntu-linux)
+	 * [Installation on MacOS](#installation-on-macos)
    * [Usage](#usage)
       * [Usage with MATLAB](#usage-with-matlab)
       * [Notes about the setup file](#notes-about-the-setup-file)
@@ -21,10 +21,10 @@ Thanks to the virtual acoustic space traveling (VAST), it is possible to systema
          * [Notes about the receiver](#notes-about-the-receiver)
          * [Examples](#examples)
    * [Building SofaMyRoom](#building-sofamyroom)
-         * [Building on Windows](#building-on-windows)
-         * [Building on Ubuntu Linux](#building-on-ubuntu-linux)
-         * [Building on MacOS](#building-on-macos)
-         * [Building with MATLAB](#building-with-matlab)
+	 * [Building on Windows](#building-on-windows)
+	 * [Building on Ubuntu Linux](#building-on-ubuntu-linux)
+	 * [Building on MacOS](#building-on-macos)
+	 * [Building with MATLAB](#building-with-matlab)
       * [Building the documentation](#building-the-documentation)
    * [Known issues](#known-issues)
    * [License](#license)
@@ -78,9 +78,8 @@ options.mex_saveaswav  =  true; % only for MATLAB MEX
 ```
 `options.outputname` is the first part of the name given to the output file that stores the result of the simulation. 
 The name must not contain the extension of the file, because SofaMyRoom takes care of that. 
-`options.mex_saveaswav` tells SofaMyRoom to export the results to a Windows WAVE (.wav) file  (`options.saveaswav = true;`) or to return a MATALB numerical array.
-Note that one binary file stores the results of the simulation for every source-receiver couple, 
-while there is one WAVE file for every source-receiver couple.
+`options.mex_saveaswav` tells SofaMyRoom to export the results to a Windows WAVE (.wav) file  (`options.mex_saveaswav = true;`) or to return a MATALB numerical array.
+Note that there is one WAVE file for every source-receiver couple.
 
 ### Notes about the receiver
 The format of the field `receiver(<i>).description` is the following:
