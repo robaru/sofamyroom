@@ -176,18 +176,23 @@ You can also build it in Unittest mode, to check the validity of SofaMyRoom func
 
 ## Building the documentation
 You can optionally build the documentation files from the source code. Documentation files are built using [Doxygen](https://www.doxygen.nl/index.html), [Sphinx](https://www.sphinx-doc.org/en/stable/) and [Breathe](https://github.com/michaeljones/breathe). 
-First of all, you need to install all of the required software. Please refer to the installation guides of each software in order to know the steps to install them on your machine. We recommend to use the package manager `pip3` to install Sphinx and Breathe.
+First of all, you need to install all of the required software. Please refer to the installation guides of each software in order to know the steps to install them on your machine. For MS Windows, we recommend to use the package manager `pip3` to install Sphinx and Breathe ([ref](https://www.sphinx-doc.org/en/master/usage/installation.html)) while with Ubuntu  the package manager is suggested with:
+```
+sudo apt install python3-breathe python3-sphinx doxygen 
+```
 
 When the installation is complete, you need to enable the building of the documentation files. When using CMake, you need to add the following to the CMake command:
-
 ```
--DBUILD_DOCS=TRUE
+cd src/build
+cmake .. -DBUILD_DOCS=TRUE
 ```
 For example, if you are using CMake to generate a Visual Studio solution, the complete command is:
 ```
-> cmake .. -G"Visual Studio 16 2019" -DBUILD_DOCS=TRUE
+cmake .. -G"Visual Studio 16 2019" -DBUILD_DOCS=TRUE
 ```
 If the option is not specified, documentation generation is skipped when building SofaMyRoom. Please note that if fyou don't need to build the documentation files, you don't need to install the aforementioned software.
+
+A useful tutorial on how to use Doxygen in combination with Sphinx and CMAKE is available [here](https://devblogs.microsoft.com/cppblog/clear-functional-c-documentation-with-sphinx-breathe-doxygen-cmake/).
 
 # Known issues
 
