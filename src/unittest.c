@@ -223,7 +223,7 @@ void Roomsetup(CRoomSetup* par)
     static const CSensor receiver[] = {
         {{500,500,500}, {0,0,0}, 
 #	ifndef MEX
-		"SOFA ../../data/SOFA/MIT_KEMAR_normal_pinna.sofa"
+		"SOFA ../../data/MIT_KEMAR_normal_pinna.sofa"
 #	else
 		"SOFA ../data/MIT_KEMAR_normal_pinna.sofa"
 #	endif
@@ -330,7 +330,7 @@ void testEmptyRoom(void)
     MsgPrintf("Extracting HRTF from SOFA file...\n");
     definition = LoadSensor(
 #	ifndef MEX
-		"SOFA ../../data/SOFA/MIT_KEMAR_normal_pinna.sofa"
+		"SOFA ../../data/MIT_KEMAR_normal_pinna.sofa"
 #	else
 		"SOFA ../data/MIT_KEMAR_normal_pinna.sofa"
 #	endif
