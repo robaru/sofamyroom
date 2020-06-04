@@ -225,7 +225,7 @@ void Roomsetup(CRoomSetup* par)
 #	ifndef MEX
 		"SOFA ../../data/SOFA/MIT_KEMAR_normal_pinna.sofa"
 #	else
-		"SOFA data/SOFA/MIT_KEMAR_normal_pinna.sofa"
+		"SOFA ../data/MIT_KEMAR_normal_pinna.sofa"
 #	endif
 		}
     };
@@ -278,7 +278,7 @@ void Roomsetup(CRoomSetup* par)
 
     /* Output */
     par->options.outputname = "brir";
-    par->options.saveaswav = true;
+    par->options.mex_saveaswav = false;
 
     /* read absorption and diffusion data if exists */
     fid = fopen("abscoeff.txt", "r");
@@ -332,7 +332,7 @@ void testEmptyRoom(void)
 #	ifndef MEX
 		"SOFA ../../data/SOFA/MIT_KEMAR_normal_pinna.sofa"
 #	else
-		"SOFA data/SOFA/MIT_KEMAR_normal_pinna.sofa"
+		"SOFA ../data/MIT_KEMAR_normal_pinna.sofa"
 #	endif
     );
     if (!SensorGetResponse(definition, &xyz, &response))

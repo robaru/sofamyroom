@@ -20,7 +20,7 @@ version = '1.0';
 % MEX-file name
 output = 'sofamyroom';
 
-src_path = ['..' filesep 'source'];
+src_path = ['..' filesep 'src'];
 
 % Set default switches
  switches = {'-DMEX'
@@ -167,31 +167,3 @@ if ispc
         fprintf("libfftw3-3.dll successfully copied.\n")
     end
 end
-
-% Creating zip archive
-distribfiles = { 'sampleroomsetup.m'
-                 'editabsorption.m'
-                 'estimateroombreakfreq.m'
-                 'estimateRT60.m'
-                 'plotabsorption.m'
-                 'plotbrir.m'
-                 'plotcoordsystem.m'
-                 'plotroom.m'
-                 'readsetup.m'
-                 'rsound.m'
-                 'selectabsorption.m'
-                 'setcomplexity.m'
-                 'yprTs2r.m'
-                 'yprTr2s.m'
-                 [output '.' mexext]
-               };
-           
-if ispc
-    distribfiles = [ distribfiles
-                     'libfftw3-3.dll'
-                    ];
-end
-
-zip(['sofamyroom_v' version '_' date '.zip'], distribfiles)
-
-fprintf("Zip archive successfully created.\n")
