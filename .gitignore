@@ -1,25 +1,6 @@
-/sofamyroom/roomsim.mexa64
-/sofamyroom/make.asv
-/sofamyroom/roomsim.mexw64
-/sofamyroom/libfftw3-3.dll
-/sofamyroom/roomsimtest.mexa64
-/sofamyroom/roomsim.mexw64.pdb
-/sofamyroom/roomsim_v1.00_19-Mar-2020.zip
-/sofamyroom/roomsim_v1.0_19-Mar-2020.zip
-/sofamyroom/roomsimtest.mexw64
-/sofamyroom/roomsimtest.mexw64.pdb
-/libmysofa/windows/.vs/
-/libmysofa/windows/bin/
-/libmysofa/windows/log/
-/libmysofa/windows/obj/
-/sofamyroom/source/Visual Studio/.vs/
-/sofamyroom/source/Visual Studio/x64/
+/src/build/*
+!/src/build/.empty
+sofamyroom*.mex*
+sofamyroom*.mex*.pdb
+*.asv
 *.DS_Store
-/sofamyroom/source/build/*
-!/sofamyroom/source/build/.empty
-/sofamyroom/data/SOFA/DRIR_SBS_VSA_194OSC_SBC.sofa
-sofamyroom/data/SOFA/DRIR_SBS_VSA_194OSC_PAC.sofa
-sofamyroom/data/SOFA/Kayser2009_Anechoic.sofa
-/sofamyroom/source/out/build/x64-Debug
-/.vs
-/sofamyroom/*.mexa64
