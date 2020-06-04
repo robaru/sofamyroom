@@ -16,10 +16,9 @@
 
 
 # -- Project information -----------------------------------------------------
-
 project = 'SofaMyRoom'
-copyright = '2020, Daniele Bianchi'
-author = 'Daniele Bianchi'
+copyright = 'EUPL v1.2, 2020'
+author = 'Roberto barumerlDaniele Bianchi'
 
 
 # -- General configuration ---------------------------------------------------
@@ -54,3 +53,6 @@ html_static_path = ['_static']
 
 # Breathe Configuration
 breathe_default_project = "SofaMyRoom"
+
+# index file
+master_doc = 'index'
