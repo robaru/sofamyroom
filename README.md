@@ -137,7 +137,7 @@ $ cd src/build
 $ cmake .. -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=BUILD_TYPE
 $ make
 ```
-`BUILD_TYPE` can be `Debug`, `Release` or `Unittest`. Before building the project, the following libraries may be needed:
+`CMAKE_BUILD_TYPE` can be `Debug`, `Release` or `Unittest`. If CMAKE_BUILD_TYPE is not set, the default build type is `Release`. Before building the project, the following libraries may be needed:
 
 ```bash
 $ sudo apt-get install libfftw3-dev
