@@ -183,11 +183,11 @@ sudo apt install python3-breathe python3-sphinx doxygen
 When the installation is complete, you need to enable the building of the documentation files. When using CMake, you need to add the following to the CMake command:
 ```
 cd src/build
-cmake .. -DBUILD_DOCS=TRUE
+cmake .. -DBUILD_DOCS=True
 ```
 For example, if you are using CMake to generate a Visual Studio solution, the complete command is:
 ```
-cmake .. -G"Visual Studio 16 2019" -DBUILD_DOCS=TRUE
+cmake .. -G"Visual Studio 16 2019" -DBUILD_DOCS=True
 ```
 If the option is not specified, documentation generation is skipped when building SofaMyRoom. Please note that if you don't need to build the documentation files, you don't need to install the aforementioned software.
 
