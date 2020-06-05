@@ -9,10 +9,10 @@ if(CMAKE_SIZEOF_VOID_P MATCHES 4)
 endif()
 
 get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-
-if (NOT isMultiConfig AND NOT DEFINED ${CMAKE_BUILD_TYPE})
-	message ("-- No build type selected, default to 'Release'")
-	set(CMAKE_BUILD_TYPE "Release")
+if (NOT isMultiConfig AND NOT CMAKE_BUILD_TYPE)
+	set(defaultBuildType "Release")
+	message ("-- No build type selected, default to '${defaultBuildType}'")
+	set(CMAKE_BUILD_TYPE "${defaultBuildType}" CACHE STRING "Choose the type of build." FORCE)
 else()
 	set(CMAKE_CONFIGURATION_TYPES "Debug;Release;Unittest")
 endif()
@@ -72,6 +72,6 @@ endif()
 
 target_link_libraries(sofamyroom libroomsim wavwriter)
 
-if(BUILD_DOCS MATCHES TRUE)
+if(BUILD_DOCS MATCHES True)
 	add_subdirectory ("docsrc")
 endif()
