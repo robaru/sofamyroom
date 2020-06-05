@@ -8,6 +8,15 @@ if(CMAKE_SIZEOF_VOID_P MATCHES 4)
 	message(FATAL_ERROR "32 bit OSs are not supported")
 endif()
 
+get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+
+if (NOT isMultiConfig AND NOT DEFINED ${CMAKE_BUILD_TYPE})
+	message ("-- No build type selected, default to 'Release'")
+	set(CMAKE_BUILD_TYPE "Release")
+else()
+	set(CMAKE_CONFIGURATION_TYPES "Debug;Release;Unittest")
+endif()
+
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
 	set(OS "Windows")
 	set(PLATFORM "x64")
@@ -18,8 +27,6 @@ elseif(CMAKE_SYSTEM_NAME MATCHES Darwin)
 	set(OS "MacOS")
 	set(PLATFORM "64bit")
 endif()
-
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release;Unittest")
 
 if(GNU)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ansi")
