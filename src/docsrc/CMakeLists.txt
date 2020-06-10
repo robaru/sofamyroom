@@ -44,9 +44,7 @@ add_custom_command(OUTPUT ${SPHINX_INDEX_FILE}
                      -Dbreathe_projects.SofaMyRoom=${DOXYGEN_OUTPUT_DIR}/xml
                    	${SPHINX_SOURCE} ${SPHINX_BUILD}
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
-                       ${CMAKE_CURRENT_BINARY_DIR}/doxygen ${PROJECT_SOURCE_DIR}/docsrc/doxygen
-                   COMMAND ${CMAKE_COMMAND} -E copy_directory
-                       ${CMAKE_CURRENT_BINARY_DIR}/sphinx ${PROJECT_SOURCE_DIR}/docsrc/sphinx
+                       ${CMAKE_CURRENT_BINARY_DIR}/sphinx ${PROJECT_SOURCE_DIR}/../doc/
                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                    DEPENDS
                    # Other docs files you want to track should go here (or in some variable)
