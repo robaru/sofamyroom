@@ -175,9 +175,10 @@ You can also build it in Unittest mode, to check the validity of SofaMyRoom func
 
 ## Building the documentation
 You can optionally build the documentation files from the source code. Documentation files are built using [Doxygen](https://www.doxygen.nl/index.html), [Sphinx](https://www.sphinx-doc.org/en/stable/) and [Breathe](https://github.com/michaeljones/breathe). 
-First of all, you need to install all of the required software. Please refer to the installation guides of each software in order to know the steps to install them on your machine. For MS Windows, we recommend to use the package manager `pip3` to install Sphinx and Breathe ([ref](https://www.sphinx-doc.org/en/master/usage/installation.html)) while with Ubuntu  the package manager is suggested with:
+First of all, you need to install all of the required software. Please refer to the installation guides of each software in order to know the steps to install them on your machine. For MS Windows, we recommend to use the package manager `pip3` to install Sphinx and Breathe ([ref](https://www.sphinx-doc.org/en/master/usage/installation.html)) while with Ubuntu is suggested to run:
 ```
-sudo apt install python3-breathe python3-sphinx doxygen 
+sudo apt install doxygen python3-breathe python3-sphinx 
+pip3 install sphinx_rtd_theme
 ```
 
 When the installation is complete, you need to enable the building of the documentation files. When using CMake, you need to add the following to the CMake command:
