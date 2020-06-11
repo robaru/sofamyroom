@@ -66,11 +66,11 @@ if ~isfield(VAST, 'Receiver') || isempty(VAST.Receiver)
     if exist('RIRnb','var')
         VAST.Receiver = struct('Position',single(zeros(3,RIRnb)),...
             'Orientation',single(zeros(1,RIRnb)),...
-            'HRTF',struct('Left',single(),'Right',single(),'Fs',NaN));
+            'HRTF',struct('Left',single([]),'Right',single([]),'Fs',NaN));
     else
         VAST.Receiver = struct('Position',single([]),...
             'Orientation',single([]),...
-            'HRTF',struct('Left',single(),'Right',single(),'Fs',NaN));
+            'HRTF',struct('Left',single([]),'Right',single([]),'Fs',NaN));
     end
 end
 
