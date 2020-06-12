@@ -1,6 +1,13 @@
 ======================================
-SofaMyRoom - Parameters
+SofaMyRoom - Parameters 
 ======================================
+
+.. toctree::
+	:caption: Contents:
+	
+Paramaters
+-----------------------
+
 Here a complete list of the paramaters that SofaMyRoom can accept. Notice that SofaMyRoom can also handle the parameters through its standard input. 
 
 A line starting with % is considered a comment and all the parameters must end with a semicolon. 
@@ -76,7 +83,6 @@ receiver(<n>).description	Receiver type			SOFA [#n_sofa]_ and [#n_recpos]_
 .. [#n_sofa] Check the README.md to understand how to handle a SOFA receiver.
 
 
------------------------
 Example
 -----------------------
 Here follows a sample for the parameter file. 

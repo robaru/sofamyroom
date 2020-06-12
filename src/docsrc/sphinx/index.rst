@@ -8,19 +8,18 @@ SofaMyRoom - Home
 
 .. toctree::
    :maxdepth: 3
-   :caption: Contents:
+   :caption: Content
+   :numbered:
+   :glob:
+   Overview <overview>
+   Install and Build <install>
+   Code documentation <doxydoc>
+   Simulation parameters <vignettes/params>
+   VAST structure <vignettes/vast>
+   Known Issues <issues>
 
 Indices and tables
-==================
+==========
 
 * :ref:`genindex`
 * :ref:`search`
-* :doc:`/vignettes/params`
-* :doc:`/vignettes/vast`
-* :doc:`/vignettes/test`
-
-
-Docs
-====
-
-.. doxygenindex::

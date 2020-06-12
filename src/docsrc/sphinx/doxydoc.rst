@@ -1,0 +1,4 @@
+Codebase documentation
+==================
+
+.. doxygenindex::
