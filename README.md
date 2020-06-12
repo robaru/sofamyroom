@@ -176,9 +176,11 @@ You can also build it in Unittest mode, to check the validity of SofaMyRoom func
 ## Building the documentation
 You can optionally build the documentation files from the source code. Documentation files are built using [Doxygen](https://www.doxygen.nl/index.html), [Sphinx](https://www.sphinx-doc.org/en/stable/) and [Breathe](https://github.com/michaeljones/breathe). 
 First of all, you need to install all of the required software. Please refer to the installation guides of each software in order to know the steps to install them on your machine. For MS Windows, we recommend to use the package manager `pip3` to install Sphinx and Breathe ([ref](https://www.sphinx-doc.org/en/master/usage/installation.html)) while with Ubuntu is suggested to run:
+
 ```
-sudo apt install doxygen python3-breathe python3-sphinx 
-pip3 install sphinx_rtd_theme
+# IMPORTANT: recommonmark version 0.5.0 or later
+sudo apt install doxygen
+pip3 install sphinx sphinx_rtd_theme recommonmark breathe 
 ```
 
 When the installation is complete, you need to enable the building of the documentation files. When using CMake, you need to add the following to the CMake command:
@@ -186,7 +188,10 @@ When the installation is complete, you need to enable the building of the docume
 cd src/build
 cmake .. -DBUILD_DOCS=True
 ```
+The documentation will be saved into the `docs` folder.
+
 For example, if you are using CMake to generate a Visual Studio solution, the complete command is:
+
 ```
 cmake .. -G"Visual Studio 16 2019" -DBUILD_DOCS=True
 ```
@@ -201,7 +206,7 @@ A useful tutorial on how to use Doxygen in combination with Sphinx and CMAKE is 
 
 # License
 
-SofaMyRoom is covered by EUPL.
+SofaMyRoom is licensed under the [EUPL-1.2](https://joinup.ec.europa.eu/sites/default/files/custom-page/attachment/2020-03/EUPL-1.2%20EN.txt). 
 
 # Credits
 
