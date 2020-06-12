@@ -1,4 +1,4 @@
 Codebase documentation
-==================
+======================================
 
 .. doxygenindex::

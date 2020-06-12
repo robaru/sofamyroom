@@ -7,11 +7,12 @@ SofaMyRoom - Home
 ======================================
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
    :caption: Content
    :numbered:
    :glob:
-   Overview <overview>
+
+   Overview <README.md>
    Install and Build <install>
    Code documentation <doxydoc>
    Simulation parameters <vignettes/params>
@@ -19,7 +20,7 @@ SofaMyRoom - Home
    Known Issues <issues>
 
 Indices and tables
-==========
+======================================
 
 * :ref:`genindex`
 * :ref:`search`
