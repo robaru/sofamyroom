@@ -7,17 +7,24 @@ SofaMyRoom - Home
 ======================================
 
 .. toctree::
-   :maxdepth: 1
-   :caption: Content
-   :numbered:
-   :glob:
-
+   :caption: Using the toolbox
+   :maxdepth: 3
+   
    Overview <README.md>
-   Install and Build <install>
-   Code documentation <doxydoc>
+
+.. toctree::
+   :caption: Vignettes
+   :maxdepth: 1
+   
    Simulation parameters <vignettes/params>
    VAST structure <vignettes/vast>
-   Known Issues <issues>
+
+.. toctree::
+   :caption: Code Reference
+   :maxdepth: 1
+   
+   Code documentation <doxydoc>
+
 
 Indices and tables
 ======================================
