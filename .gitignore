@@ -4,3 +4,5 @@ sofamyroom*.mex*
 sofamyroom*.mex*.pdb
 *.asv
 *.DS_Store
+.vscode
+src/docsrc/sphinx/_build
