@@ -1,78 +1,71 @@
-======================================
+****************************************
 SofaMyRoom - Parameters 
-======================================
+****************************************
 
-.. toctree::
-	:caption: Contents:
-	
+.. contents:: Table of contents
+
 Paramaters
------------------------
+======================
 
 Here a complete list of the paramaters that SofaMyRoom can accept. Notice that SofaMyRoom can also handle the parameters through its standard input. 
 
 A line starting with % is considered a comment and all the parameters must end with a semicolon. 
 
-==============================  ==============================  ==============================
-Name				Description			Type
-==============================  ==============================  ==============================
-room.dimension			Room dimension [m]		double array 
-room.humidity			Relative humidity 		double 
-room.temperature		Room temperature [°C]		double 
+==============================  ==============================  ============================================================
+Name                            Type                            Description
+==============================  ==============================  ============================================================
+room.dimension                  double array                    Room dimension [m]
+room.humidity                   double                          Relative humidity 
+room.temperature                double                          Room temperature [°C] 
 
 **Surface Absorption and Diffusion Coefficients**
-----------------------------------------------------------------------------------------------
-room.surface.frequency		Frequency bands	[Hz]		double array
-room.surface.absorption		Absorption coefficients		double array
-room.surface.diffusion		Diffusion coefficients		double array
+----------------------------------------------------------------------------------------------------------------------------
+room.surface.frequency          double array                    Frequency bands    [Hz]
+room.surface.absorption         double array                    Absorption coefficients
+room.surface.diffusion          double array                    Diffusion coefficients
 
 **Simulation Options**
-----------------------------------------------------------------------------------------------
-options.fs			Sampling frequency [Hz]		integer 
-options.responseduration	Maximum duration [s]		double
-options.bandsperoctave		Simulation frequency accuracy 	integer 
-options.referencefrequency	Reference frequency [Hz]	double 
-options.airabsorption		Apply air absorption		boolean 
-options.distanceattenuation	Apply distance attenuation	boolean 
-options.subsampleaccuracy	Apply subsample accuracy	boolean 
-options.highpasscutoff		3dB high-pass filter		boolean 
-options.verbose			Print status messages		boolean 
+----------------------------------------------------------------------------------------------------------------------------
+options.fs                      integer                         Sampling frequency [Hz] 
+options.responseduration        double                          Maximum duration [s]
+options.bandsperoctave          integer                         Simulation frequency accuracy 
+options.referencefrequency      double                          Reference frequency [Hz] 
+options.airabsorption           boolean                         Apply air absorption 
+options.distanceattenuation     boolean                         Apply distance attenuation 
+options.subsampleaccuracy       boolean                         Apply subsample accuracy 
+options.highpasscutoff          boolean                         3dB high-pass filter 
+options.verbose                 boolean                         Print status messages 
 
 **Specular Reflections**
-----------------------------------------------------------------------------------------------
-options.simulatespecular	Simulate specular reflections	boolean 
-options.reflectionorder		Maximum specular
-
-				reflection order [x,y,z]	integer arrray 
+----------------------------------------------------------------------------------------------------------------------------
+options.simulatespecular        boolean                         Simulate specular reflections 
+options.reflectionorder         integer arrray                  Maximum specular reflection order [x,y,z]
 
 **Diffuse reflections**
-----------------------------------------------------------------------------------------------
-options.simulatediffuse		Simulate diffuse reflections	boolean 
-options.numberofrays		Number of rays 20*K^2		integer 
-options.diffusetimestep		Time resolution in diffuse
-	
-				energy histogram [s]		double
-options.rayenergyfloordB	Ray energy threshold with 	
-
-				respect to initial energy [dB]	double
-options.uncorrelatednoise	Uncorrelated poisson arrivals	boolean 
+----------------------------------------------------------------------------------------------------------------------------
+options.simulatediffuse         boolean                         Simulate diffuse reflections 
+options.numberofrays            integer                         Number of rays 20*K^2 
+options.diffusetimestep         double                          Time resolution in diffuse energy histogram [s]
+options.rayenergyfloordB        double                          Ray energy threshold with respect to initial energy [dB]
+options.uncorrelatednoise       boolean                         Uncorrelated poisson arrivals
 
 **Output Options**
-----------------------------------------------------------------------------------------------
-options.outputname		Name of the output file		string 
-options.saveaswav		Format of the ouput file	boolean [#n_matlab]_
+----------------------------------------------------------------------------------------------------------------------------
+options.outputname              string                          Name of the output file 
+options.saveaswav               boolean [#n_matlab]_            Format of the ouput file
 
 **Source Definitions**
-----------------------------------------------------------------------------------------------
-source(<n> [#n_rec]_).location	Location of source [m]		double array [#n_check]_
-source(<n>).orientation		Orientation of source [deg] 	double array [#n_orient]_
-source(<n>).description		Source type			[#n_recpos]_
+----------------------------------------------------------------------------------------------------------------------------
+source(<n> [#n_rec]_).location  double array [#n_check]_        Location of source [m]
+source(<n>).orientation         double array [#n_orient]_       Orientation of source [deg]
+source(<n>).description         see [#n_recpos]_                Source type
 
 **Source Definitions**
-----------------------------------------------------------------------------------------------
-receiver(<n>).location		Location of receiver [m]	double array
-receiver(<n>).orientation	Orientation of receiver 	double array  [#n_orient]_
-receiver(<n>).description	Receiver type			SOFA [#n_sofa]_ and [#n_recpos]_
-==============================  ==============================  ==============================
+----------------------------------------------------------------------------------------------------------------------------
+receiver(<n>).location          double array                    Location of receiver [m]
+receiver(<n>).orientation       double array  [#n_orient]_      Orientation of receiver
+receiver(<n>).description       see  [#n_recpos]_, [#n_sofa]_   Receiver type
+==============================  ==============================  ============================================================
 
 .. rubric:: Notes
 .. [#n_matlab] Available only for MATLAB MEX.
@@ -84,8 +77,9 @@ receiver(<n>).description	Receiver type			SOFA [#n_sofa]_ and [#n_recpos]_
 
 
 Example
------------------------
+===================
+
 Here follows a sample for the parameter file. 
 
-.. literalinclude:: params_test
+.. literalinclude:: params_example
    :language: matlab
