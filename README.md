@@ -167,7 +167,7 @@ First of all, you need to install all of the required software. Please refer to 
 ```bash
 # IMPORTANT: recommonmark version 0.5.0 or later
 sudo apt install doxygen
-pip3 install sphinx sphinx_rtd_theme recommonmark breathe 
+pip3 install sphinx sphinx_rtd_theme recommonmark breathe
 ```
 
 When the installation is complete, you need to enable the building of the documentation files. When using CMake, you need to add the following to the CMake command:
