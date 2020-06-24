@@ -64,7 +64,7 @@ source(<n>).description         see [#n_recpos]_                Source type
 ----------------------------------------------------------------------------------------------------------------------------
 receiver(<n>).location          ``[1, 3] double``               Location of receiver [m]
 receiver(<n>).orientation       ``[1, 3] double`` [#n_orient]_  Orientation of receiver
-receiver(<n>).description       see [#n_recpos]_, [#n_sofa]_   Receiver type
+receiver(<n>).description       see [#n_recpos]_, [#n_sofa]_    Receiver type
 ==============================  ==============================  ============================================================
 
 .. rubric:: Notes
