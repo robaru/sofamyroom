@@ -386,7 +386,9 @@ STRUCTBEGIN ( COptions )
 	FIELDBOOL	  ( uncorrelatednoise   )
 
 	FIELDSTRING	  ( outputname			)
+#	ifdef MEX
     FIELDBOOL	  ( mex_saveaswav		)
+#	endif
 STRUCTEND ( COptions )
 
 STRUCTBEGIN ( CSensor )
