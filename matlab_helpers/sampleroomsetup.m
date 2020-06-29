@@ -63,7 +63,7 @@ options.uncorrelatednoise   = true;                 % use uncorrelated poisson a
 %    output options
 %
 options.outputname			= 'output';           	% name of the output file
-mex_saveaswav               = false;                % enable or disable saving the results of sofamyroom on disk
+options.mex_saveaswav       = false;                % enable or disable saving the results of sofamyroom on disk
                                                     % when using MATLAB
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,5 +80,5 @@ source(1).description        = 'subcardioid';       % source type
 %
 receiver(1).location         = [ 3 5 1.2 ];         % location of receiver (x,y,z; meters)
 receiver(1).orientation      = [ 0 0 0 ];           % orientation of receiver (yaw,pitch,roll; degrees)
-receiver(1).description      = 'SOFA data/SOFA/MIT_KEMAR_normal_pinna.sofa';  % receiver type
+receiver(1).description      = 'SOFA data/MIT_KEMAR_normal_pinna.sofa';  % receiver type
 

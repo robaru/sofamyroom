@@ -192,6 +192,7 @@ A useful tutorial on how to use Doxygen in combination with Sphinx and CMAKE is 
 # Known issues
 
 * When using the MEX library, MATLAB can crash since the memory allocation performed by llibmysofa is not persistent.
+* The native version outputs a warning when ``options.mex_saveaswav`` is not declared.
 
 # License
 

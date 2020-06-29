@@ -36,6 +36,8 @@ options.verbose = true;
 
 % output options
 options.outputname = 'test'; 	
+% if working with MATLAB and you need the WAV file, set true the next field
+options.mex_saveaswav = false;
 
 % source definitions
 source(1).location = [ 8 2.5 1.6 ]; % [m]

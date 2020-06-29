@@ -52,7 +52,7 @@ options.uncorrelatednoise       ``boolean``                     Uncorrelated poi
 **Output Options**
 ----------------------------------------------------------------------------------------------------------------------------
 options.outputname              ``string``                      Name of the output file 
-options.saveaswav               ``boolean`` [#n_matlab]_        Format of the ouput file
+options.max_saveaswav           ``boolean`` [#n_matlab]_        Format of the ouput file 
 
 **Source Definitions**
 ----------------------------------------------------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ receiver(<n>).description       see [#n_recpos]_, [#n_sofa]_    Receiver type
 ==============================  ==============================  ============================================================
 
 .. rubric:: Notes
-.. [#n_matlab] Available only for MATLAB MEX.
+.. [#n_matlab] Used only in MATLAB MEX.
 .. [#n_rec] SofaMyRoom can handle more than one receiver or source per run. Substitute <n> with a progressive ``integer`` to use this feature. Each BRIR is going to be saved into a separate WAVE file.
 .. [#n_check] SofaMyRoom does not check if the source or receiver position is within the room. Handle with care.
 .. [#n_orient] Defined as (yaw, pitch, roll) in degrees. Run the script ``matlab_helpers/plotroom.m`` if you need to visualize your configuration.
@@ -79,7 +79,7 @@ receiver(<n>).description       see [#n_recpos]_, [#n_sofa]_    Receiver type
 Example
 ===================
 
-Here follows a sample for the parameter file. 
+Here follows a sample for the parameter file. This example is intended for the native version of SofaMyRoom. If you need the MATLAB 
 
 .. literalinclude:: params_example
    :language: matlab
