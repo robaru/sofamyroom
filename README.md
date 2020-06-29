@@ -103,8 +103,8 @@ These instructions will guide you through the steps to build SofaMyRoom on your 
 You can use CMake to generate a Visual Studio solution that can be used to build SofaMyRoom. Open a new Command Prompt window and type the following commands:
 
 ```bash
-> cd src\build
-> cmake .. -G"Visual Studio 16 2019"
+> cd build
+> cmake ../src -G"Visual Studio 16 2019"
 ```
 
 To know how to generate solutions for other versions of Visual Studio, type `cmake --help`.
@@ -114,8 +114,8 @@ To know how to generate solutions for other versions of Visual Studio, type `cma
 You can use CMake to generate a Makefile for SofaMyRoom. Open a new Terminal window and type the following commands:
 
 ```bash
-cd src/build
-cmake .. -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=BUILD_TYPE
+cd build
+cmake ../src -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=BUILD_TYPE
 make
 ```
 
@@ -132,8 +132,8 @@ sudo apt-get install libcunit1-dev
 You can use CMake to generate a XCode project. Open a new Terminal window and type the following commands:
 
 ```applescript
-cd sofamyroom/source/build
-cmake .. -G"XCode"
+cd sofamyroom/build
+cmake ../src -G"XCode"
 ```
 
 The `cunit` library may be required. You can install it with a package manager for MacOS, i.e. Homebrew.
@@ -173,8 +173,8 @@ pip3 install sphinx sphinx_rtd_theme recommonmark breathe
 When the installation is complete, you need to enable the building of the documentation files. When using CMake, you need to add the following to the CMake command:
 
 ```bash
-cd src/build
-cmake .. -DBUILD_DOCS=True
+cd build
+cmake ../src -DBUILD_DOCS=True
 ```
 
 The documentation will be saved into the `docs` folder.
@@ -182,7 +182,7 @@ The documentation will be saved into the `docs` folder.
 For example, if you are using CMake to generate a Visual Studio solution, the complete command is:
 
 ```powershell
-cmake .. -G"Visual Studio 16 2019" -DBUILD_DOCS=True
+cmake ../src -G"Visual Studio 16 2019" -DBUILD_DOCS=True
 ```
 
 If the option is not specified, documentation generation is skipped when building SofaMyRoom. Please note that if you don't need to build the documentation files, you don't need to install the aforementioned software.
