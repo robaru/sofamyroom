@@ -1,7 +1,6 @@
-/src/build/*
 build/*
 docs
-!/src/build/.empty
+!build/.empty
 sofamyroom*.mex*
 sofamyroom*.mex*.pdb
 *.asv
