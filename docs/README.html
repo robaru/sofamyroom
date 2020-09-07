@@ -1,0 +1,419 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>SofaMyRoom &mdash; SofaMyRoom  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SofaMyRoom - Parameters" href="vignettes/params.html" />
+    <link rel="prev" title="SofaMyRoom - Home" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SofaMyRoom
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Using the toolbox</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SofaMyRoom</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installing-sofamyroom">Installing SofaMyRoom</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#installation-on-windows">Installation on Windows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installation-on-ubuntu-linux">Installation on Ubuntu Linux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installation-on-macos">Installation on MacOS</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#usage">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#usage-with-matlab">Usage with MATLAB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#notes-about-the-setup-file">Notes about the setup file</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#notes-about-the-options">Notes about the options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#notes-about-the-receiver">Notes about the receiver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#building-sofamyroom">Building SofaMyRoom</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#building-on-windows">Building on Windows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-on-ubuntu-linux">Building on Ubuntu Linux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-on-macos">Building on MacOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-with-matlab">Building with MATLAB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-the-documentation">Building the documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#known-issues">Known issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#license">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#credits">Credits</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Vignettes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="vignettes/params.html">Simulation parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vignettes/vast.html">VAST structure</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="doxydoc.html">Code documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SofaMyRoom</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>SofaMyRoom</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/README.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="sofamyroom">
+<h1>SofaMyRoom<a class="headerlink" href="#sofamyroom" title="Permalink to this headline">¶</a></h1>
+<p>SofaMyRoom is a fast, accurate, and flexible “shoebox” room acoustics simulator that supports both specular and diffuse reflections.
+The simulator extends the work released by Schimmel et al., called Roomsim, by adding the rendering of Binaural Room Impulse Response, BRIR.
+It supports the AES Spatially Oriented Format for Acoustics (SOFA) file format for storing HRTFs thanks to MySofa library (hereinafter referred as <code class="docutils literal notranslate"><span class="pre">libmysofa</span></code>) and it can export the results of the simulation to a WAVE file.</p>
+<p>Thanks to the virtual acoustic space traveling (VAST), it is possible to systematically generate labeled datasets to train and test machine learning algorithms.</p>
+<div class="section" id="installing-sofamyroom">
+<h2>Installing SofaMyRoom<a class="headerlink" href="#installing-sofamyroom" title="Permalink to this headline">¶</a></h2>
+<p>This repository includes the binary files and, if in case of need, the CMake scripts allow a customized compilation. Only 64-bit platforms are supported.
+SofaMyRoom binaries are available for Windows 10, Ubuntu Linux 20.04 and MacOS Catalina.</p>
+<div class="section" id="installation-on-windows">
+<h3>Installation on Windows<a class="headerlink" href="#installation-on-windows" title="Permalink to this headline">¶</a></h3>
+<p>No futher steps are required to run SofaMyRoom on Windows.</p>
+</div>
+<div class="section" id="installation-on-ubuntu-linux">
+<h3>Installation on Ubuntu Linux<a class="headerlink" href="#installation-on-ubuntu-linux" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">libmysofa</span></code> requires the <code class="docutils literal notranslate"><span class="pre">zlib</span></code> library in order to work properly. To install it, open a terminal and enter the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo apt-get install zlib1g
+</pre></div>
+</div>
+</div>
+<div class="section" id="installation-on-macos">
+<h3>Installation on MacOS<a class="headerlink" href="#installation-on-macos" title="Permalink to this headline">¶</a></h3>
+<p>No further steps are required to run SofaMyRoom on MacOS.</p>
+</div>
+</div>
+</div>
+<div class="section" id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<p>To use SofaMyRoom, type this command in a Command Prompt or a Terminal:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./sofamyroom setup.txt
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">setup.txt</span></code> is the name of the text file containing all the SofaMyRoom setup parameters structure.
+A sample of it can be found in <code class="docutils literal notranslate"><span class="pre">sampleroomsetup.txt</span></code>.</p>
+<div class="section" id="usage-with-matlab">
+<h2>Usage with MATLAB<a class="headerlink" href="#usage-with-matlab" title="Permalink to this headline">¶</a></h2>
+<p>A MEX-file for 64-bit MATLAB is available. To run it, type these commands in the Command Window:</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">setup</span> <span class="p">=</span> <span class="n">readsetup</span><span class="p">(</span><span class="s">&#39;sampleroomsetup.txt&#39;</span><span class="p">);</span>
+<span class="n">output</span> <span class="p">=</span> <span class="n">sofamyroom</span><span class="p">(</span><span class="n">setup</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="notes-about-the-setup-file">
+<h2>Notes about the setup file<a class="headerlink" href="#notes-about-the-setup-file" title="Permalink to this headline">¶</a></h2>
+<p>This file stores all the information needed by SofaMyRoom to perform the simulation.</p>
+<div class="section" id="notes-about-the-options">
+<h3>Notes about the options<a class="headerlink" href="#notes-about-the-options" title="Permalink to this headline">¶</a></h3>
+<p>Besides those related to the simulation, there are two options related to the output file:</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">options</span><span class="p">.</span><span class="n">outputname</span> <span class="p">=</span> <span class="s">&#39;output&#39;</span><span class="p">;</span>
+<span class="n">options</span><span class="p">.</span><span class="n">mex_saveaswav</span>  <span class="p">=</span>  <span class="n">true</span><span class="p">;</span> <span class="c">% only for MATLAB MEX</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">options.outputname</span></code> is the first part of the name given to the output file that stores the result of the simulation.
+The name must not contain the extension of the file, because SofaMyRoom takes care of that.
+<code class="docutils literal notranslate"><span class="pre">options.mex_saveaswav</span></code> tells SofaMyRoom to export the results to a Windows WAVE (.wav) file  (<code class="docutils literal notranslate"><span class="pre">options.mex_saveaswav</span> <span class="pre">=</span> <span class="pre">true;</span></code>) or to return a MATALB numerical array.
+Note that there is one WAVE file for every source-receiver couple.</p>
+</div>
+<div class="section" id="notes-about-the-receiver">
+<h3>Notes about the receiver<a class="headerlink" href="#notes-about-the-receiver" title="Permalink to this headline">¶</a></h3>
+<p>The format of the field <code class="docutils literal notranslate"><span class="pre">receiver(&lt;i&gt;).description</span></code> is the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;RECEIVER_ID PATH_TO_HRTF_FILE interp=interp_value norm=norm_value resampling=resampling_value&#39;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">RECEIVER_ID</span></code> must be <code class="docutils literal notranslate"><span class="pre">SOFA</span></code> in order to read a <code class="docutils literal notranslate"><span class="pre">.sofa</span></code> file. <code class="docutils literal notranslate"><span class="pre">PATH_TO_HRTF_FILE</span></code> is the relative or absolute path to your <code class="docutils literal notranslate"><span class="pre">.sofa</span></code> file. The other values are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">interp</span></code>: SofaMyRoom can look up the HRTF that is closest to the given coordinates or it can interpolate the neighboring HRTFs to obtain the desired HRTF. <code class="docutils literal notranslate"><span class="pre">interp_value</span></code> can be T[RUE], t[rue], 1 (interpolation is
+active), or F[ALSE], f[alse], 0 (interpolation is not performed). Words in square brackets are optional, SofaMyRoom just looks for the first character.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">norm</span></code>: SofaMyRoom can normalize HRTF data. <code class="docutils literal notranslate"><span class="pre">norm_value</span></code> behaves just like <code class="docutils literal notranslate"><span class="pre">interp_value</span></code>, described above.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">resampling</span></code>: SofaMyRoom can resample the HRTF data according to the sampling frequency defined in <code class="docutils literal notranslate"><span class="pre">options.fs</span></code>. <code class="docutils literal notranslate"><span class="pre">resampling_value</span></code> behaves just like <code class="docutils literal notranslate"><span class="pre">interp_value</span></code> and <code class="docutils literal notranslate"><span class="pre">norm_value</span></code>, described above.</p></li>
+</ul>
+<p>All the options described above are optional. If not set, interpolation, normalization and resampling are not performed. Unrecognized options are skipped. If options are repeated, only the last one is used.</p>
+</div>
+<div class="section" id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h3>
+<p>All the examples proposed below are valid:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;SOFA ./mySofaFile.sofa&#39;</span>
+<span class="s1">&#39;SOFA ./mySofaFile.sofa interp=TRUE norm=0 resampling=t&#39;</span>
+<span class="s1">&#39;SOFA ./mySofaFile.sofa interp=1 norm=f&#39;</span>
+<span class="s1">&#39;SOFA ./mySofaFile.sofa resampling=0 norm=F interp=0&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="building-sofamyroom">
+<h1>Building SofaMyRoom<a class="headerlink" href="#building-sofamyroom" title="Permalink to this headline">¶</a></h1>
+<p>These instructions will guide you through the steps to build SofaMyRoom on your local machine. CMake is required.</p>
+<div class="section" id="building-on-windows">
+<h2>Building on Windows<a class="headerlink" href="#building-on-windows" title="Permalink to this headline">¶</a></h2>
+<p>You can use CMake to generate a Visual Studio solution that can be used to build SofaMyRoom. Open a new Command Prompt window and type the following commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt; <span class="nb">cd</span> build
+&gt; cmake ../src -G<span class="s2">&quot;Visual Studio 16 2019&quot;</span>
+</pre></div>
+</div>
+<p>To know how to generate solutions for other versions of Visual Studio, type <code class="docutils literal notranslate"><span class="pre">cmake</span> <span class="pre">--help</span></code>.</p>
+</div>
+<div class="section" id="building-on-ubuntu-linux">
+<h2>Building on Ubuntu Linux<a class="headerlink" href="#building-on-ubuntu-linux" title="Permalink to this headline">¶</a></h2>
+<p>You can use CMake to generate a Makefile for SofaMyRoom. Open a new Terminal window and type the following commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> build
+cmake ../src -G<span class="s2">&quot;Unix Makefiles&quot;</span> -DCMAKE_BUILD_TYPE<span class="o">=</span>BUILD_TYPE
+make
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">CMAKE_BUILD_TYPE</span></code> can be <code class="docutils literal notranslate"><span class="pre">Debug</span></code>, <code class="docutils literal notranslate"><span class="pre">Release</span></code> or <code class="docutils literal notranslate"><span class="pre">Unittest</span></code>. If CMAKE_BUILD_TYPE is not set, the default build type is <code class="docutils literal notranslate"><span class="pre">Release</span></code>. Before building the project, the following libraries may be needed:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo apt-get install libfftw3-dev
+sudo apt-get install zlib1g-dev
+sudo apt-get install libcunit1-dev
+</pre></div>
+</div>
+</div>
+<div class="section" id="building-on-macos">
+<h2>Building on MacOS<a class="headerlink" href="#building-on-macos" title="Permalink to this headline">¶</a></h2>
+<p>You can use CMake to generate a XCode project. Open a new Terminal window and type the following commands:</p>
+<div class="highlight-applescript notranslate"><div class="highlight"><pre><span></span><span class="nv">cd</span> <span class="nv">sofamyroom</span><span class="o">/</span><span class="nv">build</span>
+<span class="nv">cmake</span> <span class="p">..</span><span class="o">/</span><span class="nv">src</span> <span class="o">-</span><span class="nv">G</span><span class="s2">&quot;XCode&quot;</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">cunit</span></code> library may be required. You can install it with a package manager for MacOS, i.e. Homebrew.</p>
+</div>
+<div class="section" id="building-with-matlab">
+<h2>Building with MATLAB<a class="headerlink" href="#building-with-matlab" title="Permalink to this headline">¶</a></h2>
+<p>You can use MATLAB to generate a MEX-file. Type the following command in the Command Window:</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">src</span>
+<span class="n">make</span>
+</pre></div>
+</div>
+<p>You can build the MEX-file in Debug mode. Type the following command:</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">debug</span>
+</pre></div>
+</div>
+<p>You can also build it in Unittest mode, to check the validity of SofaMyRoom functions. Type the following command:</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">test</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="building-the-documentation">
+<h2>Building the documentation<a class="headerlink" href="#building-the-documentation" title="Permalink to this headline">¶</a></h2>
+<p>You can optionally build the documentation files from the source code. Documentation files are built using <a class="reference external" href="https://www.doxygen.nl/index.html">Doxygen</a>, <a class="reference external" href="https://www.sphinx-doc.org/en/stable/">Sphinx</a> and <a class="reference external" href="https://github.com/michaeljones/breathe">Breathe</a>.
+First of all, you need to install all of the required software. Please refer to the installation guides of each software in order to know the steps to install them on your machine. For MS Windows, we recommend to use the package manager <code class="docutils literal notranslate"><span class="pre">pip3</span></code> to install Sphinx and Breathe (<a class="reference external" href="https://www.sphinx-doc.org/en/master/usage/installation.html">ref</a>) while with Ubuntu is suggested to run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># IMPORTANT: recommonmark version 0.5.0 or later</span>
+sudo apt install doxygen
+pip3 install sphinx sphinx_rtd_theme recommonmark breathe
+</pre></div>
+</div>
+<p>When the installation is complete, you need to enable the building of the documentation files. When using CMake, you need to add the following to the CMake command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> build
+cmake ../src -DBUILD_DOCS<span class="o">=</span>True
+</pre></div>
+</div>
+<p>The documentation will be saved into the <code class="docutils literal notranslate"><span class="pre">docs</span></code> folder.</p>
+<p>For example, if you are using CMake to generate a Visual Studio solution, the complete command is:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">cmake</span> <span class="p">../</span><span class="n">src</span> <span class="n">-G</span><span class="s2">&quot;Visual Studio 16 2019&quot;</span> <span class="n">-DBUILD_DOCS</span><span class="p">=</span><span class="n">True</span>
+</pre></div>
+</div>
+<p>If the option is not specified, documentation generation is skipped when building SofaMyRoom. Please note that if you don’t need to build the documentation files, you don’t need to install the aforementioned software.</p>
+<p>A useful tutorial on how to use Doxygen in combination with Sphinx and CMAKE is available <a class="reference external" href="https://devblogs.microsoft.com/cppblog/clear-functional-c-documentation-with-sphinx-breathe-doxygen-cmake/">here</a>.</p>
+</div>
+</div>
+<div class="section" id="known-issues">
+<h1>Known issues<a class="headerlink" href="#known-issues" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>When using the MEX library, MATLAB can crash since the memory allocation performed by llibmysofa is not persistent.</p></li>
+<li><p>The native version outputs a warning when <code class="docutils literal notranslate"><span class="pre">options.mex_saveaswav</span></code> is not declared.</p></li>
+</ul>
+</div>
+<div class="section" id="license">
+<h1>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h1>
+<p>SofaMyRoom is licensed under the <a class="reference external" href="https://joinup.ec.europa.eu/sites/default/files/custom-page/attachment/2020-03/EUPL-1.2%20EN.txt">EUPL-1.2</a>.</p>
+</div>
+<div class="section" id="credits">
+<h1>Credits<a class="headerlink" href="#credits" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Steven M. Schimmel, Martin F. Muller, and Norbert Dillier - <a class="reference external" href="https://sourceforge.net/projects/roomsim/">Roomsim</a></p></li>
+<li><p>Christian Hoene, Isabel C. Patiño Mejía, Alexandru Cacerovschi - <a class="reference external" href="https://github.com/hoene/libmysofa">MySofa</a></p></li>
+<li><p>Piotr Majdak et al. - <a class="reference external" href="https://www.sofaconventions.org/">Spatially Oriented Format for Acoustics (SOFA)</a></p></li>
+<li><p>Andrew Ippoliti - <a class="reference external" href="http://blog.acipo.com/generating-wave-files-in-c/">WAV file writer</a></p></li>
+<li><p>Antoine Deleforge and Clément Gaultier <a class="reference external" href="http://thevastproject.inria.fr/dataset/">VAST</a></p></li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="vignettes/params.html" class="btn btn-neutral float-right" title="SofaMyRoom - Parameters" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="SofaMyRoom - Home" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright EUPL v1.2, 2020
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
