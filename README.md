@@ -1,6 +1,10 @@
 
 # SofaMyRoom
 
+
+! Repository under construction! In a week or two everything should be ready.
+
+
 SofaMyRoom is a fast, accurate, and flexible "shoebox" room acoustics simulator that supports both specular and diffuse reflections.
 The simulator extends the work released by Schimmel et al., called Roomsim, by adding the rendering of Binaural Room Impulse Response, BRIR.
 It supports the AES Spatially Oriented Format for Acoustics (SOFA) file format for storing HRTFs thanks to MySofa library (hereinafter referred as `libmysofa`) and it can export the results of the simulation to a WAVE file.
