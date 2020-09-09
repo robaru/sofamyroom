@@ -7,10 +7,11 @@ Repository under construction! In a week or two everything should be ready.
 ##########################################################
 
 SofaMyRoom is a fast, accurate, and flexible "shoebox" room acoustics simulator that supports both specular and diffuse reflections.
-The simulator extends the work released by Schimmel et al., called Roomsim, by adding the rendering of Binaural Room Impulse Response, BRIR.
-It supports the AES Spatially Oriented Format for Acoustics (SOFA) file format for storing HRTFs thanks to MySofa library (hereinafter referred as `libmysofa`) and it can export the results of the simulation to a WAVE file.
+The simulator extends the work released by Schimmel et al., called Roomsim, by adding the rendering of Binaural Room Impulse Responses (BRIR) using arbitrary Head Related Transfer Functions (HRTFs) stored with the AES Spatially Oriented Format for Acoustics (SOFA) file format. 
 
-Thanks to the virtual acoustic space traveling (VAST), it is possible to systematically generate labeled datasets to train and test machine learning algorithms.
+The SOFA support is possible thanks to MySofa library (hereinafter referred as `libmysofa`) and it can export the results of the simulation to a WAVE file.
+
+Thanks to the Virtual Acoustic Space Traveling (VAST) framework [1], it is possible to systematically generate labeled datasets to train and test machine learning algorithms.
 
 ## Installing SofaMyRoom
 
@@ -209,3 +210,6 @@ SofaMyRoom is licensed under the [EUPL-1.2](https://joinup.ec.europa.eu/sites/de
 * Piotr Majdak et al. - [Spatially Oriented Format for Acoustics (SOFA)](https://www.sofaconventions.org/)
 * Andrew Ippoliti - [WAV file writer](http://blog.acipo.com/generating-wave-files-in-c/)
 * Antoine Deleforge and Clément Gaultier [VAST](http://thevastproject.inria.fr/dataset/)
+
+# References
+[1] C. Gaultier, S. Kataria, and A. Deleforge. "VAST: The virtual acoustic space traveler dataset." International Conference on Latent Variable Analysis and Signal Separation. Springer, Cham, 2017.
