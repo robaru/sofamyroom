@@ -2,8 +2,9 @@
 # SofaMyRoom
 
 
-! Repository under construction! In a week or two everything should be ready.
-
+##########################################################
+Repository under construction! In a week or two everything should be ready.
+##########################################################
 
 SofaMyRoom is a fast, accurate, and flexible "shoebox" room acoustics simulator that supports both specular and diffuse reflections.
 The simulator extends the work released by Schimmel et al., called Roomsim, by adding the rendering of Binaural Room Impulse Response, BRIR.
@@ -28,9 +29,9 @@ No futher steps are required to run SofaMyRoom on Windows.
 sudo apt-get install zlib1g
 ```
 
-### Installation on MacOS
+### Installation on macOS
 
-No further steps are required to run SofaMyRoom on MacOS.
+No further steps are required to run SofaMyRoom on macOS.
 
 # Usage
 
@@ -195,8 +196,7 @@ A useful tutorial on how to use Doxygen in combination with Sphinx and CMAKE is 
 
 # Known issues
 
-* When using the MEX library, MATLAB can crash since the memory allocation performed by llibmysofa is not persistent.
-* The native version outputs a warning when ``options.mex_saveaswav`` is not declared.
+* When using the MEX library, MATLAB can crash since the memory allocation performed by libmysofa is not persistent.
 
 # License
 
