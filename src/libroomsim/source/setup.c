@@ -341,6 +341,7 @@ int ReadSetup(char *filename, CFileSetup *pSetup)
 	FILE *fid;
 	unsigned long flen;
 	char *p;
+	size_t fread_bytes = 0;
 
 	/* clear output variable */
 	memset(pSetup,0,sizeof(*pSetup));
@@ -363,7 +364,7 @@ int ReadSetup(char *filename, CFileSetup *pSetup)
 	pSetup->buflen = flen;
 
 	/* read file into buffer, close file */
-	fread(pSetup->buf,1,flen,fid);
+	fread_bytes = fread(pSetup->buf,1,flen,fid);
 	fclose(fid);
 
 	pSetup->root.type = SI_STRUCT;
