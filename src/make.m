@@ -25,7 +25,7 @@ src_path = ['..' filesep 'src'];
 % Set default switches
  switches = {'-DMEX'
              '-DLOGLEVEL=0'
-             '-DMEXP=19937'
+             '-DSFMT_MEXP=19937'
              ['-I' src_path filesep 'libroomsim' filesep 'include']
              ['-I' src_path filesep 'libsfmt']
              ['-I' src_path filesep 'wavwriter' filesep 'include']
