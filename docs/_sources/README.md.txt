@@ -1,11 +1,13 @@
-
 # SofaMyRoom
 
 SofaMyRoom is a fast, accurate, and flexible "shoebox" room acoustics simulator that supports both specular and diffuse reflections.
-The simulator extends the work released by Schimmel et al., called Roomsim, by adding the rendering of Binaural Room Impulse Response, BRIR.
-It supports the AES Spatially Oriented Format for Acoustics (SOFA) file format for storing HRTFs thanks to MySofa library (hereinafter referred as `libmysofa`) and it can export the results of the simulation to a WAVE file.
+The simulator extends the work released by Schimmel et al., called Roomsim, by adding the rendering of Binaural Room Impulse Responses (BRIR) using arbitrary Head Related Transfer Functions (HRTFs) stored with the AES Spatially Oriented Format for Acoustics (SOFA) file format. Moreover, SofaMyRoom can be launched directly from your console of choice.
 
-Thanks to the virtual acoustic space traveling (VAST), it is possible to systematically generate labeled datasets to train and test machine learning algorithms.
+The SOFA support is possible thanks to MySofa library (hereinafter referred as `libmysofa`) and it can export the results of the simulation to a WAVE file.
+
+Thanks to the Virtual Acoustic Space Traveling (VAST) framework [1], we added the possibility to systematically generate labeled datasets to train and test machine learning algorithms.
+
+**For any question or request of help please write to: roberto(at)robaru(dot)com**
 
 ## Installing SofaMyRoom
 
@@ -24,9 +26,9 @@ No futher steps are required to run SofaMyRoom on Windows.
 sudo apt-get install zlib1g
 ```
 
-### Installation on MacOS
+### Installation on macOS
 
-No further steps are required to run SofaMyRoom on MacOS.
+No further steps are required to run SofaMyRoom on macOS.
 
 # Usage
 
@@ -191,8 +193,7 @@ A useful tutorial on how to use Doxygen in combination with Sphinx and CMAKE is 
 
 # Known issues
 
-* When using the MEX library, MATLAB can crash since the memory allocation performed by llibmysofa is not persistent.
-* The native version outputs a warning when ``options.mex_saveaswav`` is not declared.
+* When using the MEX library, MATLAB can crash since the memory allocation performed by libmysofa is not persistent.
 
 # License
 
@@ -205,3 +206,6 @@ SofaMyRoom is licensed under the [EUPL-1.2](https://joinup.ec.europa.eu/sites/de
 * Piotr Majdak et al. - [Spatially Oriented Format for Acoustics (SOFA)](https://www.sofaconventions.org/)
 * Andrew Ippoliti - [WAV file writer](http://blog.acipo.com/generating-wave-files-in-c/)
 * Antoine Deleforge and Clément Gaultier [VAST](http://thevastproject.inria.fr/dataset/)
+
+# References
+[1] C. Gaultier, S. Kataria, and A. Deleforge. "VAST: The virtual acoustic space traveler dataset." International Conference on Latent Variable Analysis and Signal Separation. Springer, Cham, 2017.
