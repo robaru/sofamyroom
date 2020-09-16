@@ -10,7 +10,7 @@ The SOFA support is possible thanks to MySofa library (hereinafter referred as `
 
 Thanks to the Virtual Acoustic Space Traveling (VAST) framework [1], we added the possibility to systematically generate labeled datasets to train and test machine learning algorithms.
 
-:open_book: The full documentation is available here: spatialhearing.github.io/sofamyroom
+:open_book: The full documentation is available here: https://spatialhearing.github.io/sofamyroom
 
 :mailbox_with_mail: For any question or request of help please write to: roberto(at)robaru(dot)com
 
