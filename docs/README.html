@@ -86,7 +86,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#installing-sofamyroom">Installing SofaMyRoom</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#installation-on-windows">Installation on Windows</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#installation-on-ubuntu-linux">Installation on Ubuntu Linux</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#installation-on-macos">Installation on MacOS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installation-on-macos">Installation on macOS</a></li>
 </ul>
 </li>
 </ul>
@@ -112,6 +112,7 @@
 <li class="toctree-l1"><a class="reference internal" href="#known-issues">Known issues</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#license">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#credits">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#references">References</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Vignettes</span></p>
 <ul>
@@ -188,9 +189,10 @@
   <div class="section" id="sofamyroom">
 <h1>SofaMyRoom<a class="headerlink" href="#sofamyroom" title="Permalink to this headline">¶</a></h1>
 <p>SofaMyRoom is a fast, accurate, and flexible “shoebox” room acoustics simulator that supports both specular and diffuse reflections.
-The simulator extends the work released by Schimmel et al., called Roomsim, by adding the rendering of Binaural Room Impulse Response, BRIR.
-It supports the AES Spatially Oriented Format for Acoustics (SOFA) file format for storing HRTFs thanks to MySofa library (hereinafter referred as <code class="docutils literal notranslate"><span class="pre">libmysofa</span></code>) and it can export the results of the simulation to a WAVE file.</p>
-<p>Thanks to the virtual acoustic space traveling (VAST), it is possible to systematically generate labeled datasets to train and test machine learning algorithms.</p>
+The simulator extends the work released by Schimmel et al., called Roomsim, by adding the rendering of Binaural Room Impulse Responses (BRIR) using arbitrary Head Related Transfer Functions (HRTFs) stored with the AES Spatially Oriented Format for Acoustics (SOFA) file format. Moreover, SofaMyRoom can be launched directly from your console of choice.</p>
+<p>The SOFA support is possible thanks to MySofa library (hereinafter referred as <code class="docutils literal notranslate"><span class="pre">libmysofa</span></code>) and it can export the results of the simulation to a WAVE file.</p>
+<p>Thanks to the Virtual Acoustic Space Traveling (VAST) framework [1], we added the possibility to systematically generate labeled datasets to train and test machine learning algorithms.</p>
+<p><strong>For any question or request of help please write to: roberto(at)robaru(dot)com</strong></p>
 <div class="section" id="installing-sofamyroom">
 <h2>Installing SofaMyRoom<a class="headerlink" href="#installing-sofamyroom" title="Permalink to this headline">¶</a></h2>
 <p>This repository includes the binary files and, if in case of need, the CMake scripts allow a customized compilation. Only 64-bit platforms are supported.
@@ -207,8 +209,8 @@ SofaMyRoom binaries are available for Windows 10, Ubuntu Linux 20.04 and MacOS C
 </div>
 </div>
 <div class="section" id="installation-on-macos">
-<h3>Installation on MacOS<a class="headerlink" href="#installation-on-macos" title="Permalink to this headline">¶</a></h3>
-<p>No further steps are required to run SofaMyRoom on MacOS.</p>
+<h3>Installation on macOS<a class="headerlink" href="#installation-on-macos" title="Permalink to this headline">¶</a></h3>
+<p>No further steps are required to run SofaMyRoom on macOS.</p>
 </div>
 </div>
 </div>
@@ -348,8 +350,7 @@ cmake ../src -DBUILD_DOCS<span class="o">=</span>True
 <div class="section" id="known-issues">
 <h1>Known issues<a class="headerlink" href="#known-issues" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
-<li><p>When using the MEX library, MATLAB can crash since the memory allocation performed by llibmysofa is not persistent.</p></li>
-<li><p>The native version outputs a warning when <code class="docutils literal notranslate"><span class="pre">options.mex_saveaswav</span></code> is not declared.</p></li>
+<li><p>When using the MEX library, MATLAB can crash since the memory allocation performed by libmysofa is not persistent.</p></li>
 </ul>
 </div>
 <div class="section" id="license">
@@ -365,6 +366,10 @@ cmake ../src -DBUILD_DOCS<span class="o">=</span>True
 <li><p>Andrew Ippoliti - <a class="reference external" href="http://blog.acipo.com/generating-wave-files-in-c/">WAV file writer</a></p></li>
 <li><p>Antoine Deleforge and Clément Gaultier <a class="reference external" href="http://thevastproject.inria.fr/dataset/">VAST</a></p></li>
 </ul>
+</div>
+<div class="section" id="references">
+<h1>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h1>
+<p>[1] C. Gaultier, S. Kataria, and A. Deleforge. “VAST: The virtual acoustic space traveler dataset.” International Conference on Latent Variable Analysis and Signal Separation. Springer, Cham, 2017.</p>
 </div>
 
 
