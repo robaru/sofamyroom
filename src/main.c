@@ -12,7 +12,6 @@
 #include "msg.h"
 #include "build.h"
 #include "wavwriter.h"
-#include "mem.h"
 
 /* disable warnings about unsafe CRT functions */
 #ifdef _MSC_VER
@@ -24,13 +23,13 @@
 int main(int argc, char **argv)
 {
 	CRoomSetup setup;
-    BRIR	   **response;
+    BRIR	   *response;
     FILE	   *fid;
-	int		   i, j, k, r;
+	int		   i, j, k;
 	CFileSetup filesetup;
 	char	   filename[256];
 	Wave	   w;
-	float      **samples;
+	float      *sample;
 
 	printf(SOFAMYROOM_NAME " v" SOFAMYROOM_VERSION ", built %s %s\n", builddate, buildtime);
 
@@ -55,52 +54,45 @@ int main(int argc, char **argv)
 
 	/* run the simulator */
     response = Roomsim(&setup);
-	samples = (float**)MemMalloc(setup.nRooms * sizeof(float*));
 
-	for (r = 0; r < setup.nRooms; r++)
+#define FWVAR(v) fwrite(&(v),sizeof(v),1,fid)
+#define FWDBLARR(v,c) fwrite(v,sizeof((v)[0]),c,fid)
+
+	fid = NULL;
+
+	sample = (float*)malloc(response[0].nChannels * sizeof(float));
+
+	if (!sample)
 	{
-		BRIR* currentBRIR = response[r];
-		samples[r] = (float*)MemMalloc(currentBRIR[0].nChannels * sizeof(float));
-
-		if (!samples[r])
-		{
-			MsgPrintf("Unable to allocate memory for writing the WAVE file for Room %d\n", r);
-			continue;
-		}
-
-		for (i = 0; i < setup.nSources * setup.nReceivers; i++)
-		{
-			sprintf(filename, "%s_room_%d_receiver_%d.wav", setup.options.outputname, r, i);
-
-			MsgPrintf("Writing output file '%s'\n", filename);
-
-			w = makeWave(3, (int)currentBRIR[i].fs, (short int)currentBRIR[i].nChannels, (short int)32);
-			waveSetDuration(&w, (float)currentBRIR[i].nSamples / currentBRIR[i].fs);
-			for (j = 0; j < currentBRIR[i].nSamples; ++j)
-			{
-				for (k = 0; k < currentBRIR[i].nChannels; ++k)
-				{
-					samples[r][k] = (float)currentBRIR[i].sample[j + currentBRIR[i].nSamples * k];
-				}
-				waveAddSampleFloat(&w, samples[r]);
-			}
-			waveToFile(&w, filename);
-			waveDestroy(&w);
-		}
-
-		/* release BRIR memory */
-		ReleaseBRIR(currentBRIR);
+		MsgPrintf("Unable to allocate memory for writing the WAVE file\n");
+		return 1;
 	}
 
-	/* release memory */
-	for (i = 0; i < setup.nRooms; i++)
-		if (samples[i])
-			MemFree(samples[i]);
+	for (i = 0; i < setup.nSources*setup.nReceivers; i++)
+	{
+		sprintf(filename, "%s - receiver_%d.wav", setup.options.outputname, i);
 
-	MemFree(samples);
+		MsgPrintf("Writing output file '%s'\n", filename);
 
-	/* release BRIR pointers array */
-	MemFree(response);
+		w = makeWave(3, (int)response[i].fs, (short int)response[i].nChannels, (short int)32);
+		waveSetDuration(&w, (float)response[i].nSamples / response[i].fs);
+		for (j = 0; j < response[i].nSamples; ++j)
+		{
+			for (k = 0; k < response[i].nChannels; ++k)
+			{
+				sample[k] = (float)response[i].sample[j + response[i].nSamples * k];
+			}
+			waveAddSampleFloat(&w, sample);
+		}
+		waveToFile(&w, filename);
+		waveDestroy(&w);
+
+	}
+
+	free(sample);
+    
+	/* release BRIR memory */
+	ReleaseBRIR(response);
 
 	/* release sensors */
 	ClearAllSensors();
