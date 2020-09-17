@@ -10,7 +10,7 @@
 #include "interface.h"
 
 void  ValidateSetup   ( const CRoomSetup *pSetup );
-BRIR **Roomsim         ( const CRoomSetup *pSetup );
+BRIR *Roomsim         ( const CRoomSetup *pSetup );
 void  ReleaseBRIR     ( BRIR *brir );
 void  ClearAllSensors ( void );
 
