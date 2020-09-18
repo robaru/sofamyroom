@@ -4,7 +4,6 @@ function par = readsetup(filename)
 %    the file FILENAME and returns it in the parameter structure
 %    PAR. 
 %
-%    See also ROOMSIM, SAMPLEROOMSETUP
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Author: Steven Schimmel, stevenmschimmel@gmail.com
@@ -27,7 +26,7 @@ function par = readsetup(filename)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 [d,n] = fileparts(filename);
-name = [d n];
+name = [n];
 par = evalc(name);
 clear par filename d n name;
 vars = whos;

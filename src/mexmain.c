@@ -3,6 +3,11 @@
  * @brief Main file for MEX interface with MATLAB.
  **********************************************************************//*
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Author: Steven Schimmel, stevenmschimmel@gmail.com
+% adapted and updated by: Roberto Barumerli, roberto.baru@gmail.com
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 /****** NOTES *********************************************************//**
 

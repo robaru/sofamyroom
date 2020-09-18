@@ -3,10 +3,9 @@ function plotroom(param)
 %    PLOTROOM(PARAM) plots the room specified by the room setup structure
 %    PARAM. The plot illustrates the room dimensions, and the source and
 %    receiver positions and orientations.
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Author: Steven Schimmel, stevenmschimmel@gmail.com
-% Copyright 2009, University of Zurich
+% adapted by: Roberto Barumerli, roberto.baru@gmail.com
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of ROOMSIM.
 %
