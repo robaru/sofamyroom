@@ -1,0 +1,50 @@
+% room settings
+room.dimension = [10 7 4]; % [m]
+room.humidity = 0.42; % relative humidity 
+room.temperature = 20; % [deg C]
+
+% diffuse reflections simulation options
+options.simulatediffuse = true;
+options.numberofrays        = 2000; 
+options.diffusetimestep     = 0.010; %[s]
+options.rayenergyfloordB    = -80;  %[dB]
+options.uncorrelatednoise   = true;    
+
+% specular reflections simulation options
+options.simulatespecular = true; 
+options.reflectionorder = [10 10 10]; 
+
+% surface coefficients
+room.surface.frequency = [125 250 500 1000 2000 4000 8000]; % [Hz]
+room.surface.absorption = [0.1000 0.0500 0.0600 0.0700 0.1000 0.1000; 
+0.1400 0.3500 0.5300 0.7500 0.7000 0.6000 0.1000;
+0.1000 0.0500 0.0600 0.0700 0.1000 0.1000 0.1000;
+0.1000 0.0500 0.0600 0.0700 0.1000 0.1000 0.1000;
+0.0100 0.0200 0.0600 0.1500 0.2500 0.4500 0.1000;
+0.2400 0.1900 0.1400 0.0800 0.1300 0.1000 0.1000];
+
+% simulation options
+options.fs = 44100; % [Hz] 
+options.responseduration = 1.25; % [s]
+options.bandsperoctave = 1; %  [bands/octave]
+options.referencefrequency = 125; %  [Hz]
+options.airabsorption = true;
+options.distanceattenuation = true; 
+options.subsampleaccuracy = false;
+options.highpasscutoff = 0; 
+options.verbose = true; 
+
+% output options
+options.outputname = 'test'; 	
+% if working with MATLAB and you need the WAV file, set true the next field
+options.mex_saveaswav = false;
+
+% source definitions
+source(1).location = [ 8 2.5 1.6 ]; % [m]
+source(1).orientation = [ 180 0 0 ]; % [deg]
+source(1).description = 'subcardioid'; 
+
+% receiver definitions
+receiver(1).location = [ 3 5 1.2 ]; % [m]
+receiver(1).orientation = [ 0 0 0 ]; % [deg]
+receiver(1).description = 'SOFA cipic_subject_003.sofa';
