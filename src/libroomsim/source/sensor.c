@@ -359,8 +359,7 @@ void getMysofaErrorString(int error, char *buffer)
 int sensor_SOFA_probe_nointerp(const CSensorDefinition* sensor, const XYZ* xyz)
 {
 	float c[3];
-	int size;
-	unsigned int i;
+	unsigned int i, size;
 
 	UNREFERENCED_PARAMETER(sensor);
 
@@ -384,8 +383,7 @@ int sensor_SOFA_probe_nointerp(const CSensorDefinition* sensor, const XYZ* xyz)
 int sensor_SOFA_probe(const CSensorDefinition *sensor, const XYZ *xyz)
 {
 	float c[3];
-	int size;
-	unsigned int i;
+	unsigned int i, size;
 
 	UNREFERENCED_PARAMETER(sensor);
 
