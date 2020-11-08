@@ -1,0 +1,10 @@
+build/*
+!build/.empty
+docs
+sofamyroom*.mex*
+sofamyroom*.mex*.pdb
+*.asv
+*.DS_Store
+.vscode
+*.code-workspace
+src/docsrc/sphinx/_build
