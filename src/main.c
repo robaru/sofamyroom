@@ -75,7 +75,7 @@ int main(int argc, char **argv)
 		MsgPrintf("Writing output file '%s'\n", filename);
 
 		w = makeWave(3, (int)response[i].fs, (short int)response[i].nChannels, (short int)32);
-		waveSetDuration(&w, (float)response[i].nSamples / response[i].fs);
+		waveSetDuration(&w, (float)(response[i].nSamples / response[i].fs));
 		for (j = 0; j < response[i].nSamples; ++j)
 		{
 			for (k = 0; k < response[i].nChannels; ++k)
