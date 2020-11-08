@@ -9,22 +9,22 @@
 %
 %    room settings
 %
-room.dimension              = [ 10 7 4 ];   % room dimension (x,y,z)
-room.humidity               = 0.42;         % relative humidity (0,...,1)
-room.temperature            = 20;           % room temperature (celsius)
+room(1).dimension              = [ 10 7 4 ];   % room dimension (x,y,z)
+room(1).humidity               = 0.42;         % relative humidity (0,...,1)
+room(1).temperature            = 20;           % room temperature (celsius)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %    surface absorption/diffusion coefficients
 %
-room.surface.frequency      = [  125       250       500       1000      2000      4000];
-room.surface.absorption     = [  0.1000    0.0500    0.0600    0.0700    0.1000    0.1000;
+room(1).surface.frequency      = [  125       250       500       1000      2000      4000];
+room(1).surface.absorption     = [  0.1000    0.0500    0.0600    0.0700    0.1000    0.1000;
                                  0.1400    0.3500    0.5300    0.7500    0.7000    0.6000;
                                  0.1000    0.0500    0.0600    0.0700    0.1000    0.1000;
                                  0.1000    0.0500    0.0600    0.0700    0.1000    0.1000;
                                  0.0100    0.0200    0.0600    0.1500    0.2500    0.4500;
                                  0.2400    0.1900    0.1400    0.0800    0.1300    0.1000 ];
-room.surface.diffusion      = [  0.5       0.5       0.5       0.5       0.5       0.5   ; 
+room(1).surface.diffusion      = [  0.5       0.5       0.5       0.5       0.5       0.5   ; 
                                  0.5       0.5       0.5       0.5       0.5       0.5   ; 
                                  0.5       0.5       0.5       0.5       0.5       0.5   ; 
                                  0.5       0.5       0.5       0.5       0.5       0.5   ; 

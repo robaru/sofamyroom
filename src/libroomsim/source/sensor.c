@@ -356,6 +356,29 @@ void getMysofaErrorString(int error, char *buffer)
 
 }
 
+int sensor_SOFA_probe_multichannel(const CSensorDefinition* sensor, const XYZ* xyz)
+{
+	float c[3];
+	unsigned int i, size, offset;;
+
+	UNREFERENCED_PARAMETER(sensor);
+
+	c[0] = (float)xyz->x;
+	c[1] = (float)xyz->y;
+	c[2] = (float)xyz->z;
+
+	size = sensor->sofahandle->hrtf->R * sensor->sofahandle->hrtf->N;
+
+	offset = (unsigned int) mysofa_lookup(sensor->sofahandle->lookup, c);
+
+	for (i = 0; i < size; ++i)
+	{
+		sensor->responsedata[i] = (double)sensor->sofahandle->hrtf->DataIR.values[offset + i];
+	}
+
+	return 0;
+}
+
 int sensor_SOFA_probe_nointerp(const CSensorDefinition* sensor, const XYZ* xyz)
 {
 	float c[3];
@@ -685,9 +708,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	definition->type = ST_IMPULSERESPONSE;
 	if (definition->sofahandle->hrtf->R > 2) //R > 2
 	{
-		ClearSofaSensor(definition);
-		sprintf(msg, "multichannel sensors are not yet supported\n");
-		MsgErrorExit(msg);
+		definition->probe.xyz2idx = sensor_SOFA_probe_multichannel;
 	}
 	else if (definition->interpolation) //R <= 2
 	{
