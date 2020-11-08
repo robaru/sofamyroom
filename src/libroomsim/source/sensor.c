@@ -489,7 +489,6 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 {
 	char msg[512], mysofaerror[64], *datafilecopy, *path, *options;
 	int err;
-	unsigned int i;
 
 	/* test that a datafile name is provided */
 	if (!datafile)
