@@ -47,6 +47,7 @@
 #include "types.h"
 #include "fftw3.h"
 #include "wavwriter.h"
+#include "mem.h"
 
 
 /* disable warnings about depricated unsafe CRT functions */
@@ -84,7 +85,7 @@ void mexFunction(
         int nrhs, const mxArray *prhs[])
 {
     CRoomSetup roomsetup;
-    BRIR       *brir;
+    BRIR       **brir;
     
     /* accept call sofamyroom(par) */
     if (nrhs==1 && mxIsStruct(prhs[0]))
@@ -99,71 +100,94 @@ void mexFunction(
 
         if (roomsetup.options.mex_saveaswav)
         {
-            char	   filename[256];
-            Wave	   w;
-            float      *sample;
+            char    filename[256];
+            Wave    w;
+            float   **samples;
+            int     i, r, k, j;
             
-            sample = (float*)malloc(brir[0].nChannels * sizeof(float));
+            samples = (float**)MemMalloc(roomsetup.nRooms * sizeof(float*));
 
-            if (!sample)
+            if (!samples)
             {
-                MsgPrintf("Unable to allocate memory for writing the WAVE file\n");
-                return;
+                MsgErrorExit("Unable to allocate memory for writing the WAVE file\n");
             }
 
-            for (int i = 0; i < roomsetup.nSources*roomsetup.nReceivers; i++)
+            for (r = 0; r < roomsetup.nRooms; r++)
             {
-                sprintf(filename, "%s-receiver_%d.wav", roomsetup.options.outputname, i);
+                BRIR* currentBRIR = brir[r];
+                samples[r] = (float*)MemMalloc(currentBRIR[0].nChannels * sizeof(float));
 
-                MsgPrintf("Writing output file '%s'\n", filename);
-
-                w = makeWave(3, (int)brir[i].fs, (short int)brir[i].nChannels, (short int)32);
-                waveSetDuration(&w, (float)brir[i].nSamples / brir[i].fs);
-                for (int j = 0; j < brir[i].nSamples; ++j)
+                if (!samples[r])
                 {
-                    for (int k = 0; k < brir[i].nChannels; ++k)
-                    {
-                        sample[k] = (float)brir[i].sample[j + brir[i].nSamples * k];
-                    }
-                    waveAddSampleFloat(&w, sample);
+                    MsgPrintf("Unable to allocate memory for writing the WAVE file for Room %d\n", r);
+                    continue;
                 }
-                waveToFile(&w, filename);
-                waveDestroy(&w);
+
+                for (i = 0; i < roomsetup.nSources * roomsetup.nReceivers; i++)
+                {
+                    sprintf(filename, "%s_room_%d_receiver_%d.wav", roomsetup.options.outputname, r, i);
+
+                    MsgPrintf("Writing output file '%s'\n", filename);
+
+                    w = makeWave(3, (int)currentBRIR[i].fs, (short int)currentBRIR[i].nChannels, (short int)32);
+                    waveSetDuration(&w, (float)(currentBRIR[i].nSamples / currentBRIR[i].fs));
+
+                    for (j = 0; j < currentBRIR[i].nSamples; ++j)
+                    {
+                        for (k = 0; k < currentBRIR[i].nChannels; ++k)
+                        {
+                            samples[r][k] = (float)currentBRIR[i].sample[j + currentBRIR[i].nSamples * k];
+                        }
+
+                        waveAddSampleFloat(&w, samples[r]);
+                    }
+
+                    waveToFile(&w, filename);
+                    waveDestroy(&w);
+                }
+
+                /* release BRIR memory */
+                ReleaseBRIR(currentBRIR);
+
+                /* release WAVE memory */
+                MemFree(samples[r]);
             }
 
-            free(sample);
+            /* release Wave pointers array */
+            MemFree(samples);
+
+            /* release BRIR pointers array */
+            MemFree(brir);
         }
         else {
+
             /** @todo Create proper output (cell) array */
-            if (nlhs>0)
+            if (nlhs>0 && !roomsetup.options.mex_saveaswav)
             {
+                int i, r;
+                mxArray *h, *g;
 
-                if ((roomsetup.nSources == 1) && (roomsetup.nReceivers == 1))
+                if (roomsetup.options.verbose)
                 {
-                    if (roomsetup.options.verbose)
-                    {
-                        MsgPrintf("Creating output: %dx%d array\n", brir[0].nSamples, brir[0].nChannels);
-                        MsgRelax;
-                    }
-
-                    plhs[0] = mxCreateDoubleMatrix(brir[0].nSamples, brir[0].nChannels, mxREAL);
-                    mxFree(mxGetPr(plhs[0]));
-                    mxSetPr(plhs[0],brir[0].sample);
+                    mexPrintf("Creating output\n");
                 }
-                else
-                {
-                    int i;
-                    mxArray *h;
 
-                    mexPrintf("Creating output: %dx%d cell matrix\n", roomsetup.nSources, roomsetup.nReceivers);
-                    plhs[0] = mxCreateCellMatrix(roomsetup.nSources, roomsetup.nReceivers);
-                    for (i=0; i<roomsetup.nSources*roomsetup.nReceivers; i++)
+                plhs[0] = mxCreateCellMatrix(roomsetup.nRooms, 1);
+
+                for (r = 0; r < roomsetup.nRooms; r++)
+                {
+                    BRIR* currentBRIR = brir[r];
+                    g = mxCreateCellMatrix(roomsetup.nSources * roomsetup.nReceivers, 1);
+
+                    for (i = 0; i < roomsetup.nSources * roomsetup.nReceivers; i++)
                     {
-                        h = mxCreateDoubleMatrix(brir[i].nSamples, brir[i].nChannels, mxREAL);
-                        mxFree(mxGetPr(h)); 
-                        mxSetPr(h,brir[i].sample);
-                        mxSetCell(plhs[0],i,h);
+                        h = mxCreateDoubleMatrix(currentBRIR[i].nSamples, currentBRIR[i].nChannels, mxREAL);
+                        mxFree(mxGetPr(h));
+                        mxSetPr(h, currentBRIR[i].sample);
+                        mxSetCell(g, i, h);
                     }
+
+                    mxSetCell(plhs[0], r, g);
                 }
             }
         }
