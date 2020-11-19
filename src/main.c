@@ -56,6 +56,11 @@ int main(int argc, char **argv)
     response = Roomsim(&setup);
 	samples = (float**)MemMalloc(setup.nRooms * sizeof(float*));
 
+	if (!samples)
+	{
+		MsgErrorExit("Unable to allocate memory for writing the WAVE file\n");
+	}
+
 	for (r = 0; r < setup.nRooms; r++)
 	{
 		BRIR* currentBRIR = response[r];
@@ -75,6 +80,7 @@ int main(int argc, char **argv)
 
 			w = makeWave(3, (int)currentBRIR[i].fs, (short int)currentBRIR[i].nChannels, (short int)32);
 			waveSetDuration(&w, (float)(currentBRIR[i].nSamples / currentBRIR[i].fs));
+
 			for (j = 0; j < currentBRIR[i].nSamples; ++j)
 			{
 				for (k = 0; k < currentBRIR[i].nChannels; ++k)
@@ -89,13 +95,12 @@ int main(int argc, char **argv)
 
 		/* release BRIR memory */
 		ReleaseBRIR(currentBRIR);
+
+		/* release WAVE memory */
+		MemFree(samples[i]);
 	}
-
-	/* release memory */
-	for (i = 0; i < setup.nRooms; i++)
-		if (samples[i])
-			MemFree(samples[i]);
-
+	
+	/* release Wave pointers array */
 	MemFree(samples);
 
 	/* release BRIR pointers array */
