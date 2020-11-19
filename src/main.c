@@ -87,8 +87,10 @@ int main(int argc, char **argv)
 				{
 					samples[r][k] = (float)currentBRIR[i].sample[j + currentBRIR[i].nSamples * k];
 				}
+
 				waveAddSampleFloat(&w, samples[r]);
 			}
+
 			waveToFile(&w, filename);
 			waveDestroy(&w);
 		}
@@ -97,7 +99,7 @@ int main(int argc, char **argv)
 		ReleaseBRIR(currentBRIR);
 
 		/* release WAVE memory */
-		MemFree(samples[i]);
+		MemFree(samples[r]);
 	}
 	
 	/* release Wave pointers array */
