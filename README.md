@@ -1,4 +1,4 @@
-# SofaMyRoom
+# sofamyroom
 
 This project proposes a fast, accurate, and flexible "shoebox" room acoustics simulator that supports both specular and diffuse reflections.
 The simulator extends the work released by Schimmel et al., called Roomsim, by adding the rendering of Binaural Room Impulse Responses (BRIR) using arbitrary Head Related Transfer Functions (HRTFs) stored with the AES Spatially Oriented Format for Acoustics (SOFA) file format. Moreover, SofaMyRoom can be launched directly from your console of choice.
@@ -8,15 +8,17 @@ The SOFA support is possible thanks to MySofa library (hereinafter referred as `
 Thanks to the Virtual Acoustic Space Traveling (VAST) framework [1], we added the possibility to systematically generate labeled datasets to train and test machine learning algorithms.
 
 :open_book: The full documentation is available here: [spatialhearing.github.io/sofamyroom](spatialhearing.github.io/sofamyroom)
+:open_book: We are writing an article about sofamyroom and the pre-print is already available on [arXiv](https://arxiv.org/abs/2106.12992).
 
-## Installing SofaMyRoom
+
+## Installing sofamyroom
 
 This repository includes the binary files and, if in case of need, the CMake scripts allow a customized compilation. Only 64-bit platforms are supported.
-SofaMyRoom binaries are available for Windows 10, Ubuntu Linux 20.04 and MacOS Catalina.
+sofamyroom binaries are available for Windows 10, Ubuntu Linux 20.04 and MacOS Catalina.
 
 ### Installation on Windows
 
-No futher steps are required to run SofaMyRoom on Windows.
+No futher steps are required to run sofamyroom on Windows.
 
 ### Installation on Ubuntu Linux
 
@@ -28,17 +30,17 @@ sudo apt-get install zlib1g
 
 ### Installation on macOS
 
-No further steps are required to run SofaMyRoom on macOS.
+No further steps are required to run sofamyroom on macOS.
 
 ## Usage
 
-To use SofaMyRoom, type this command in a Command Prompt or a Terminal:
+To use sofamyroom, type this command in a Command Prompt or a Terminal:
 
 ```bash
 ./sofamyroom setup.txt
 ```
 
-`setup.txt` is the name of the text file containing all the SofaMyRoom setup parameters structure.
+`setup.txt` is the name of the text file containing all the sofamyroom setup parameters structure.
 A sample of it can be found in `sampleroomsetup.txt`.
 
 ### Usage with MATLAB
@@ -56,7 +58,7 @@ These instructions will guide you through the steps to build SofaMyRoom on your 
 
 ### Building on Windows
 
-You can use CMake to generate a Visual Studio solution that can be used to build SofaMyRoom. Open a new Command Prompt window and type the following commands:
+You can use CMake to generate a Visual Studio solution that can be used to build sofamyroom. Open a new Command Prompt window and type the following commands:
 
 ```bash
 > cd build
@@ -67,7 +69,7 @@ To know how to generate solutions for other versions of Visual Studio, type `cma
 
 ### Building on Ubuntu Linux
 
-You can use CMake to generate a Makefile for SofaMyRoom. Open a new Terminal window and type the following commands:
+You can use CMake to generate a Makefile for sofamyroom. Open a new Terminal window and type the following commands:
 
 ```bash
 cd build
@@ -109,7 +111,7 @@ You can build the MEX-file in Debug mode. Type the following command:
 make debug
 ```
 
-You can also build it in Unittest mode, to check the validity of SofaMyRoom functions. Type the following command:
+You can also build it in Unittest mode, to check the validity of sofamyroom functions. Type the following command:
 
 ```matlab
 make test
@@ -121,7 +123,7 @@ make test
 
 ## License
 
-SofaMyRoom is licensed under the [EUPL-1.2](https://joinup.ec.europa.eu/sites/default/files/custom-page/attachment/2020-03/EUPL-1.2%20EN.txt).
+sofamyroom is licensed under the [EUPL-1.2](https://joinup.ec.europa.eu/sites/default/files/custom-page/attachment/2020-03/EUPL-1.2%20EN.txt).
 
 ## Credits
 
