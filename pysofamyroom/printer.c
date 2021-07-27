@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "mstruct.h"
 #include "printer.h"
-
+#include "types.h"
 
 //float mul ( const MyStruct pSetup ){
 //    float return_value = pSetup.first * pSetup.second;
@@ -57,6 +57,7 @@
 //}
 
 void print_options(const COptions *options){
+	printf("options");
 	printf("%f\n", options->fs);
 	printf("%i\n", options->numberofrays);
 	printf("%d \n", options->airabsorption);
@@ -65,6 +66,7 @@ void print_options(const COptions *options){
 
 
 void print_surface(const CSurface *surface){
+	printf("Surface");
 	printf("%f \n", surface->frequency[0]);
 	printf("%f \n", surface->absorption[0]);
 	printf("%f \n", surface->diffusion[0]);
@@ -74,6 +76,7 @@ void print_surface(const CSurface *surface){
 }
 
 void print_room(const CRoom *room){
+	printf("room");
 	printf("%f \n", room->temperature );
 	printf("%f \n", room->humidity );
 	printf("%f \n", room->dimension[0] );
@@ -88,12 +91,32 @@ void print_setup(const CRoomSetup *setup){
 }
 
 void print_sensor(const CSensor *sensor){
+	printf("sensor");
 	printf(" %f \n", sensor[0].location[0]);
 	printf(" %f \n", sensor[0].orientation[0]);
 	printf(" %s \n", sensor[0].description);
 	printf(" %f \n", sensor[1].location[0]);
 	printf(" %f \n", sensor[1].orientation[0]);
 }
+
+void print_brir_response(const BRIR *brir){
+	printf("BRIR Response");
+	printf(" %f \n",brir[0].fs);
+	printf(" %d \n",brir[0].nChannels);
+  printf(" %d \n",brir[0].nSamples);
+	printf(" %lf \n",brir[0].sample[1]);
+	printf(" %lf \n",brir[0].sample[5000]);
+	//printf(" %lf \n",brir[1].sample[1]);
+	/*
+	printf(" %f \n",brir[1].fs);
+	printf(" %d \n",brir[1].nChannels);
+  printf(" %d \n",brir[1].nSamples);
+	printf(" %lf \n",brir[1].sample[1]);
+*/
+
+
+}
+
 // The main is just to be able to compile it and see that it works.
 int main (void){
 //	int n_src = 2;
@@ -113,4 +136,3 @@ int main (void){
 //	mul(&my_struct);
 	return 0;
 }
-

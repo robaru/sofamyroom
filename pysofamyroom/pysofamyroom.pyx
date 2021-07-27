@@ -1,11 +1,7 @@
 from libc.stdlib cimport malloc, free
 from libcpp cimport bool
 from cpython cimport array
-
 import numpy as np
-cimport numpy as np
-
-
 cdef extern from "mstruct.h":
     ctypedef struct CSurface:
         int nBands
@@ -77,12 +73,13 @@ cdef extern from "printer.h":
     void print_room(const CRoom *room)
     void print_setup(const CRoomSetup *setup)
     void print_sensor(const CSensor *sensor)
+    void print_brir_response(const BRIR *brir)
 
 cdef extern from "roomsim.h":
     BRIR *Roomsim(const CRoomSetup *pSetup)
     void  ValidateSetup(const CRoomSetup *pSetup)
     void  ReleaseBRIR(BRIR *brir)
-    # void  ClearAllSensors()
+    void  ClearAllSensors()
 
 cdef extern from "sensor.h":
     pass
@@ -114,62 +111,31 @@ cdef extern from "sensor.h":
 # Other question how are the several channels packed?
 # Need to copy the data somehow and free it?
 
-
 def generate(opt_dict: dict):
     cdef BRIR *brir
     cdef CRoomSetup room_setup
     _make_roomsetup(opt_dict, &room_setup)
     # TODO: don't forget to free
-    brir = Roomsim(&room_setup)
-
-    # cdef int nsrc = len(opt_dict["sources"])
-    # cdef int nrec = len(opt_dict["receivers"])
-    # # cdef int nSamples
-    #
-    # cdef int nchan = int(brir[0].nChannels)
-    # cdef int nsamples
-    #
-    # cdef int xmax = 10
-    # cdef int ymax = 10
-    # cdef np.ndarray h = np.zeros([xmax, ymax], dtype=DTYPE)
-    # cdef np.ndarray np_arr = np.zeros(, dtype=DTYPE)
-    # hey_list = []
-    # for u in range(xmax):
-    #     hey_list.append(u)
-        # np_arr[u] = brir[0].sample[u]
-        # print("Sample", hey)
-    # print(nsamples)
-
-    # cdef double fs = brir[0].fs
-    #
-    # # This is wrong, channels will need to be packed somehow else.
-    # np_arr = np.empty([nsrc, nrec, nchan, nsamples], dtype=np.float32)
-
-    hey = brir[0].sample[0]
-    print("Sample", hey)
-    # for u in range(nsamples):
-    #     hey = brir[0].sample[u]
-    #     print("Sample", hey)
+    #ValidateSetup(&room_setup)
+    cpdef int n_sour=len(opt_dict["sources"])
+    cpdef int n_recv=len(opt_dict["receivers"])
 
 
-    # for s in range(nsrc):
-    #     for r in range(nrec):
-    #         for c in range(nchan):
-    #             for idx in range(nsamples):
-    #                 i = r * nsrc + s
-    #                 samp_idx = c * nsamples + idx
-    #                 np_arr[s, r, c, idx] = float(brir[i].sample[samp_idx])
-                    # print(i)
-            # for i in range(chan*sam):
-        #     if i >= sam:
-        #         j=1
-        #         np_arr[j][i-sam]=float(ad[0].sample[i])
-        #     else:
-        #         np_arr[j][i]=float(ad[0].sample[i])
-        #
-        # print(np_arr.shape)
-            # nsamples =
-            # brir[i].nSamples
+    brir=Roomsim(&room_setup)
+    n_samples=brir[0].nSamples
+    total_channels=sum([brir[a].nChannels for a in range(n_recv)]) #Sum all the channels present in the RIR
+    arr=np.zeros((total_channels,n_samples)) #Create a zero array to store all the channels
+
+    for x in range(n_recv): #Loop through Reciver
+        for y in range(n_samples): #Loop through samples
+            arr[x][y]=brir[x].sample[y]
+        if brir[x].nChannels > 1: #Condition to check if same receiver have more than one channel
+            for z in range(n_samples): #Loop again through all the samples for that channel
+                arr[x+1][z]=brir[x].sample[n_samples+z]
+    #print(arr.shape)
+    return arr
+
+    #ReleaseBRIR(brir)
     # cdef array.array samples = array.array('d', brir.sample)
     # print(brir.sample.data.as_doubles)
     # return samples
@@ -181,18 +147,29 @@ def generate(opt_dict: dict):
 cdef void _make_roomsetup(opt_dict: dict, CRoomSetup* setup):
     # setup room, options, sources, receivers.
     _make_room(opt_dict["room"], &setup.room)
+
     setup.options = opt_dict["options"]
+
+
     # setup.source is already an address
 
     cdef int n_src=len(opt_dict["sources"])
+
+    setup.nSources=n_src
     cdef CSensor *sources = <CSensor *> malloc(n_src * sizeof(CSensor))
     _make_sensors(opt_dict["sources"], sources)
     setup.source = sources
 
     cdef int n_rcv=len(opt_dict["receivers"])
+
+    #print("Recivers",n_rcv)
+    setup.nReceivers=n_rcv
     cdef CSensor *receivers = <CSensor *> malloc(n_rcv * sizeof(CSensor))
     _make_sensors(opt_dict["receivers"], receivers)
     setup.receiver = receivers
+
+
+
 
 cdef void _make_room(opt_dict: dict, CRoom* room):
     _make_surface(opt_dict["surface"], &room.surface)
@@ -200,7 +177,7 @@ cdef void _make_room(opt_dict: dict, CRoom* room):
     room.dimension = opt_dict["dimension"]
     room.humidity = opt_dict["humidity"]
     room.temperature = opt_dict["temperature"]
-    # print_room(room)
+    #print(opt_dict['dimension'])
 
 cdef void _make_surface(opt_dict: dict, CSurface* surface):
     cdef int nBands = len(opt_dict["frequency"])
@@ -231,41 +208,40 @@ cdef void _make_surface(opt_dict: dict, CSurface* surface):
     surface.diffusion = diffusion
     surface.nRowsDiffusion = nBands
     surface.nColsDiffusion = nColsDiffusion
-    # print_surface(surface)
+    #print_surface(surface)
 
 cdef void _make_sensors(opt_dict: list, CSensor sensors[]):
     cdef int n_src=len(opt_dict)
+
     for i in range(n_src):
         sensors[i].location = opt_dict[i]["location"]
         sensors[i].orientation = opt_dict[i]["orientation"]
         sensors[i].description = opt_dict[i]["description"]
+    #print_sensor(sensors)
 
 #### Just for testing
 def make_roomsetup(opt_dict: dict):
     cdef CRoomSetup room_setup
     _make_roomsetup(opt_dict, &room_setup)
-    # print_setup(&room_setup)
+    print_setup(&room_setup)
 
 def make_room(opt_dict: dict):
     cdef CRoom room
     _make_room(opt_dict, &room)
-    # print_room(&room)
+    print_room(&room)
 
 def make_surface(opt_dict: dict):
     cdef CSurface surface
     _make_surface(opt_dict, &surface)
-    # print_surface(&surface)
+    print_surface(&surface)
 
 def make_options(opt_dict: dict):
     cdef COptions options=opt_dict
-    # print_options(&options)
+    print_options(&options)
     return options
 
 def make_sensors(opt_dict: list):
     cdef int n_src=len(opt_dict)
     cdef CSensor *sensors = <CSensor *> malloc(n_src * sizeof(CSensor))
     _make_sensors(opt_dict, sensors)
-    # print_sensor(sensors)
-
-
-
+    print_sensor(sensors)
