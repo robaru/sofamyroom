@@ -70,12 +70,12 @@ int main(int argc, char **argv)
 
 	for (i = 0; i < setup.nSources*setup.nReceivers; i++)
 	{
-		sprintf(filename, "%s_receiver_%d.wav", setup.options.outputname, i);
+		sprintf(filename, "%s - receiver_%d.wav", setup.options.outputname, i);
 
 		MsgPrintf("Writing output file '%s'\n", filename);
 
 		w = makeWave(3, (int)response[i].fs, (short int)response[i].nChannels, (short int)32);
-		waveSetDuration(&w, (float)(response[i].nSamples / response[i].fs));
+		waveSetDuration(&w, (float)response[i].nSamples / response[i].fs);
 		for (j = 0; j < response[i].nSamples; ++j)
 		{
 			for (k = 0; k < response[i].nChannels; ++k)
