@@ -1,5 +1,6 @@
 import yaml
 from typing import Tuple, Union, List
+from scipy.io.wavfile import write
 
 # from pysofamyroom import _roomsim, release_brir, clear_sensors
 from pysofamyroom.utils import get_class_args, dict_from_lines
@@ -81,7 +82,9 @@ class BaseClass:
             all_lines = f.readlines()
         conf = dict_from_lines(all_lines)
         return cls.from_config(conf)
-
+    @classmethod
+    def write_wavefile(sample_rate,data,id):
+        write(id+".wav",sample_rate,data)
 
 class Surface(BaseClass):
     # There are arrays here, find out what to do.
@@ -99,12 +102,12 @@ class Surface(BaseClass):
             self.frequency = [125, 250, 500, 1000, 2000, 4000]
         if self.absorption is None:
             self.absorption = [
-                1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
-                1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
-                1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
-                1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
-                1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
-                1.0, 1.0, 1.0, 1.0, 1.0, 1.0
+                0.1000, 0.0500, 0.0600, 0.0700, 0.1000, 0.1000,
+                0.1400, 0.3500, 0.5300, 0.7500, 0.7000, 0.6000,
+                0.1000, 0.0500, 0.0600, 0.7000, 0.1000, 0.1000,
+                0.1000, 0.0500, 0.0600, 0.0700, 0.1000, 0.1000,
+                0.0100, 0.0200, 0.0600, 0.1500, 0.2500, 0.4500,
+                0.2400, 0.1900, 0.1400, 0.0800, 0.1300, 0.1000
             ]
         if self.diffusion is None:
             self.diffusion = [
@@ -145,10 +148,10 @@ class Options(BaseClass):
             verbose: bool = True,
             simulatespecular: bool = True,
             reflectionorder: Tuple = (10, 10, 10),
-            simulatediffuse: bool = False,
+            simulatediffuse: bool = True,
             numberofrays: int = 2000,
             diffusetimestep: float = 0.010,
-            rayenergyfloordB: float = -80.,
+            rayenergyfloordB: float = -80,
             uncorrelatednoise: bool = True,
             **kwargs
     ):
