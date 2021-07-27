@@ -1,0 +1,11 @@
+//float mul ( const MyStruct *pSetup );
+//float real_mul(int first, float second);
+//const MyStruct make_struct(int first, float second);
+//void print_sensor(const CSensor *sensor);
+////CSensor* create_sensor(int nSensor);
+//CSensor fill_sensor(CSensor sensors[], int idx, int first, float second);
+void print_options(const COptions *options);
+void print_surface(const CSurface *surface);
+void print_room(const CRoom *room);
+void print_setup(const CRoomSetup *setup);
+void print_sensor(const CSensor *sensor);
