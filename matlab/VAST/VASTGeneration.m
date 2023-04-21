@@ -122,7 +122,8 @@ SofaMyRoomParam.options.rayenergyfloordB    = -80;
 SofaMyRoomParam.options.uncorrelatednoise   = true;
 
 SofaMyRoomParam.options.outputname			= 'brir';
-SofaMyRoomParam.options.saveaswav	        = false;
+SofaMyRoomParam.options.mex_saveaswav       = false;
+SofaMyRoomParam.options.saveaswav           = false;
 
 % appending more parameters in variable 'SofaMyRoomParam'
 SofaMyRoomParam.room.dimension	             = RoomSize;
