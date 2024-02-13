@@ -38,18 +38,18 @@ No further steps are required to run sofamyroom on macOS.
 To use sofamyroom, type this command in a Command Prompt or a Terminal:
 
 ```bash
-./sofamyroom setup.txt
+./sofamyroom sampleroomsetup.m
 ```
 
-`setup.txt` is the name of the text file containing all the sofamyroom setup parameters structure.
-A sample of it can be found in `sampleroomsetup.txt`.
+`sampleroomsetup.m` is the name of the text file containing all the sofamyroom setup parameters structure.
+A sample of it can be found in `data/sampleroomsetup.m`.
 
 ### Usage with MATLAB
 
 A MEX-file for 64-bit MATLAB is available. To run it, type these commands in the Command Window:
 
 ```matlab
-setup = readsetup('sampleroomsetup.txt');
+setup = readsetup('sampleroomsetup.m');
 output = sofamyroom(setup);
 ```
 
