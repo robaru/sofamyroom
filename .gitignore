@@ -1,6 +1,6 @@
 build/*
-docs
 !build/.empty
+docs
 sofamyroom*.mex*
 sofamyroom*.mex*.pdb
 *.asv

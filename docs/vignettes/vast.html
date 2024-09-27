@@ -1,0 +1,455 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>SofaMyRoom - VAST &mdash; SofaMyRoom  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Codebase documentation" href="../doxydoc.html" />
+    <link rel="prev" title="SofaMyRoom - Parameters" href="params.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> SofaMyRoom
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Using the toolbox</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">SofaMyRoom</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../README.html#usage">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../README.html#building-sofamyroom">Building SofaMyRoom</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../README.html#known-issues">Known issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../README.html#license">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../README.html#credits">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../README.html#references">References</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Vignettes</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="params.html">Simulation parameters</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">VAST structure</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vast-structure">VAST structure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#legend">Legend</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Code Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../doxydoc.html">Code documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SofaMyRoom</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>SofaMyRoom - VAST</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/vignettes/vast.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="sofamyroom-vast">
+<h1><a class="toc-backref" href="#id1">SofaMyRoom - VAST</a><a class="headerlink" href="#sofamyroom-vast" title="Permalink to this headline">¶</a></h1>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#sofamyroom-vast" id="id1">SofaMyRoom - VAST</a></p>
+<ul>
+<li><p><a class="reference internal" href="#vast-structure" id="id2">VAST structure</a></p>
+<ul>
+<li><p><a class="reference internal" href="#legend" id="id3">Legend</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<p>Here is reported the organization of the VAST structure. The VAST project is available <a class="reference external" href="http://thevastproject.inria.fr/dataset/">here</a>.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>In this version, the VAST dataset can handle more than six frequency bands and, moreover, the HRTF dataset is not restricted to the one recorded at MIT on the KEMAR mannequin.</p>
+</div>
+<div class="section" id="vast-structure">
+<h2><a class="toc-backref" href="#id2">VAST structure</a><a class="headerlink" href="#vast-structure" title="Permalink to this headline">¶</a></h2>
+<p>The VAST dataset is stored with the multilevel MATLAB <code class="docutils literal notranslate"><span class="pre">struct</span></code>. In order to initialize and populate a VAST dataset check the script <code class="docutils literal notranslate"><span class="pre">VAST/DemoVAST.m</span></code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The size of the arrays are reported in the legend below</p>
+</div>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 1%" />
+<col style="width: 1%" />
+<col style="width: 13%" />
+<col style="width: 17%" />
+<col style="width: 68%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head" colspan="3"><p>Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td colspan="3"><p>GlobalParams</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">struct</span></code></p></td>
+<td><p>Simulation Parameters</p></td>
+</tr>
+<tr class="row-odd"><td colspan="3"><p>SamplingFrequency</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">double</span></code></p></td>
+<td><p>Sampling Frequency of the BRIRs</p></td>
+</tr>
+<tr class="row-even"><td colspan="3"><p>FreqBin</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">F]</span> <span class="pre">double</span></code></p></td>
+<td><p>Frequency bands used to compute the BRIRs - refer to room.surface.frequency</p></td>
+</tr>
+<tr class="row-odd"><td colspan="3"><p>RIRLengthTime</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">double</span></code></p></td>
+<td><p>Length in seconds of the BRIRs</p></td>
+</tr>
+<tr class="row-even"><td colspan="3"><p><strong>RIR</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">struct</span></code></p></td>
+<td><p>BRIR container</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td colspan="2"><p>Left</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[L,</span> <span class="pre">N]</span> <span class="pre">single</span></code></p></td>
+<td><p>RIR for the left ear</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td colspan="2"><p>Right</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[L,</span> <span class="pre">N]</span> <span class="pre">single</span></code></p></td>
+<td><p>RIR for the right ear</p></td>
+</tr>
+<tr class="row-odd"><td colspan="3"><p><strong>Room</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">struct</span></code></p></td>
+<td><p>Acoustic parameters</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td colspan="2"><p>Size</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[3,</span> <span class="pre">N]</span> <span class="pre">single</span></code></p></td>
+<td><p>(width, depth, height) dimensions in meters</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td colspan="2"><p>FreqRT60</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[F,</span> <span class="pre">N]</span> <span class="pre">single</span></code></p></td>
+<td><p>Reverberation Time is seconds for each frequency band</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td colspan="2"><p>GlobalRT60</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">N]</span> <span class="pre">single</span></code></p></td>
+<td><p>Overall Reverberation Time is seconds</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td colspan="2"><p>Diffusion</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[F,</span> <span class="pre">N]</span> <span class="pre">single</span></code></p></td>
+<td><p>Diffusion coefficients for each frequency band</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td colspan="2"><p><strong>Absorption</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">struct</span></code></p></td>
+<td><p>Absorption coefficients for each frequency band</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td></td>
+<td><p>NorthWall</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[F,</span> <span class="pre">N]</span> <span class="pre">single</span></code></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td></td>
+<td></td>
+<td><p>WestWall</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[F,</span> <span class="pre">N]</span> <span class="pre">single</span></code></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td></td>
+<td><p>SouthWall</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[F,</span> <span class="pre">N]</span> <span class="pre">single</span></code></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td></td>
+<td></td>
+<td><p>EastWall</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[F,</span> <span class="pre">N]</span> <span class="pre">single</span></code></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td></td>
+<td><p>Ceiling</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[F,</span> <span class="pre">N]</span> <span class="pre">single</span></code></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td></td>
+<td></td>
+<td><p>Floor</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[F,</span> <span class="pre">N]</span> <span class="pre">single</span></code></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td colspan="3"><p><strong>Receiver</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">struct</span></code></p></td>
+<td><p>Receivers characterization</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td colspan="2"><p>Position</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[3,</span> <span class="pre">N]</span> <span class="pre">single</span></code></p></td>
+<td><p>(x,y,z) in meters for each receiver</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td colspan="2"><p>Orientation</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">N]</span> <span class="pre">single</span></code></p></td>
+<td><p>tilt in degree</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td colspan="2"><p><strong>HRTF</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">struct</span></code></p></td>
+<td><p>HRTF dataset</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td></td>
+<td><p>Fs</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">double</span></code></p></td>
+<td><p>Sampling Frequency in hertz</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td></td>
+<td><p>Left</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[D,</span> <span class="pre">K]</span> <span class="pre">double</span></code></p></td>
+<td><p>Impulse responses of the left ear</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td></td>
+<td><p>Right</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[D,</span> <span class="pre">K]</span> <span class="pre">double</span></code></p></td>
+<td><p>as above for the right ear</p></td>
+</tr>
+<tr class="row-even"><td colspan="3"><p><strong>Source</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">struct</span></code></p></td>
+<td><p>Sources characterization</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td colspan="2"><p>Azimuth</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">N]</span> <span class="pre">single</span></code></p></td>
+<td><p>Azimuth angle in respect to receiver. Values in degree.</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td colspan="2"><p>Elevation</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">N]</span> <span class="pre">single</span></code></p></td>
+<td><p>Elevation angle in respect to receiver. Values in degree.</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td colspan="2"><p>Distance</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">N]</span> <span class="pre">single</span></code></p></td>
+<td><p>Distance in respect to receiver. Values in meters</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td colspan="2"><p>AbsolutePos</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[3,</span> <span class="pre">N]</span> <span class="pre">single</span></code></p></td>
+<td><p>Cartesian coordinates in respect to the room. Values in meters.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="legend">
+<h3><a class="toc-backref" href="#id3">Legend</a><a class="headerlink" href="#legend" title="Permalink to this headline">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 82%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>F</p></td>
+<td><p>Number of frequency bands</p></td>
+</tr>
+<tr class="row-odd"><td><p>N</p></td>
+<td><p>RIRs available in VAST</p></td>
+</tr>
+<tr class="row-even"><td><p>L</p></td>
+<td><p>Length in samples of the RIRs</p></td>
+</tr>
+<tr class="row-odd"><td><p>D</p></td>
+<td><p>Length in samples of the HRIRs</p></td>
+</tr>
+<tr class="row-even"><td><p>K</p></td>
+<td><p>HRIRs available</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../doxydoc.html" class="btn btn-neutral float-right" title="Codebase documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="params.html" class="btn btn-neutral float-left" title="SofaMyRoom - Parameters" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright EUPL v1.2, 2020
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
