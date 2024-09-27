@@ -7,29 +7,29 @@
 /****** NOTES ************************************************************/
 /**
 
- @todo Make sure that all frequency band weighting uses the same base for log. 
+ @todo Make sure that all frequency band weighting uses the same base for log.
     => Done. They all use the LOGDOMAIN macro now.
 
  @todo Make roomsim.c independent of mex.h.
- 
+
  @todo Have Roomsim return the BRIR properly (currently returns pointer to
        internal.brir, without knowledge of number of brir's in the array).
- 
+
  @todo Make separation of mexmain.c and roomsim.c complete, by removing
        interdependencies on global roomsim and internal structures.
     => Done. Converted from global variables to function arguments as part
 	   of the development of the C codebase.
- 
+
  @todo Loading of sensors: must match Fs, and how to deal with sensor v. simulation frequency bands
     => Partly done. Fs is matched on running a simulation.
 
  @todo Receiver ypr should be negated when receiver YPRT computed.
-	=> Done. yprt matrices are now for room->source and room->receiver 
+	=> Done. yprt matrices are now for room->source and room->receiver
 	   coordinate transformations, and source->receiver vector is
 	   negated to obtain receiver->source vector.
 
  @todo Should let sensor init functions return void *, which is passed to sensor probe functions (should I?)
-    => Done. Sensor init functions fill a sensor definition structure, which includes a void * for private use. 
+    => Done. Sensor init functions fill a sensor definition structure, which includes a void * for private use.
        This void * is passed to sensor probe.
 
  @todo Convert roomsim attenuation and diffusion coefficients to log domain.
@@ -38,16 +38,16 @@
        when manually setting attenuation coefficients.)
 
 ************************************************ @file *******************/
- 
+
 /* C library includes */
-/* math.h defines sin, cos, tan, asin, acos, atan, atan2, sinh, cosh, tanh, 
+/* math.h defines sin, cos, tan, asin, acos, atan, atan2, sinh, cosh, tanh,
                   exp, log (=ln), log10, pow, sqrt, ceil, floor, fabs */
-#include <math.h>     
+#include <math.h>
 #include <string.h>
 
-/* NOTE: I was unable to make the FFTW DLL work with LCC. Version 2.4 of LCC 
-   that is shipped with MATLAB does not support __declspec(dllimport), hence 
-   it does not know how to call functions inside a DLL. Attempts to upgrade 
+/* NOTE: I was unable to make the FFTW DLL work with LCC. Version 2.4 of LCC
+   that is shipped with MATLAB does not support __declspec(dllimport), hence
+   it does not know how to call functions inside a DLL. Attempts to upgrade
    LCC to version 4.2 and linking to a static FFTW library both were unsuccessful.
    The only solution I found was to compile/link using the Visual C compiler */
 #include "fftw3.h"
@@ -123,7 +123,7 @@ typedef struct {
     double  *logdiffusereflection;
 	double  *logspecularreflection;
 	double  *diffusioncoefficient;
-    
+
 	/* image source method fields */
     double  *surfaceattenuation;	/**< Attenuation of surfaces on virtual-to-real room. */
     double  *attenuation;			/**< Total attenuation of image source to receiver path. */
@@ -142,14 +142,14 @@ typedef struct {
     /* sources */
     int     nSources;
     CSensorInternal *source;
-    
+
 	/* receivers */
     int     nReceivers;
     CSensorInternal *receiver;
 
 	/* output */
     BRIR    *brir;
-    
+
 } CRoomsimInternal;
 
 /* Convenience macro's to access individual surface absorption and diffusion coefficients */
@@ -166,10 +166,10 @@ void ComputeBandFrequencies(const CRoomSetup *pSetup, CRoomsimInternal *pSimulat
     int p0, p1;
     int i, idx;
     double base = pow(2,1.0/pSetup->options.bandsperoctave);
-    
+
     p0 = (int) ceil(LOG2(30.0/pSetup->options.referencefrequency)  * pSetup->options.bandsperoctave);
     p1 = (int) floor(LOG2(pSetup->options.fs / 2.22 / pSetup->options.referencefrequency) * pSetup->options.bandsperoctave);
-    
+
     pSimulation->nBands = (p1-p0+1+2);
     pSimulation->frequency = (double *) MemMalloc(pSimulation->nBands * sizeof(double));
 
@@ -183,11 +183,11 @@ void ComputeBandFrequencies(const CRoomSetup *pSetup, CRoomsimInternal *pSimulat
 void PrintAbsorptionAndDiffusion(const CRoomSetup *pSetup, CRoomsimInternal *pSimulation)
 {
     int b, s;
-    
+
     MsgPrintf("\nNumber of surface bands: %d\n", pSetup->room.surface.nBands);
     for (b=0; b<pSetup->room.surface.nBands; b++)
         MsgPrintf("%7.f ", pSetup->room.surface.frequency[b]);
-    
+
     MsgPrintf("\n\nAbsorption\n");
     for (s=0; s<6; s++)
     {
@@ -196,7 +196,7 @@ void PrintAbsorptionAndDiffusion(const CRoomSetup *pSetup, CRoomsimInternal *pSi
         MsgPrintf("\n");
     }
     MsgPrintf("\n");
-    
+
     MsgPrintf("Diffusion\n");
     for (s=0; s<6; s++)
     {
@@ -205,7 +205,7 @@ void PrintAbsorptionAndDiffusion(const CRoomSetup *pSetup, CRoomsimInternal *pSi
         MsgPrintf("\n");
     }
     MsgPrintf("\n");
-    
+
     MsgPrintf("\nNumber of simulation bands: %d\n", pSimulation->nBands);
     for (b=0; b<pSimulation->nBands; b++)
         MsgPrintf("%7.f ", pSimulation->frequency[b]);
@@ -228,12 +228,12 @@ void PrintAbsorptionAndDiffusion(const CRoomSetup *pSetup, CRoomsimInternal *pSi
     MsgPrintf("\n");
 }
 
-/** Resamples the surface absorption and diffusion coefficients 
+/** Resamples the surface absorption and diffusion coefficients
  *  at the simulation band frequencies.
  *
  *  @note
  *     Requires that the \a pSetup structure contains meaningful values,
- *     and that the \a pSimulation->nBands and \a pSimulation->frequency 
+ *     and that the \a pSimulation->nBands and \a pSimulation->frequency
  *     fields are initialized.
  */
 #define LOGLIMIT(v)  if((v)<LOGMINIMUM) (v)=LOGMINIMUM;
@@ -242,10 +242,10 @@ void InterpolateAbsorptionAndDiffusion(const CRoomSetup *pSetup, CRoomsimInterna
 {
     int    i, j, Nin, Nout;
 	double *alpha, *d, r;
-    
+
 	Nin  = pSetup->room.surface.nBands;
 	Nout = pSimulation->nBands;
-	
+
 	/* allocate arrays in simulation structure */
     pSimulation->logreflection         = (double *) MemMalloc(Nout * 6 * sizeof(double));
     pSimulation->logabsorption         = (double *) MemMalloc(Nout * 6 * sizeof(double));
@@ -253,7 +253,7 @@ void InterpolateAbsorptionAndDiffusion(const CRoomSetup *pSetup, CRoomsimInterna
     pSimulation->logdiffusereflection  = (double *) MemMalloc(Nout * 6 * sizeof(double));
     pSimulation->logspecularreflection = (double *) MemMalloc(Nout * 6 * sizeof(double));
     pSimulation->diffusioncoefficient  = (double *) MemMalloc(Nout * 6 * sizeof(double));
-    
+
 	/* allocate local arrays */
 	alpha = (double *)MemMalloc(pSimulation->nBands * sizeof(double));
 	d     = (double *)MemMalloc(pSimulation->nBands * sizeof(double));
@@ -319,7 +319,7 @@ void ComputeAirAbsorption(const CRoomSetup *pSetup, CRoomsimInternal *pSimulatio
 }
 #endif
 
-/* compute frequency dependent pressure absorption coefficients for air 
+/* compute frequency dependent pressure absorption coefficients for air
    according to the ISO 9613-1:1993 standard */
 void ComputeAirAbsorption(const CRoomSetup *pSetup, CRoomsimInternal *pSimulation)
 {
@@ -338,9 +338,9 @@ void ComputeAirAbsorption(const CRoomSetup *pSetup, CRoomsimInternal *pSimulatio
 	for (i=0; i<pSimulation->nBands; i++)
 	{
 		f2 = pSimulation->frequency[i]; f2*=f2;
-		alpha = 8.686*f2 * 
-			( 1.84e-11 * (1/pressure) * sqrt(tempr) + pow(tempr,-2.5) * 
-			     ( 0.01275 * (exp(-2239.1/temp) / (frO + f2/frO)) + 
+		alpha = 8.686*f2 *
+			( 1.84e-11 * (1/pressure) * sqrt(tempr) + pow(tempr,-2.5) *
+			     ( 0.01275 * (exp(-2239.1/temp) / (frO + f2/frO)) +
 			       0.1068  * (exp(-3352  /temp) / (frN + f2/frN))
 			     )
 		    );
@@ -381,7 +381,7 @@ void roomcallback(const CRoomCallbackArg *arg) /*(int order, int rx, int ry, int
         for (s=0; s<6; s++)
             arg->pSimulation->surfaceattenuation[b] += arg->pSimulation->logspecularreflection[b+s*i] * arg->surfacecount[s];
     }
-    
+
     /* loop over all sources */
     for (si=0; si<arg->pSetup->nSources; si++)
     {
@@ -389,7 +389,7 @@ void roomcallback(const CRoomCallbackArg *arg) /*(int order, int rx, int ry, int
         S.x = IMGF(arg->rx) * arg->pSetup->room.dimension[0] + IMGS(arg->rx) * arg->pSetup->source[si].location[0];
         S.y = IMGF(arg->ry) * arg->pSetup->room.dimension[1] + IMGS(arg->ry) * arg->pSetup->source[si].location[1];
         S.z = IMGF(arg->rz) * arg->pSetup->room.dimension[2] + IMGS(arg->rz) * arg->pSetup->source[si].location[2];
-        
+
         /* loop over all receivers */
         for (ri=0; ri<arg->pSetup->nReceivers; ri++)
         {
@@ -399,21 +399,21 @@ void roomcallback(const CRoomCallbackArg *arg) /*(int order, int rx, int ry, int
             V.z = arg->pSetup->receiver[ri].location[2] - S.z;
 
 			/* derive receiver to virtual source vector */
-			W.x = -V.x; 
-			W.y = -V.y; 
+			W.x = -V.x;
+			W.y = -V.y;
 			W.z = -V.z;
-                                
+
             /* compute distance, delay */
             distance = sqrt(V.x*V.x + V.y*V.y + V.z*V.z);
             delay = distance / arg->pSimulation->c;
-            
+
             /* jump out of loop if delay > max delay */
-            if (delay > arg->pSetup->options.responseduration) 
+            if (delay > arg->pSetup->options.responseduration)
                 continue;
 
             /* copy virtual room surface attenuation to source/receiver attenuation */
             memcpy(arg->pSimulation->attenuation,arg->pSimulation->surfaceattenuation,arg->pSimulation->nBands*sizeof(double));
-            
+
             /* apply attenuation from distance and air absorption */
             if (arg->pSetup->options.distanceattenuation)
             {
@@ -426,8 +426,8 @@ void roomcallback(const CRoomCallbackArg *arg) /*(int order, int rx, int ry, int
                 for (b=0; b<arg->pSimulation->nBands; b++)
                     arg->pSimulation->attenuation[b] += distance*arg->pSimulation->logairattenuation[b];
             }
-                  
-            /** @todo Add test for maximum attenuation, something like 
+
+            /** @todo Add test for maximum attenuation, something like
                       "if max(Attenuation) < MinReflection, continue; end;". */
 
             /* flip source vector component depending on reflection order */
@@ -464,28 +464,28 @@ void roomcallback(const CRoomCallbackArg *arg) /*(int order, int rx, int ry, int
             {
                 case ST_GAIN:
                     gain = arg->pSimulation->source[si].definition->probe.gain(&xyz,arg->pSimulation->source[si].definition->data);
-                    if (gain==EMPTY_GAIN) 
+                    if (gain==EMPTY_GAIN)
 						continue;
                     for (b=0; b<arg->pSimulation->nBands; b++)
                         arg->pSimulation->attenuation[b] += gain;
                     break;
-                    
+
                 case ST_WEIGHTS:
                     weights = arg->pSimulation->source[si].definition->probe.weights(&xyz,arg->pSimulation->source[si].definition->data);
-                    if (!weights) 
+                    if (!weights)
 						continue;
                     /** @todo Interpolate source weights to simulation freq. bands. */
                     for (b=0; b<arg->pSimulation->nBands; b++)
                         arg->pSimulation->attenuation[b] += weights[b];
                     break;
-                    
+
                 case ST_RESPONSE:
                     sourceresponse = arg->pSimulation->source[si].definition->probe.response(&xyz,arg->pSimulation->source[si].definition->data);
-                    if (!sourceresponse) 
+                    if (!sourceresponse)
 						continue;
             }
 #endif
-            
+
 			/* convert receiver vector from room to sensor coordinates */
             YawPitchRoll(&W,&arg->pSimulation->receiver[ri].r2s_yprt,&xyz);
 
@@ -522,7 +522,7 @@ void roomcallback(const CRoomCallbackArg *arg) /*(int order, int rx, int ry, int
                     for (b=0; b<arg->pSimulation->nBands; b++)
                         arg->pSimulation->attenuation[b] += gain;
                     break;
-                    
+
                 case ST_WEIGHTS:
                     weights = arg->pSimulation->receiver[ri].definition->probe.weights(&xyz,arg->pSimulation->receiver[ri].definition->data);
                     if (!weights) continue;
@@ -530,7 +530,7 @@ void roomcallback(const CRoomCallbackArg *arg) /*(int order, int rx, int ry, int
                     for (b=0; b<arg->pSimulation->nBands; b++)
                         arg->pSimulation->attenuation[b] += weights[b];
                     break;
-                    
+
                 case ST_RESPONSE:
                     receiverresponse = arg->pSimulation->receiver[ri].definition->probe.response(&xyz,arg->pSimulation->receiver[ri].definition->data);
                     if (!receiverresponse) continue;
@@ -539,13 +539,13 @@ void roomcallback(const CRoomCallbackArg *arg) /*(int order, int rx, int ry, int
 
             /* combine surfaces, air, distance, source, and receiver weights into single impulse response */
             LogMagFreqResp2MinPhaseFIR(arg->pSimulation->attenuation, arg->pSimulation->h, arg->pSimulation->minphaseplan);
-            
+
             x = arg->pSimulation->h; xlen = NFFT_SIZE;
             y = arg->pSimulation->convbuf;
             nChannels = 1;
-            
+
             /** @todo Apply subsample filter if required. */
-            
+
             /* Convolve arg->pSimulation->h with sourceimpulse and receiverimpulse, if any. */
 			/* Note that receiverimpulse could contain 2 channels. */
             if (sourceimpulse)
@@ -556,7 +556,7 @@ void roomcallback(const CRoomCallbackArg *arg) /*(int order, int rx, int ry, int
                 x = y; xlen = ylen;
                 y += ylen;
             }
-            
+
             if (receiverimpulse)
             {
                 h = receiverimpulse; hlen = arg->pSimulation->receiver[ri].definition->nSamples;
@@ -570,7 +570,7 @@ void roomcallback(const CRoomCallbackArg *arg) /*(int order, int rx, int ry, int
                 x = y; xlen = ylen;
                 y += nChannels * ylen;
             }
-            
+
             /* add final impulse response to output room impulse response */
             sr  = ri*arg->pSimulation->nSources + si;
             ofs = ROUND(distance/arg->pSimulation->csample);
@@ -580,7 +580,7 @@ void roomcallback(const CRoomCallbackArg *arg) /*(int order, int rx, int ry, int
             if (nChannels == 2)
                 for (i=0; i<lim; i++)
                     arg->pSimulation->brir[sr].sample[arg->pSimulation->brir[sr].nSamples+ofs+i] += x[xlen+i];
-            
+
         } /* next receiver */
 
     } /* next source */
@@ -598,9 +598,9 @@ void EnumerateVirtualRooms(const CRoomSetup *pSetup, CRoomsimInternal *pSimulati
 
 	arg.pSetup = pSetup;
 	arg.pSimulation = pSimulation;
-    
+
     maxorder = MAX(maxx,MAX(maxy,maxz));
-    
+
     for (arg.order=0; arg.order<=maxorder; arg.order++)
     {
         for (x=0; x<=arg.order && x<=maxx; x++)
@@ -608,39 +608,39 @@ void EnumerateVirtualRooms(const CRoomSetup *pSetup, CRoomsimInternal *pSimulati
             for (sx=1; sx>-2; sx-=2)
             {
                 if ((sx==-1) && (x==0)) break;
-                
+
                 /* determine surface counts in X dimension */
                 arg.surfacecount[0] = (x>>1) + ((sx<0) & (x&1));
                 arg.surfacecount[1] = x - arg.surfacecount[0];
-                
+
                 for (y=0; y<=arg.order-x && y<=maxy; y++)
                 {
                     for (sy=1; sy>-2; sy-=2)
                     {
                         if ((sy==-1) && (y==0)) break;
-                        
+
                         /* determine surface counts in Y dimension */
                         arg.surfacecount[2] = (y>>1) + ((sy<0) & (y&1));
                         arg.surfacecount[3] = y - arg.surfacecount[2];
-                        
+
                         z = arg.order-x-y;
                         if (z>maxz) break;
-                        
+
                         for (sz=1; sz>-2; sz-=2)
                         {
                             if ((sz==-1) && (z==0)) break;
-                            
+
                             /* determine surface counts in Z dimension */
                             arg.surfacecount[4] = (z>>1) + ((sz<0) & (z&1));
                             arg.surfacecount[5] = z - arg.surfacecount[4];
-                            
+
 							arg.rx = sx*x;
 							arg.ry = sy*y;
 							arg.rz = sz*z;
 
                             /* invoke callback */
                             callback(&arg);
-                            
+
                         } /* for sz */
                     } /* for sy */
                 } /* for y */
@@ -657,7 +657,7 @@ void InitSimulationWeights(CRoomsimInternal *pSimulation, CSensorDefinition *pSe
 		return;
 
 	/* check existing simulation weights, if any */
-		
+
 	if ( (pSensor->nSimulationBands == pSimulation->nBands) /* number of simulation bands same as current simulation? */
          && pSensor->simulationfrequency				    /* and simulation frequency information available? */
 		 && pSensor->simulationlogweights					/* and simulation log-weights available? */
@@ -716,7 +716,7 @@ void InitSimulationWeights(CRoomsimInternal *pSimulation, CSensorDefinition *pSe
 		for (i=0; i<icount; i++)
 		{
 			FreqzLogMagnitude(
-				&pSensor->responsedata[i * pSensor->nSamples], pSensor->nSamples, 
+				&pSensor->responsedata[i * pSensor->nSamples], pSensor->nSamples,
 				pSensor->simulationfrequency, pSensor->nSimulationBands,
 				&pSensor->simulationlogweights[i * pSensor->nSimulationBands]
 			);
@@ -726,7 +726,7 @@ void InitSimulationWeights(CRoomsimInternal *pSimulation, CSensorDefinition *pSe
 		memcpy(pSensor->simulationfrequency, pSimulation->frequency, pSensor->nSimulationBands * sizeof(double));
 	}
 
-#ifdef MEX    
+#ifdef MEX
     /* make memory persistent */
     mexMakeMemoryPersistent(pSensor->simulationfrequency);
     mexMakeMemoryPersistent(pSensor->simulationlogweights);
@@ -767,7 +767,7 @@ CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup, sfmt_t *sfmt)
 
     /* prepare simulation band frequencies */
     ComputeBandFrequencies(pSetup, pSimulation);
-    
+
 	/* compute air absorption coefficients */
 	ComputeAirAbsorption(pSetup, pSimulation);
 
@@ -786,7 +786,7 @@ CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup, sfmt_t *sfmt)
     pSimulation->source     = (CSensorInternal *) MemMalloc(pSimulation->nSources * sizeof(CSensorInternal));
     pSimulation->nReceivers = pSetup->nReceivers;
     pSimulation->receiver   = (CSensorInternal *) MemMalloc(pSimulation->nReceivers * sizeof(CSensorInternal));
-    
+
     /* load sources, filling probe callback functions and associated data, and  */
     /* prepare yaw-pitch-roll transformation matrices */
     for (s=0; s<pSetup->nSources; s++)
@@ -794,10 +794,10 @@ CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup, sfmt_t *sfmt)
 		pSimulation->source[s].definition = LoadSensor(pSetup->source[s].description);
 
 		/* verify that source sampling frequency matches simulation sampling frequency */
-        if (!(pSimulation->source[s].definition->fs == ANY_FS 
+        if (!(pSimulation->source[s].definition->fs == ANY_FS
 			|| pSimulation->source[s].definition->fs == pSimulation->fs))
         {
-            sprintf(msg,"sampling frequency mismatch for source '%s'\n(simulation Fs=%.f Hz, source Fs=%.f Hz)", 
+            sprintf(msg,"sampling frequency mismatch for source '%s'\n(simulation Fs=%.f Hz, source Fs=%.f Hz)",
                             pSetup->source[s].description, pSetup->options.fs, pSimulation->source[s].definition->fs);
             MsgErrorExit(msg);
         }
@@ -817,10 +817,10 @@ CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup, sfmt_t *sfmt)
         pSimulation->receiver[r].definition = LoadSensor(pSetup->receiver[r].description);
 
 		/* verify that receiver sampling frequency matches simulation sampling frequency */
-        if (!(pSimulation->receiver[r].definition->fs == ANY_FS 
+        if (!(pSimulation->receiver[r].definition->fs == ANY_FS
 			|| pSimulation->receiver[r].definition->fs == pSimulation->fs))
         {
-            sprintf(msg,"sampling frequency mismatch for receiver '%s'\n(simulation Fs=%.f Hz, receiver Fs=%.f Hz)", 
+            sprintf(msg,"sampling frequency mismatch for receiver '%s'\n(simulation Fs=%.f Hz, receiver Fs=%.f Hz)",
                             pSetup->receiver[r].description, pSetup->options.fs, pSimulation->receiver[r].definition->fs);
             MsgErrorExit(msg);
         }
@@ -851,21 +851,21 @@ CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup, sfmt_t *sfmt)
 		for (i=0; i<nSpacebin; i++)
 			pSimulation->receiver[r].FirstTOA[i] = 10000.0;
     }
-    
+
     /* allocate plan for converting log magnitude frequency response to minimum phase filter */
     pSimulation->minphaseplan = AllocMinPhaseFIRplan(NFFT_SIZE, pSimulation->frequency, pSimulation->nBands);
     pSimulation->h = MemMalloc(NFFT_SIZE * sizeof(double));
-    
+
     /* allocate internal attenuation vectors */
     pSimulation->surfaceattenuation = (double *)MemMalloc(pSimulation->nBands * sizeof(double));
     pSimulation->attenuation		= (double *)MemMalloc(pSimulation->nBands * sizeof(double));
 
     /* allocate memory for convolution results */
-    { 
+    {
         int maxslen = 0, maxrlen = 0;
         int len   = NFFT_SIZE;
         int total = 0;
-        
+
         for (s=0; s<pSimulation->nSources; s++)
             if (pSimulation->source[s].definition->type == ST_IMPULSERESPONSE)
                 maxslen = MAX(maxslen,pSimulation->source[s].definition->nSamples);
@@ -873,10 +873,10 @@ CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup, sfmt_t *sfmt)
         for (r=0; r<pSimulation->nReceivers; r++)
             if (pSimulation->receiver[r].definition->type == ST_IMPULSERESPONSE)
                 maxrlen = MAX(maxrlen,pSimulation->receiver[r].definition->nSamples);
-        
+
         if (maxslen > 0) { len += maxslen; total += len;   }
         if (maxrlen > 0) { len += maxrlen; total += len*2; }
-        
+
         pSimulation->convbuf = MemMalloc(total * sizeof(double));
     }
 
@@ -896,19 +896,19 @@ CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup, sfmt_t *sfmt)
 
     /* allocate memory for BRIR matrix */
     pSimulation->brir = (BRIR *)MemCalloc(pSimulation->nSources * pSimulation->nReceivers + 1, sizeof(BRIR));
-    
+
     /* initialize structure and allocate memory for all source/receiver combinations */
     for (s=0; s<pSimulation->nSources; s++)
-    {        
+    {
         for (r=0; r<pSimulation->nReceivers; r++)
         {
             i = r * pSimulation->nSources + s; /* s*pSimulation->nReceivers + r; */
-            
+
             pSimulation->brir[i].fs = pSetup->options.fs;
-                        
-            pSimulation->brir[i].nChannels = pSimulation->receiver[r].definition->nChannels; 
+
+            pSimulation->brir[i].nChannels = pSimulation->receiver[r].definition->nChannels;
             pSimulation->brir[i].nSamples  = pSimulation->length;
-            
+
             /* allocate memory for impulse response and set to zero */
             pSimulation->brir[i].sample = (double *) MemCalloc(pSimulation->brir[i].nChannels * pSimulation->brir[i].nSamples, sizeof(double));
         }
@@ -970,7 +970,7 @@ void ReleaseBRIR(BRIR *brir)
 	MemFree(brir);
 }
 
-/** Generates unit vectors equally distributed around a sphere. 
+/** Generates unit vectors equally distributed around a sphere.
  *
  *	@param[in]  nDesiredRays	Number of desired rays.
  *	@param[out] pnActualRays	Number of rays actually generated.
@@ -980,14 +980,14 @@ void ReleaseBRIR(BRIR *brir)
  *     The number of rays N that is actually generated satisfies N = 20*k*k, where
  *     k is the smallest integer such that N >= nDesiredRays.
  *  @note
- *     The generating algorithm subdivides each face of a regular icosahedron into 
- *     a triangular grid, whose granularity is determined by the number of desired 
- *     rays. The algorithm then enumerates the triangular cells of the grid and 
+ *     The generating algorithm subdivides each face of a regular icosahedron into
+ *     a triangular grid, whose granularity is determined by the number of desired
+ *     rays. The algorithm then enumerates the triangular cells of the grid and
  *     takes the center of the grid cell as a ray direction.
- * 
- *                C             Triangle ABC is one face of the icosahedron, which 
- *              ./_\.           is subdivided into a triangular grid. The grid is 
- *            ./_\./_\          enumerated from left-to-right, bottom-to-top, 
+ *
+ *                C             Triangle ABC is one face of the icosahedron, which
+ *              ./_\.           is subdivided into a triangular grid. The grid is
+ *            ./_\./_\          enumerated from left-to-right, bottom-to-top,
  *          ./_\./_\./_\.       starting at A.
  *         A             B
  */
@@ -996,7 +996,7 @@ XYZ *GenerateRays(int nDesiredRays, int *pnActualRays)
 	/** @todo Rotate vertices over small yaw,pitch,roll to avoid alignment with room axes. */
 
 	/* xyz-coordinates of vertices of regular icosahedron */
-	static const XYZ ico_vert[12] = 
+	static const XYZ ico_vert[12] =
 	{
 		{ 0.0000000000,  0.0000000000,  1.0000000000},
 		{ 0.8944271910,  0.0000000000,  0.4472135955},
@@ -1012,7 +1012,7 @@ XYZ *GenerateRays(int nDesiredRays, int *pnActualRays)
 		{ 0.0000000000,  0.0000000000, -1.0000000000}
 	};
 	/* vertex indices of faces of regular icosahedron */
-	static const int ico_face[20][3] = 
+	static const int ico_face[20][3] =
 	{
 		{ 0,  1,  2}, { 0,  2,  3}, { 0,  3,  4}, { 0,  4,  5},
 		{ 0,  5,  1}, { 1,  2,  6}, { 2,  6,  7}, { 2,  3,  7},
@@ -1056,7 +1056,7 @@ XYZ *GenerateRays(int nDesiredRays, int *pnActualRays)
 		/* initialize number of grid cells for enumeration */
 		nSteps = 2*rayorder - 1;
 
-		/** @todo Speed up algorithm by updating p = (p1+p2+p3)/3 
+		/** @todo Speed up algorithm by updating p = (p1+p2+p3)/3
 		rather than updating p1, p2, and p3 individually */
 
 		for (i1=0; i1<rayorder; i1++)
@@ -1082,10 +1082,10 @@ XYZ *GenerateRays(int nDesiredRays, int *pnActualRays)
 				rayxyz[idx].x = (p1.x + p2.x + p3.x) / 3;
 				rayxyz[idx].y = (p1.y + p2.y + p3.y) / 3;
 				rayxyz[idx].z = (p1.z + p2.z + p3.z) / 3;
-            
+
 				/* normalize length to unity */
-				norm = sqrt(rayxyz[idx].x * rayxyz[idx].x + 
-							rayxyz[idx].y * rayxyz[idx].y + 
+				norm = sqrt(rayxyz[idx].x * rayxyz[idx].x +
+							rayxyz[idx].y * rayxyz[idx].y +
 							rayxyz[idx].z * rayxyz[idx].z);
 
 				rayxyz[idx].x /= norm;
@@ -1093,7 +1093,7 @@ XYZ *GenerateRays(int nDesiredRays, int *pnActualRays)
 				rayxyz[idx].z /= norm;
 
 				idx = idx + 1;
-            
+
 				/* update p1, p2, and p3 to move to next grid cell */
 				if ((i2 % 2) == 0)
 				{
@@ -1119,7 +1119,7 @@ XYZ *GenerateRays(int nDesiredRays, int *pnActualRays)
 
 #if 0
 /* DEBUG OUTPUT  */
-	{ 
+	{
 		int i;
 		char filename[256];
 		FILE *fid;
@@ -1155,10 +1155,10 @@ XYZ *GenerateRays(int nDesiredRays, int *pnActualRays)
 	return rayxyz;
 }
 
-void AddDiffuseEnergy(CRoomsimInternal *pSimulation, int iReceiver, 
-					  double recv_timeofarrival, 
-					  XYZ    *recvrayvector, 
-					  int    iBand, 
+void AddDiffuseEnergy(CRoomsimInternal *pSimulation, int iReceiver,
+					  double recv_timeofarrival,
+					  XYZ    *recvrayvector,
+					  int    iBand,
 					  double recv_logenergy)
 {
 	int    sbin, tbin;
@@ -1196,9 +1196,9 @@ void AddDiffuseEnergy(CRoomsimInternal *pSimulation, int iReceiver,
 
 void MakeUnitVector(XYZ *xyz)
 {
-	double norm = 
-		sqrt(xyz->x * xyz->x + 
-			 xyz->y * xyz->y + 
+	double norm =
+		sqrt(xyz->x * xyz->x +
+			 xyz->y * xyz->y +
 			 xyz->z * xyz->z);
 	if (norm == 0.0) return;
 	xyz->x /= norm;
@@ -1249,7 +1249,7 @@ void RoomsimDiffuse(const CRoomSetup *pSetup, CRoomsimInternal *pSimulation, sfm
         MsgRelax;
     }
 
-/* TEMP 
+/* TEMP
 	{
 		CMinPhaseFIRplan *plan;
 		double F[] = {0,125,250,500,1000,2000,4000,8000,16000,22050};
@@ -1287,8 +1287,8 @@ TEMP */
 		/* clear receivers' TFS histogram */
 		for (iReceiver=0; iReceiver<pSetup->nReceivers; iReceiver++)
 		{
-			nBins = pSimulation->receiver[iReceiver].nTbin * 
-					pSimulation->receiver[iReceiver].nFbin * 
+			nBins = pSimulation->receiver[iReceiver].nTbin *
+					pSimulation->receiver[iReceiver].nFbin *
 					pSimulation->receiver[iReceiver].nSbin;
 			memset(pSimulation->receiver[iReceiver].TFShist,0,nBins * sizeof(double));
 		}
@@ -1337,7 +1337,7 @@ TEMP */
 					/* compute time to intersection with x-surfaces */
 					if (ray_dxyz.x < 0)
 					{
-						timetoimpact = -ray_xyz.x / ray_dxyz.x; 
+						timetoimpact = -ray_xyz.x / ray_dxyz.x;
 						surfaceofimpact = 0;
 					}
 					else if (ray_dxyz.x > 0)
@@ -1348,7 +1348,7 @@ TEMP */
 					/* compute time to intersection with y-surfaces */
 					if (ray_dxyz.y < 0)
 					{
-						t = -ray_xyz.y / ray_dxyz.y; 
+						t = -ray_xyz.y / ray_dxyz.y;
 						if (t < timetoimpact)
 						{
 							surfaceofimpact = 2;
@@ -1367,7 +1367,7 @@ TEMP */
 					/* compute time to intersection with z-surfaces */
 					if (ray_dxyz.z < 0)
 					{
-						t = -ray_xyz.z / ray_dxyz.z; 
+						t = -ray_xyz.z / ray_dxyz.z;
 						if (t < timetoimpact)
 						{
 							surfaceofimpact = 4;
@@ -1410,7 +1410,7 @@ TEMP */
 #  endif
 					}
 #  ifdef LOGRAYS_EXTRA
-					if (distance==0.0) 
+					if (distance==0.0)
 					{
 						fprintf(fid,"%% DISTANCE FELL TO ZERO, BREAKING\n");
 						break;
@@ -1461,9 +1461,9 @@ TEMP */
 						rayrecvvector.z = pSetup->receiver[iReceiver].location[2] - impact_xyz.z;
 
 						/* determine ray's time of arrival at receiver */
-						distance = sqrt(rayrecvvector.x * rayrecvvector.x + 
-										rayrecvvector.y * rayrecvvector.y + 
-										rayrecvvector.z * rayrecvvector.z); 
+						distance = sqrt(rayrecvvector.x * rayrecvvector.x +
+										rayrecvvector.y * rayrecvvector.y +
+										rayrecvvector.z * rayrecvvector.z);
 						recv_timeofarrival = ray_time + distance / pSimulation->c;
 
 						/* skip this receiver if ray arrives too late */
@@ -1474,27 +1474,27 @@ TEMP */
 						switch (surfaceofimpact)
 						{
 						case 0:
-							vn = rayrecvvector.x; 
+							vn = rayrecvvector.x;
 							vf = rayrecvvector.y*rayrecvvector.y + rayrecvvector.z*rayrecvvector.z;
 							break;
 						case 1:
-							vn = -rayrecvvector.x; 
+							vn = -rayrecvvector.x;
 							vf = rayrecvvector.y*rayrecvvector.y + rayrecvvector.z*rayrecvvector.z;
 							break;
 						case 2:
-							vn = rayrecvvector.y; 
+							vn = rayrecvvector.y;
 							vf = rayrecvvector.x*rayrecvvector.x + rayrecvvector.z*rayrecvvector.z;
 							break;
 						case 3:
-							vn = -rayrecvvector.y; 
+							vn = -rayrecvvector.y;
 							vf = rayrecvvector.x*rayrecvvector.x + rayrecvvector.z*rayrecvvector.z;
 							break;
 						case 4:
-							vn = rayrecvvector.z; 
+							vn = rayrecvvector.z;
 							vf = rayrecvvector.x*rayrecvvector.x + rayrecvvector.y*rayrecvvector.y;
 							break;
 						case 5:
-							vn = -rayrecvvector.z; 
+							vn = -rayrecvvector.z;
 							vf = rayrecvvector.x*rayrecvvector.x + rayrecvvector.y*rayrecvvector.y;
 							break;
 						}
@@ -1522,10 +1522,10 @@ TEMP */
 					if (iSource==0 && iBand==0)
 					{
 						fprintf(fidrecv,"%4d   %4d   %9.6f %9.6f %9.6f   %9.6f   %9.6f   %9.6f %9.6f %9.6f    %10.6f\n",
-							iRay, iReceiver, 
-							rayrecvvector.x, rayrecvvector.y, rayrecvvector.z, 
-							LOGDOMAIN(v1 * vn / v3 / (d * d)), recv_timeofarrival, 
-							recvrayvector.x, recvrayvector.y, recvrayvector.z, 
+							iRay, iReceiver,
+							rayrecvvector.x, rayrecvvector.y, rayrecvvector.z,
+							LOGDOMAIN(v1 * vn / v3 / (d * d)), recv_timeofarrival,
+							recvrayvector.x, recvrayvector.y, recvrayvector.z,
 							recv_logenergy);
 					}
 #endif
@@ -1536,7 +1536,7 @@ TEMP */
 				/*
 				 * Pick new direction for current ray
 				 */
-					
+
 					/* select random unit vector from lambert distribution */
 					RngLambert(sfmt, &rd);
 					switch (surfaceofimpact)
@@ -1579,7 +1579,7 @@ TEMP */
 			int i,j,k;
 			FILE *fidtfs;
 			fidtfs = fopen("tfslog.txt","w");
-			fprintf(fidtfs,"%d %d %d\n", 
+			fprintf(fidtfs,"%d %d %d\n",
 				pSimulation->receiver[0].nTbin,
 				pSimulation->receiver[0].nFbin,
 				pSimulation->receiver[0].nSbin);
@@ -1615,7 +1615,7 @@ TEMP */
                     iSource+1, iReceiver+1);
                 MsgRelax;
             }
-            
+
 			SRidx = iReceiver * pSimulation->nSources + iSource;
 
 			/* loop over spatial groups */
@@ -1626,7 +1626,7 @@ TEMP */
 					&SpaceBinCenter[iDirection],&receiverresponse))
 				{
 					/* skip direction if no receiver response defined */
-					continue;	
+					continue;
 				}
 
 				TFSbase  = &(RECV_TFS_BIN(pSimulation->receiver[iReceiver],0,0,iDirection));
@@ -1655,7 +1655,7 @@ TEMP */
 					LogMagFreqResp2MinPhaseFIR(TFSbase + iTimebin * nFreqbin,
 						&pSimulation->htv[iTimebin*NFFT_SIZE], pSimulation->minphaseplan);
 				}
-				
+
 #ifdef LOGTAIL
 				fwrite(pSimulation->htv,sizeof(double),nTimebin*NFFT_SIZE,fidtail);
 #endif /* LOGTAIL */
@@ -1668,18 +1668,18 @@ TEMP */
 #endif /* LOGTAIL */
 
 				/* apply time-varying filter to noise signal */
-				TimeVaryingConv(pSimulation->htv, NFFT_SIZE, 
-					 pSimulation->htvidx, nTimebin, 
-					 pSimulation->noise, length, 
+				TimeVaryingConv(pSimulation->htv, NFFT_SIZE,
+					 pSimulation->htvidx, nTimebin,
+					 pSimulation->noise, length,
 					 ROUND(pSimulation->receiver[iReceiver].FirstTOA[iDirection] * pSimulation->fs),
 					 noisethreshold, pSimulation->shapednoise);
 
 				if (nRecvCh==2 && pSetup->options.uncorrelatednoise)
 				{
 					/* apply time-varying filter to second channel of noise signal */
-					TimeVaryingConv(pSimulation->htv, NFFT_SIZE, 
-						 pSimulation->htvidx, nTimebin, 
-						 pSimulation->noise+length, length, 
+					TimeVaryingConv(pSimulation->htv, NFFT_SIZE,
+						 pSimulation->htvidx, nTimebin,
+						 pSimulation->noise+length, length,
 						 ROUND(pSimulation->receiver[iReceiver].FirstTOA[iDirection] * pSimulation->fs),
 						 noisethreshold,pSimulation->shapednoise+length);
 				}
@@ -1794,21 +1794,40 @@ BRIR *Roomsim(const CRoomSetup *pSetup)
 	/* This structure holds the state of SFMT, a library that
 	   generates random numbers */
 	sfmt_t sfmt;
+  //printf("From RoomSim Code");
+  //printf("Fs%f \n",pSetup->options.fs);
+  //printf("Recivers %f \n",pSetup->nReceivers);
+
+
+  //printf("Fs %f \n",pSetup->options.fs);
+  //printf("Fs %f \n",pSetup->options.responseduration);
+  //printf("Fs %f \n",pSetup->options.bandsperoctave);
+  //printf("Fs %f \n",pSetup->options.referencefrequency);
+  //printf("Fs %d \n",pSetup->options.airabsorption);
+  //printf("Fs %d \n",pSetup->options.reflectionorder[0]);
+  //printf("Fs %f \n",pSetup->options.rayenergyfloordB);
+  //printf("Fs %d \n",pSetup->options.simulatespecular);
+  //printf("Fs %d \n",pSetup->options.simulatediffuse);
+  //printf("Fs %d \n",pSetup->options.numberofrays);
+  //printf("Fs %f \n",pSetup->source->location[1]);
+  //printf("Fs %f \n",pSetup->receiver->location[0]);
+  //printf("Fs %f \n",pSetup->room.surface.nColsAbsorption);
+
 
 	/* prepare internal room simulation data structure */
 	CRoomsimInternal *pSimulation = RoomsimInit(pSetup, &sfmt);
-    
+
 	if (pSetup->options.simulatespecular)
 	{
         if (pSetup->options.verbose)
         {
-            MsgPrintf("Simulating specular reflections (xyz-order %d,%d,%d)...\n", 
+            MsgPrintf("Simulating specular reflections (xyz-order %d,%d,%d)...\n",
                 pSetup->options.reflectionorder[0],
                 pSetup->options.reflectionorder[1],
                 pSetup->options.reflectionorder[2]);
             MsgRelax; /* let MATLAB process events */
         }
-        
+
 		/* generate specular reflections */
 		EnumerateVirtualRooms(pSetup, pSimulation,
 				pSetup->options.reflectionorder[0],
@@ -1832,9 +1851,10 @@ BRIR *Roomsim(const CRoomSetup *pSetup)
 }
 
 #define VALIDATE(a,s) if (!(a)) { MsgErrorExit("invalid setup: " s); }
- 
+
 void ValidateSetup(CRoomSetup *pSetup)
 {
+
 	VALIDATE(pSetup->room.surface.nRowsAbsorption == 6, "surface absorption not defined for 6 surfaces");
 	VALIDATE(pSetup->room.surface.nColsAbsorption == pSetup->room.surface.nBands,
 		"surface absorption not defined for all surface frequency bands");
@@ -1845,4 +1865,5 @@ void ValidateSetup(CRoomSetup *pSetup)
 		VALIDATE(pSetup->room.surface.nColsDiffusion == pSetup->room.surface.nBands,
 			"surface diffusion not defined for all surface frequency bands");
 	}
+
 }
