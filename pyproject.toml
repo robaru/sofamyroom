@@ -7,7 +7,7 @@ name = "pysofamyroom"
 dynamic = ["version"]
 description = "Python interface to SofaMyRoom, a shoebox room acoustics simulator that renders binaural room impulse responses with SOFA HRTFs"
 readme = "README.md"
-license = "GPL-3.0-or-later"
+license = "EUPL-1.2"
 license-files = ["LICENSE.txt", "THIRD_PARTY_LICENSES.md"]
 requires-python = ">=3.10"
 authors = [
