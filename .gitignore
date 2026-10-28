@@ -8,3 +8,6 @@ sofamyroom*.mex*.pdb
 .vscode
 *.code-workspace
 src/docsrc/sphinx/_build
+data/*.sofa
+PLAN.md
+manuscript.pdf
