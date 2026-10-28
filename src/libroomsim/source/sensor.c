@@ -458,7 +458,7 @@ void getOptions(char *options, CSensorDefinition *definition)
 				definition->interpolation = true;
 				break;
 			default: 
-				sprintf(msg, "invalid interpolation value, setting it to false\n");
+				snprintf(msg, sizeof(msg), "invalid interpolation value, setting it to false\n");
 				MsgPrintf("%s", msg);
 				definition->interpolation = false;
 			}
@@ -478,7 +478,7 @@ void getOptions(char *options, CSensorDefinition *definition)
 				definition->normalization = true;
 				break;
 			default:
-				sprintf(msg, "invalid normalization value, setting it to false\n");
+				snprintf(msg, sizeof(msg), "invalid normalization value, setting it to false\n");
 				MsgPrintf("%s", msg);
 				definition->normalization = false;
 			}
@@ -498,14 +498,14 @@ void getOptions(char *options, CSensorDefinition *definition)
 				definition->resampling = true;
 				break;
 			default:
-				sprintf(msg, "invalid resempling value, setting it to false\n");
+				snprintf(msg, sizeof(msg), "invalid resempling value, setting it to false\n");
 				MsgPrintf("%s", msg);
 				definition->resampling = false;
 			}
 		}
 		else
 		{
-			sprintf(msg, "%s, not a valid option\n", option);
+			snprintf(msg, sizeof(msg), "%s, not a valid option\n", option);
 			MsgPrintf("%s", msg);
 		}
 
@@ -528,7 +528,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	datafilecopy = (char *)MemMalloc((strlen(datafile) + 1) * sizeof(char));
 	if (!datafilecopy)
 	{
-		sprintf(msg, "unable to allocate memory space for datafile string\n");
+		snprintf(msg, sizeof(msg), "unable to allocate memory space for datafile string\n");
 		MsgPrintf("%s", msg);
 	}
     strcpy(datafilecopy, datafile);
@@ -541,7 +541,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	path = strtok(datafilecopy, " ");
 	if (strlen(path) == strlen(datafile))
 	{
-		sprintf(msg, "no options provided in sensor description, using default values\n");
+		snprintf(msg, sizeof(msg), "no options provided in sensor description, using default values\n");
 		MsgPrintf("%s", msg);
 	}
 	else
@@ -556,7 +556,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	{
 		err = MYSOFA_NO_MEMORY;
 		getMysofaErrorString(err, mysofaerror);
-		sprintf(msg, "unable to allocate memory for SOFA data file '%s' (error %d: %s)", path, err, mysofaerror);
+		snprintf(msg, sizeof(msg), "unable to allocate memory for SOFA data file '%s' (error %d: %s)", path, err, mysofaerror);
 		MemFree(datafilecopy);
 		MsgErrorExit(msg);
 	}
@@ -571,27 +571,27 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	definition->sofahandle->fir = NULL;
 
 	/* open SOFA file */
-	sprintf(msg, "loading SOFA file...");
+	snprintf(msg, sizeof(msg), "loading SOFA file...");
 	MsgPrintf("%s", msg);
 	definition->sofahandle->hrtf = mysofa_load(path, &err);
 	if (!definition->sofahandle->hrtf) 
 	{
 		ClearSofaSensor(definition);
 		getMysofaErrorString(err, mysofaerror);
-		sprintf(msg, "unable to load SOFA data file '%s' (error %d: %s)", path, err, mysofaerror);
+		snprintf(msg, sizeof(msg), "unable to load SOFA data file '%s' (error %d: %s)", path, err, mysofaerror);
 		MemFree(datafilecopy);
 		MsgErrorExit(msg);
 	}
-	sprintf(msg, "completed\n");
+	snprintf(msg, sizeof(msg), "completed\n");
 	MsgPrintf("%s", msg);
 
 	/* check SOFA data */
-	sprintf(msg, "checking SOFA file...");
+	snprintf(msg, sizeof(msg), "checking SOFA file...");
 	MsgPrintf("%s", msg);
 
 	if (definition->sofahandle->hrtf->R > 2)
 	{
-		sprintf(msg, "skipped because number of channels is greater than 2\n");
+		snprintf(msg, sizeof(msg), "skipped because number of channels is greater than 2\n");
 		MsgPrintf("%s", msg);
 	}
 	else
@@ -601,11 +601,11 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 		{
 			ClearSofaSensor(definition);
 			getMysofaErrorString(err, mysofaerror);
-			sprintf(msg, "error in SOFA hrtf data '%s' (error %d: %s)", path, err, mysofaerror);
+			snprintf(msg, sizeof(msg), "error in SOFA hrtf data '%s' (error %d: %s)", path, err, mysofaerror);
 			MemFree(datafilecopy);
 			MsgErrorExit(msg);
 		}
-		sprintf(msg, "completed\n");
+		snprintf(msg, sizeof(msg), "completed\n");
 		MsgPrintf("%s", msg);
 	}
 
@@ -615,31 +615,31 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	/* SOFA data resampling */
 	if (definition->resampling && g_fs > 0)
 	{
-		sprintf(msg, "resampling HRTF data... ");
+		snprintf(msg, sizeof(msg), "resampling HRTF data... ");
 		MsgPrintf("%s", msg);
 		err = mysofa_resample(definition->sofahandle->hrtf, (float)g_fs);
 		if (err != MYSOFA_OK) 
 		{
 			getMysofaErrorString(err, mysofaerror);
 			ClearSofaSensor(definition);
-			sprintf(msg, "an error occurred during the resampling of HRTF data\n (error %d: %s)", err, mysofaerror);
+			snprintf(msg, sizeof(msg), "an error occurred during the resampling of HRTF data\n (error %d: %s)", err, mysofaerror);
 			MsgErrorExit(msg);
 		}
-		sprintf(msg, "completed\n");
+		snprintf(msg, sizeof(msg), "completed\n");
 		MsgPrintf("%s", msg);
 	}
 
 	/* SOFA data normalization */
 	if (definition->normalization)
 	{
-		//sprintf(msg, "normalizing HRTF data... ");
+		//snprintf(msg, sizeof(msg), "normalizing HRTF data... ");
 		//MsgPrintf("%s", msg);
 		mysofa_loudness(definition->sofahandle->hrtf);
-		//sprintf(msg, "completed\n");
+		//snprintf(msg, sizeof(msg), "completed\n");
 		//MsgPrintf("%s", msg);
 	}
 
-	sprintf(msg, "allocating and initializing sensor memory...");
+	snprintf(msg, sizeof(msg), "allocating and initializing sensor memory...");
 	MsgPrintf("%s", msg);
 
 	/* SOFA lookup initialization */
@@ -651,7 +651,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 		err = MYSOFA_INTERNAL_ERROR;
 		getMysofaErrorString(err, mysofaerror);
 		ClearSofaSensor(definition);
-		sprintf(msg, "unable to initialize lookup (error %d: %s)", err, mysofaerror);
+		snprintf(msg, sizeof(msg), "unable to initialize lookup (error %d: %s)", err, mysofaerror);
 		MsgErrorExit(msg);
 	}
 
@@ -662,7 +662,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 		err = MYSOFA_INTERNAL_ERROR;
 		getMysofaErrorString(err, mysofaerror);
 		ClearSofaSensor(definition);
-		sprintf(msg, "unable to initialize neighborhood (error %d: %s)", err, mysofaerror);
+		snprintf(msg, sizeof(msg), "unable to initialize neighborhood (error %d: %s)", err, mysofaerror);
 		MsgErrorExit(msg);
 	}
 
@@ -673,7 +673,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 		err = MYSOFA_INTERNAL_ERROR;
 		getMysofaErrorString(err, mysofaerror);
 		ClearSofaSensor(definition);
-		sprintf(msg, "unable to initialize fir filter memory (error %d: %s)", err, mysofaerror);
+		snprintf(msg, sizeof(msg), "unable to initialize fir filter memory (error %d: %s)", err, mysofaerror);
 		MsgErrorExit(msg);
 	}
 
@@ -682,7 +682,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	if (!definition->responsedatafloat)
 	{
 		ClearSofaSensor(definition);
-		sprintf(msg, "unable to allocate memory for impulse response");
+		snprintf(msg, sizeof(msg), "unable to allocate memory for impulse response");
 		MsgErrorExit(msg);
 	}
 
@@ -693,7 +693,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	if (!definition->delays)
 	{
 		ClearSofaSensor(definition);
-		sprintf(msg, "unable to allocate memory for delays");
+		snprintf(msg, sizeof(msg), "unable to allocate memory for delays");
 		MsgErrorExit(msg);
 	}
 	
@@ -702,13 +702,13 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	if (!definition->responsedata)
 	{
 		ClearSofaSensor(definition);
-		sprintf(msg, "unable to allocate memory for impulse response");
+		snprintf(msg, sizeof(msg), "unable to allocate memory for impulse response");
 		MsgErrorExit(msg);
 	}
 
 	memset(definition->responsedata, 0, definition->sofahandle->hrtf->N* definition->sofahandle->hrtf->R * sizeof(double));
 
-	sprintf(msg, "completed\n");
+	snprintf(msg, sizeof(msg), "completed\n");
 	MsgPrintf("%s", msg);
 
 	/* fill sensor definition structure */
@@ -716,7 +716,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	if (definition->sofahandle->hrtf->R > 2) //R > 2
 	{
 		ClearSofaSensor(definition);
-		sprintf(msg, "multichannel sensors are not yet supported\n");
+		snprintf(msg, sizeof(msg), "multichannel sensors are not yet supported\n");
 		MsgErrorExit(msg);
 	}
 	else if (definition->interpolation) //R <= 2
@@ -842,7 +842,7 @@ CSensorDefinition *LoadSensor(const char *description)
     /* when no matching sensor found, terminate */
     if (s<0) 
     {
-        sprintf(msg,"unknown source/receiver '%s'", description);
+        snprintf(msg, sizeof(msg),"unknown source/receiver '%s'", description);
         MsgErrorExit(msg);
     }
 
@@ -857,9 +857,9 @@ CSensorDefinition *LoadSensor(const char *description)
     /* provide feedback because this may take a while */
     /* (esp. loading HRTF data over a network) */
     if (subid)
-        sprintf(msg,"Loading source/receiver %s (%s)...\n", sensor[s].name, subid);
+        snprintf(msg, sizeof(msg),"Loading source/receiver %s (%s)...\n", sensor[s].name, subid);
     else
-        sprintf(msg,"Loading source/receiver %s...\n", sensor[s].name);
+        snprintf(msg, sizeof(msg),"Loading source/receiver %s...\n", sensor[s].name);
     MsgPrintf("%s", msg);
     MsgRelax;
 
@@ -911,9 +911,9 @@ void ClearSensor(CSensorDefinitionListItem *item)
     
     /* provide user feedback */
     if (item->subid[0])
-        sprintf(msg,"Clearing %s (%s)...\n", item->sensorid, item->subid);
+        snprintf(msg, sizeof(msg),"Clearing %s (%s)...\n", item->sensorid, item->subid);
     else
-        sprintf(msg,"Clearing %s...\n", item->sensorid);
+        snprintf(msg, sizeof(msg),"Clearing %s...\n", item->sensorid);
     MsgPrintf("%s", msg);
 
     /* release allocated memory, if any */
@@ -1016,7 +1016,7 @@ void CmdClearSensor(const char *description)
     s = FindSensor(description);
     if (s<0)
     {
-        sprintf(msg,"unrecognized source/receiver '%s'", description);
+        snprintf(msg, sizeof(msg),"unrecognized source/receiver '%s'", description);
         MsgErrorExit(msg);
     }
     
@@ -1026,9 +1026,9 @@ void CmdClearSensor(const char *description)
     if (!sensordefinitionlistitem)
     {
         if (subid)
-            sprintf(msg, "source/receiver %s (%s) not loaded", sensor[s].name, subid);
+            snprintf(msg, sizeof(msg), "source/receiver %s (%s) not loaded", sensor[s].name, subid);
         else
-            sprintf(msg, "source/receiver %s not loaded", sensor[s].name);
+            snprintf(msg, sizeof(msg), "source/receiver %s not loaded", sensor[s].name);
         MsgErrorExit(msg);
     }
     

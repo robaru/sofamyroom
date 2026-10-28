@@ -72,7 +72,7 @@ int main(int argc, char **argv)
 	if (ReadSetup(argv[1],&filesetup) < 0)
 	{
 		char msg[256];
-		sprintf(msg,"error reading setup file '%s'\n",argv[1]);
+		snprintf(msg, sizeof(msg),"error reading setup file '%s'\n",argv[1]);
 		MsgErrorExit(msg);
 	}
 
@@ -103,7 +103,7 @@ int main(int argc, char **argv)
 
 	for (i = 0; i < setup.nSources*setup.nReceivers; i++)
 	{
-		sprintf(filename, "%s_receiver_%d.wav", setup.options.outputname, i);
+		snprintf(filename, sizeof(filename), "%s_receiver_%d.wav", setup.options.outputname, i);
 
 		MsgPrintf("Writing output file '%s'\n", filename);
 

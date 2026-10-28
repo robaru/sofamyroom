@@ -784,7 +784,7 @@ CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup, sfmt_t *sfmt)
 	/* check simulation sample frequency */
 	if (pSetup->options.fs < 44100)
 	{
-		sprintf(msg, "warning: the sample rate of the simulation is low, should be at least 44100Hz\n");
+		snprintf(msg, sizeof(msg), "warning: the sample rate of the simulation is low, should be at least 44100Hz\n");
 		MsgPrintf("%s", msg);
 	}
 
@@ -837,7 +837,7 @@ CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup, sfmt_t *sfmt)
         if (!(pSimulation->source[s].definition->fs == ANY_FS 
 			|| pSimulation->source[s].definition->fs == pSimulation->fs))
         {
-            sprintf(msg,"sampling frequency mismatch for source '%s'\n(simulation Fs=%.f Hz, source Fs=%.f Hz)", 
+            snprintf(msg, sizeof(msg),"sampling frequency mismatch for source '%s'\n(simulation Fs=%.f Hz, source Fs=%.f Hz)", 
                             pSetup->source[s].description, pSetup->options.fs, pSimulation->source[s].definition->fs);
             MsgErrorExit(msg);
         }
@@ -860,7 +860,7 @@ CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup, sfmt_t *sfmt)
         if (!(pSimulation->receiver[r].definition->fs == ANY_FS 
 			|| pSimulation->receiver[r].definition->fs == pSimulation->fs))
         {
-            sprintf(msg,"sampling frequency mismatch for receiver '%s'\n(simulation Fs=%.f Hz, receiver Fs=%.f Hz)", 
+            snprintf(msg, sizeof(msg),"sampling frequency mismatch for receiver '%s'\n(simulation Fs=%.f Hz, receiver Fs=%.f Hz)", 
                             pSetup->receiver[r].description, pSetup->options.fs, pSimulation->receiver[r].definition->fs);
             MsgErrorExit(msg);
         }
@@ -1164,7 +1164,7 @@ XYZ *GenerateRays(int nDesiredRays, int *pnActualRays)
 		char filename[256];
 		FILE *fid;
 
-		sprintf(filename,"rays%04d.txt", nRays);
+		snprintf(filename, sizeof(filename),"rays%04d.txt", nRays);
 		fid = fopen(filename,"w");
 
 		/* print vertices */

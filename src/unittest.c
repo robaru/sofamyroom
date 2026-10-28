@@ -60,14 +60,14 @@
 
 #define CLEAROUTPUT memset(out,0,sizeof(out))
 #define ASSERTOUTPUT(out,r) \
-    for (i=0; i<LENGTH(r); i++) if (!EPSEQ(out[i],r[i])) { char msg[64]; sprintf(msg,"incorrect output (%d,%.10f,%.10f)",i,out[i],r[i]); ERROR(msg); } \
+    for (i=0; i<LENGTH(r); i++) if (!EPSEQ(out[i],r[i])) { char msg[64]; snprintf(msg, sizeof(msg),"incorrect output (%d,%.10f,%.10f)",i,out[i],r[i]); ERROR(msg); } \
     for (i=LENGTH(r); i<LENGTH(out); i++) if (out[i]!=0.0) ERROR("output beyond array bounds");
 
 #define ERROR(MSG) uterror(MSG,__FILE__,__LINE__)
 void uterror(char *msg, char *file, unsigned int line)
 {
     char errmsg[256];
-    sprintf(errmsg,"\nERROR AT %s(%d):\n%s", file, line, msg);
+    snprintf(errmsg, sizeof(errmsg),"\nERROR AT %s(%d):\n%s", file, line, msg);
     MsgErrorExit(errmsg);
 }
 
@@ -375,7 +375,7 @@ void testEmptyRoom(void)
         if (!EPSEQ(brirLogmag[i], hrtfLogmag[i]))
          {
              char msg[64];
-             sprintf(msg, "incorrect logmag output (%d,%.10f,%.10f)", i, brirLogmag[i], hrtfLogmag[i]);
+             snprintf(msg, sizeof(msg), "incorrect logmag output (%d,%.10f,%.10f)", i, brirLogmag[i], hrtfLogmag[i]);
              ERROR(msg);
          }
     }
@@ -393,7 +393,7 @@ void testEmptyRoom(void)
     if (!EPSEQ(brirEnergy, hrtfEnergy))
     {
         char msg[64];
-        sprintf(msg, "incorrect energy output (%.10f,%.10f)", brirEnergy, hrtfEnergy);
+        snprintf(msg, sizeof(msg), "incorrect energy output (%.10f,%.10f)", brirEnergy, hrtfEnergy);
         ERROR(msg);
     }
 
