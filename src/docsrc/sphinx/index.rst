@@ -30,7 +30,7 @@ SofaMyRoom - Home
    :caption: Code Reference
    :maxdepth: 1
 
-   Code documentation <doxydoc>
+   C API reference <c_api>
 
 
 Indices and tables

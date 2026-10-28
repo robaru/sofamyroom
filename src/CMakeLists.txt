@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
 
 project(sofamyroom C)
 
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 if(CMAKE_SIZEOF_VOID_P MATCHES 4)
 	message(FATAL_ERROR "32 bit OSs are not supported")
@@ -100,8 +99,4 @@ if(SOFAMYROOM_PYTHON)
 		LIBRARY DESTINATION pysofamyroom
 		RUNTIME DESTINATION pysofamyroom
 		ARCHIVE DESTINATION pysofamyroom)
-endif()
-
-if(BUILD_DOCS MATCHES True)
-	add_subdirectory ("docsrc")
 endif()

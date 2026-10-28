@@ -1,13 +1,8 @@
 # Configuration file for the Sphinx documentation builder.
 #
-# Two ways to build:
-#   * `cmake -DBUILD_DOCS=True`: Doxygen runs first and the C reference page
-#     (doxydoc.rst) is rendered through breathe; CMake passes the location
-#     of the Doxygen XML in SOFAMYROOM_DOXYGEN_XML.
-#   * `pip install .[docs]` + `sphinx-build` (Read the Docs): the Python
-#     pages are built with autodoc, the C reference page is skipped.
-
-import os
+# Build with `pip install .[docs]` and
+# `sphinx-build -b html src/docsrc/sphinx <output>`; the Python pages use
+# autodoc, so the pysofamyroom package must be importable.
 
 # -- Project information -----------------------------------------------------
 project = 'SofaMyRoom'
@@ -29,32 +24,6 @@ extensions = [
 ]
 
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '.nojekyll']
-
-# C reference through Doxygen + breathe, only when the XML output exists;
-# otherwise the doxydoc page says how to build it
-doxygen_xml = os.environ.get('SOFAMYROOM_DOXYGEN_XML', '')
-have_doxygen = bool(doxygen_xml) and os.path.isdir(doxygen_xml)
-if have_doxygen:
-    extensions.append('breathe')
-    breathe_projects = {'SofaMyRoom': doxygen_xml}
-    breathe_default_project = 'SofaMyRoom'
-
-
-def setup(app):
-    if have_doxygen:
-        return
-    from docutils import nodes
-    from docutils.parsers.rst import Directive
-
-    class NoDoxygen(Directive):
-        def run(self):
-            text = ('The C code reference is generated with Doxygen and '
-                    'Breathe when the documentation is built through CMake '
-                    '(cmake -DBUILD_DOCS=True); it is not part of this '
-                    'build.')
-            return [nodes.note('', nodes.paragraph(text=text))]
-
-    app.add_directive('doxygenindex', NoDoxygen)
 
 autodoc_member_order = 'bysource'
 autodoc_typehints = 'description'
