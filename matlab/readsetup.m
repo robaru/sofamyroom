@@ -24,11 +24,14 @@ function par = readsetup(filename)
 % You should have received a copy of the GNU General Public License
 % along with ROOMSIM. If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Modified for SofaMyRoom (https://github.com/robaru/sofamyroom):
+% the setup file is run from its path instead of being looked up on the
+% MATLAB path. The modifications are released under the same GPL terms.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-[d,n] = fileparts(filename);
-name = [n];
-par = evalc(name);
-clear par filename d n name;
+% run the setup script in this workspace (accepts a path to the file)
+out = evalc('run(filename)');
+clear filename out;
 vars = whos;
 par = [];
 for i = 1:length(vars)
