@@ -37,6 +37,7 @@ set(CMAKE_EXE_LINKER_FLAGS_UNITTEST ${CMAKE_EXE_LINKER_FLAGS_DEBUG})
 add_compile_definitions("$<$<CONFIG:Unittest>:UNITTEST>")
 
 add_subdirectory("libsfmt")
+add_subdirectory("libpocketfft")
 add_subdirectory("libroomsim")
 add_subdirectory("wavwriter")
 
@@ -60,10 +61,7 @@ add_executable(sofamyroom
 	)
 
 if(MSVC)
-	add_custom_command(TARGET sofamyroom POST_BUILD
-                   		COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                   		"${CMAKE_SOURCE_DIR}/libfftw/${OS}/${PLATFORM}/bin/libfftw3-3.dll" $<TARGET_FILE_DIR:sofamyroom>)
-    set_property(TARGET sofamyroom libsfmt libroomsim wavwriter PROPERTY
+    set_property(TARGET sofamyroom libsfmt libpocketfft libroomsim wavwriter PROPERTY
   				MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<OR:$<CONFIG:Debug>,$<CONFIG:Unittest>>:Debug>DLL")
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT sofamyroom)
 	set_property(TARGET sofamyroom libsfmt libroomsim wavwriter APPEND_STRING PROPERTY LINK_FLAGS_RELEASE " /INCREMENTAL:NO")

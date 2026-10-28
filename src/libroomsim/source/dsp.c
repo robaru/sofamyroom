@@ -21,11 +21,12 @@
  * along with ROOMSIM. If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************
  * Modified for SofaMyRoom (https://github.com/robaru/sofamyroom).
- * Copyright 2019-2020, Roberto Barumerli and Daniele Bianchi
+ * Copyright 2019-2026, Roberto Barumerli and Daniele Bianchi
  *
  * Changes with respect to the original ROOMSIM file:
- *   - The FFTW header is included as a system header (<fftw3.h>) when
- *     compiling with GCC or Clang.
+ *   - FFTW replaced by PocketFFT (BSD) for the real FFTs of the minimum
+ *     phase filter design; the half-complex buffer layout of FFTW is kept
+ *     and converted in ExecuteR2HC()/ExecuteHC2R().
  *
  * The modifications are released under the same GNU General Public
  * License, version 3 or later.
@@ -34,15 +35,12 @@
 #include <math.h>
 #include <string.h>
 
-#ifdef __GNUC__
-#	include <fftw3.h>
-#else
-#	include "fftw3.h"
-#endif
+#include "pocketfft.h"
 #include "defs.h"
 #include "dsp.h"
 #include "interp.h"
 #include "mem.h"
+#include "msg.h"
 
 /** Convolution. The sequence \a h[0...\a hlen - 1] is convolved with
  *  the sequence \a x[0...\a xlen - 1], and the result is stored in 
@@ -236,10 +234,10 @@ struct CMinPhaseFIRplan {
     double *weight1;				/**< Freq. interpolation: right weight. */
     /*double *righthalfhannwin; */
 
-	fftw_plan fftwplanr2hc;			/**< Real to half-complex forward FFTW plan. */
-    fftw_plan fftwplanhc2r;			/**< Half-complex to real inverse FFTW plan. */
-    double    *fftwbufhc;			/**< FFTW buffer for half-complex FFT output. */
-	double	  *fftwbufr;			/**< FFTW buffer for real FFT output. */
+	rfft_plan fftplan;				/**< PocketFFT real FFT plan. */
+    double    *fftwork;				/**< PocketFFT in-place work buffer. */
+    double    *bufhc;				/**< Half-complex FFT buffer (FFTW layout). */
+	double	  *bufr;				/**< Real FFT buffer. */
     
     double       *lifterzerostart;	/**< Pointer to lifter's first 0. */
     unsigned int lifterzerosize;	/**< Number of 0's in lifter. */
@@ -248,6 +246,46 @@ struct CMinPhaseFIRplan {
     unsigned int complexexpend;		/**< Index. */
     unsigned int realexpnyquist;	/**< Index. */
 };
+
+/** Forward real FFT of plan->bufr into plan->bufhc (unnormalized).
+ *
+ *  PocketFFT returns r0, r1, i1, r2, i2, ...; the result is stored in the
+ *  half-complex order of FFTW: r0, r1, ..., r_{n/2}, i_{(n+1)/2-1}, ..., i1.
+ */
+static void ExecuteR2HC(CMinPhaseFIRplan *plan)
+{
+    const unsigned int n = plan->nFFT;
+    double *w = plan->fftwork, *hc = plan->bufhc;
+    unsigned int k;
+
+    memcpy(w, plan->bufr, n * sizeof(double));
+    rfft_forward(plan->fftplan, w, 1.0);
+    hc[0] = w[0];
+    for (k=1; k<(n+1)/2; k++)
+    {
+        hc[k]   = w[2*k-1];
+        hc[n-k] = w[2*k];
+    }
+    if (n % 2 == 0) hc[n/2] = w[n-1];
+}
+
+/** Inverse real FFT of plan->bufhc (half-complex, FFTW order) into plan->bufr (unnormalized). */
+static void ExecuteHC2R(CMinPhaseFIRplan *plan)
+{
+    const unsigned int n = plan->nFFT;
+    double *w = plan->fftwork, *hc = plan->bufhc;
+    unsigned int k;
+
+    w[0] = hc[0];
+    for (k=1; k<(n+1)/2; k++)
+    {
+        w[2*k-1] = hc[k];
+        w[2*k]   = hc[n-k];
+    }
+    if (n % 2 == 0) w[n-1] = hc[n/2];
+    rfft_backward(plan->fftplan, w, 1.0);
+    memcpy(plan->bufr, w, n * sizeof(double));
+}
 
 /** Allocate and initialize a minimum phase FIR filter design plan. 
  *
@@ -284,14 +322,18 @@ CMinPhaseFIRplan *AllocMinPhaseFIRplan(unsigned int nFFT, double *F, unsigned in
     PrepareLinearInterpolate(F,nF,FFTfreq,nFFThalf+1, plan->idx0, plan->idx1, plan->weight0, plan->weight1);
     MemFree(FFTfreq);
 
-    /* allocate FFTW memory and prepare FFTW plans */
-    plan->fftwbufhc  = (double *) fftw_malloc(nFFT * sizeof(double));
-    plan->fftwbufr   = (double *) fftw_malloc(nFFT * sizeof(double));
-    plan->fftwplanhc2r = fftw_plan_r2r_1d(nFFT, plan->fftwbufhc, plan->fftwbufr,  FFTW_HC2R, FFTW_ESTIMATE);
-    plan->fftwplanr2hc = fftw_plan_r2r_1d(nFFT, plan->fftwbufr,  plan->fftwbufhc, FFTW_R2HC, FFTW_ESTIMATE);
+    /* allocate FFT buffers and prepare the FFT plan */
+    plan->bufhc   = (double *) MemMalloc(nFFT * sizeof(double));
+    plan->bufr    = (double *) MemMalloc(nFFT * sizeof(double));
+    plan->fftwork = (double *) MemMalloc(nFFT * sizeof(double));
+    plan->fftplan = make_rfft_plan(nFFT);
+    if (!plan->fftplan)
+    {
+        MsgErrorExit("unable to create FFT plan");
+    }
     
     plan->liftermul2end = (nFFT+1)>>1;
-    plan->lifterzerostart = &plan->fftwbufr[(nFFT>>1)+1];
+    plan->lifterzerostart = &plan->bufr[(nFFT>>1)+1];
     plan->lifterzerosize = ((nFFT-1)>>1) * sizeof(double);
     
     plan->complexexpend = (nFFT+1)>>1;
@@ -313,50 +355,50 @@ void LogMagFreqResp2MinPhaseFIR(const double *logmag, double *h, CMinPhaseFIRpla
     double tmp1, tmp2;
     
     /* resample log mag onto FFT grid */
-    ExecuteLinearInterpolate(logmag, plan->fftwbufhc, plan->nFFThalf+1, plan->idx0, plan->idx1, plan->weight0, plan->weight1);
+    ExecuteLinearInterpolate(logmag, plan->bufhc, plan->nFFThalf+1, plan->idx0, plan->idx1, plan->weight0, plan->weight1);
     /* set imaginary part to 0 */
-    memset(&plan->fftwbufhc[plan->nFFThalf+1], 0, (plan->nFFT - plan->nFFThalf - 1) * sizeof(double));
+    memset(&plan->bufhc[plan->nFFThalf+1], 0, (plan->nFFT - plan->nFFThalf - 1) * sizeof(double));
     
     /* compute real cepstrum by taking real output of ifft  */
-    fftw_execute(plan->fftwplanhc2r);
+    ExecuteHC2R(plan);
     
     /** @todo Normalization should be integrated with multiplication step 
               below, or with complex exp step further below. */
     
     /* normalize ifft output by dividing by N */
     for (i=0; i<plan->nFFT; i++) 
-		plan->fftwbufr[i] /= plan->nFFT;
+		plan->bufr[i] /= plan->nFFT;
     
     /* lifter positive quefrencies */
     for (i=1; i<plan->liftermul2end; i++) 
-		plan->fftwbufr[i] *= 2;
+		plan->bufr[i] *= 2;
     memset(plan->lifterzerostart, 0, plan->lifterzerosize);
 
     /* take fft */
-    fftw_execute(plan->fftwplanr2hc);
+    ExecuteR2HC(plan);
     
     /* compute complex exp of half-complex buffer */
-    plan->fftwbufhc[0] = exp(plan->fftwbufhc[0]); /* DC */
+    plan->bufhc[0] = exp(plan->bufhc[0]); /* DC */
     for (i=1; i<plan->complexexpend; i++)
     {
-        tmp1 = exp(plan->fftwbufhc[i]);
-        tmp2 = plan->fftwbufhc[plan->nFFT-i];
-        plan->fftwbufhc[i]            = tmp1 * cos(tmp2);
-        plan->fftwbufhc[plan->nFFT-i] = tmp1 * sin(tmp2);
+        tmp1 = exp(plan->bufhc[i]);
+        tmp2 = plan->bufhc[plan->nFFT-i];
+        plan->bufhc[i]            = tmp1 * cos(tmp2);
+        plan->bufhc[plan->nFFT-i] = tmp1 * sin(tmp2);
     }
     if (plan->realexpnyquist) 
-		plan->fftwbufhc[plan->realexpnyquist] = exp(plan->fftwbufhc[plan->realexpnyquist]); 
+		plan->bufhc[plan->realexpnyquist] = exp(plan->bufhc[plan->realexpnyquist]); 
     
     /* take ifft and real => minphase sequence */
-    fftw_execute(plan->fftwplanhc2r);
+    ExecuteHC2R(plan);
     for (i=0; i<plan->nFFT; i++) 
-		plan->fftwbufr[i] /= plan->nFFT;
+		plan->bufr[i] /= plan->nFFT;
     
     /** @todo When truncation desired, apply right-half hann window to min phase respone. */
     /** @todo Or should window always be applied to smooth the freq. resp? */
     
     /* copy min phase sequence to output */
-    memcpy(h, plan->fftwbufr, plan->nFFT*sizeof(double));
+    memcpy(h, plan->bufr, plan->nFFT*sizeof(double));
 }
 
 /** Release memory associated with minimum phase FIR filter design plan. 
@@ -371,11 +413,11 @@ void FreeMinPhaseFIRplan(CMinPhaseFIRplan *plan)
     MemFree(plan->weight0);
     MemFree(plan->weight1);
 
-    /* destroy FFTW plans and free FFTW memory */
-    fftw_destroy_plan(plan->fftwplanhc2r);
-    fftw_destroy_plan(plan->fftwplanr2hc);
-    fftw_free(plan->fftwbufr);
-    fftw_free(plan->fftwbufhc);
+    /* destroy FFT plan and free FFT buffers */
+    destroy_rfft_plan(plan->fftplan);
+    MemFree(plan->fftwork);
+    MemFree(plan->bufr);
+    MemFree(plan->bufhc);
     
     /* free plan memory     */
     MemFree(plan);

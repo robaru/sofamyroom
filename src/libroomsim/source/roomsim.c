@@ -79,13 +79,6 @@
 #include <math.h>     
 #include <string.h>
 
-/* NOTE: I was unable to make the FFTW DLL work with LCC. Version 2.4 of LCC 
-   that is shipped with MATLAB does not support __declspec(dllimport), hence 
-   it does not know how to call functions inside a DLL. Attempts to upgrade 
-   LCC to version 4.2 and linking to a static FFTW library both were unsuccessful.
-   The only solution I found was to compile/link using the Visual C compiler */
-#include "fftw3.h"
-
 /* local includes */
 #include "3D.h"
 #include "defs.h"

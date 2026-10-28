@@ -25,7 +25,7 @@ add_library(libroomsim STATIC
 	
 include_directories(
 	"${CMAKE_CURRENT_SOURCE_DIR}/include"
-	"${CMAKE_SOURCE_DIR}/libfftw/${OS}/${PLATFORM}/include"
+	"${CMAKE_SOURCE_DIR}/libpocketfft/"
 	"${CMAKE_SOURCE_DIR}/libsfmt/"
 	"${CMAKE_SOURCE_DIR}/libmysofa/${OS}/${PLATFORM}/include"
 	)
@@ -35,15 +35,12 @@ set(CMAKE_DEBUG_POSTFIX "d")
 set(MYSOFA "${CMAKE_SOURCE_DIR}/libmysofa/${OS}/${PLATFORM}/lib/$<IF:$<OR:$<CONFIG:Debug>,$<CONFIG:Release>>,$<IF:$<CONFIG:Release>,Release,Debug>,Debug>/libmysofa$<$<OR:$<CONFIG:Debug>,$<CONFIG:Unittest>>:${CMAKE_DEBUG_POSTFIX}>${CMAKE_STATIC_LIBRARY_SUFFIX}")
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
-	set(FFTW "${CMAKE_SOURCE_DIR}/libfftw/${OS}/${PLATFORM}/lib/libfftw3-3.lib")
 	set(MATH "")
 	set(LIBZ "")
 elseif(CMAKE_SYSTEM_NAME MATCHES Linux)
-	set(FFTW "-lfftw3")
 	set(MATH "m")
 	set(LIBZ "z")
 elseif(CMAKE_SYSTEM_NAME MATCHES Darwin)
-	set(FFTW "${CMAKE_SOURCE_DIR}/libfftw/${OS}/${PLATFORM}/lib/$<IF:$<OR:$<CONFIG:Debug>,$<CONFIG:Release>>,$<IF:$<CONFIG:Release>,Release,Debug>,Debug>/libfftw3$<$<OR:$<CONFIG:Debug>,$<CONFIG:Unittest>>:${CMAKE_DEBUG_POSTFIX}>${CMAKE_STATIC_LIBRARY_SUFFIX}")
 	set(MATH "")
 	set(LIBZ "z")
 endif()
@@ -51,7 +48,7 @@ endif()
 target_link_libraries(libroomsim
 	"${MATH}"
 	libsfmt
-	"${FFTW}"
+	libpocketfft
 	"${MYSOFA}"
 	"${LIBZ}"
 	)

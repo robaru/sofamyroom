@@ -70,7 +70,6 @@
 #include "msg.h"
 #include "sensor.h"
 #include "types.h"
-#include "fftw3.h"
 #include "wavwriter.h"
 
 

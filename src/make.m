@@ -28,18 +28,17 @@ src_path = ['..' filesep 'src'];
              '-DSFMT_MEXP=19937'
              ['-I' src_path filesep 'libroomsim' filesep 'include']
              ['-I' src_path filesep 'libsfmt']
+             ['-I' src_path filesep 'libpocketfft']
              ['-I' src_path filesep 'wavwriter' filesep 'include']
            };
        
 if ispc
     switches =  [switches
-                ['-I' src_path filesep 'libfftw' filesep 'Windows' filesep 'x64' filesep 'include']
                 ['-I' src_path filesep 'libmysofa' filesep 'Windows' filesep 'x64' filesep 'include']
                 ];
             
 elseif ismac
     switches = [switches
-               ['-I' src_path filesep 'libfftw' filesep 'MacOS' filesep '64bit' filesep 'include']
                ['-I' src_path filesep 'libmysofa' filesep 'MacOS' filesep '64bit' filesep 'include']
                ];
             
@@ -75,10 +74,6 @@ end
 options = {};
 
 if ispc
-    options = [options
-               ['-L' src_path filesep 'libfftw' filesep 'Windows' filesep 'x64' filesep 'lib']
-               '-lfftw3-3.lib'
-               ];
     if ~debug
         options = [options
                   ['-L' src_path filesep 'libmysofa' filesep 'Windows' filesep 'x64' filesep 'lib' filesep 'Release']
@@ -96,15 +91,11 @@ elseif ismac
         options = [options
                   ['-L' src_path filesep 'libmysofa' filesep 'MacOS' filesep '64bit' filesep 'lib' filesep 'Release']
                   '-lmysofa'
-                  ['-L' src_path filesep 'libfftw' filesep 'MacOS' filesep '64bit' filesep 'lib' filesep 'Release']
-                  '-lfftw3'
             ];
     else
         options = [options
                   ['-L' src_path filesep 'libmysofa' filesep 'MacOS' filesep '64bit' filesep 'lib' filesep 'Debug']
                   '-lmysofad'
-                  ['-L' src_path filesep 'libfftw' filesep 'MacOS' filesep '64bit' filesep 'lib' filesep 'Debug']
-                  '-lfftw3d'
                   ];
     end
     options = [options
@@ -125,7 +116,6 @@ elseif isunix
     end
     options = [options
                '-lz'
-               '-lfftw3'
               ];
 end
 
@@ -137,6 +127,7 @@ mexfiles = { [src_path filesep 'libroomsim' filesep 'source' filesep '3D.c']
              [src_path filesep  'libroomsim'  filesep  'source'  filesep  'rng.c']
              [src_path filesep  'libroomsim'  filesep  'source'  filesep  'sensor.c']
              [src_path filesep  'libsfmt'  filesep  'SFMT.c']
+             [src_path filesep  'libpocketfft'  filesep  'pocketfft.c']
              [src_path filesep  'mexmain.c']
              [src_path filesep  'build.c']
              [src_path filesep  'wavwriter' filesep 'source' filesep 'wavwriter.c']
@@ -155,15 +146,3 @@ fprintf('\n');
 
 % Run MEX to build the desired target
 mex(switches{:}, '-output', output, mexfiles{:}, options{:})
-
-% Copy libfftw3-3.dll into working directory, Windows only
-if ispc
-    [status, msg] = copyfile(...
-        [src_path filesep 'libfftw' filesep 'Windows' filesep 'x64' filesep 'bin' filesep 'libfftw3-3.dll']...
-    );
-    if ~status
-        fprintf("An error occured while copying libfftw3-3.dll file: %s\n", msg)
-    else
-        fprintf("libfftw3-3.dll successfully copied.\n")
-    end
-end
