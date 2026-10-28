@@ -271,8 +271,6 @@ void Roomsetup(CRoomSetup* par)
     par->options.referencefrequency = 125;
     par->options.airabsorption = false;
     par->options.distanceattenuation = false;
-    par->options.subsampleaccuracy = true;
-    par->options.highpasscutoff = 0;
     par->options.verbose = true;
 
     par->options.simulatespecular = true;

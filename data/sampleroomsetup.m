@@ -42,8 +42,6 @@ options.bandsperoctave      = 1;                    % simulation frequency accur
 options.referencefrequency  = 125;                  % reference frequency for frequency octaves
 options.airabsorption       = true;                 % apply air absorption?
 options.distanceattenuation = true;                 % apply distance attenuation?
-options.subsampleaccuracy   = false;                % apply subsample accuracy?
-options.highpasscutoff      = 0;                    % 3dB frequency of high-pass filter (0=none)
 options.verbose             = true;                 % print status messages?
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

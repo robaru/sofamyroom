@@ -40,6 +40,8 @@
 #undef FIELDBOOL
 #undef FIELDINT
 #undef FIELDINTOPT
+#undef FIELDBOOLOPT
+#undef FIELDDOUBLEOPT
 #undef FIELDDOUBLE
 #undef FIELDSTRING
 #undef FIELDSTRUCT
@@ -65,6 +67,8 @@
 #define FIELDBOOL(n)                    bool n;
 #define FIELDINT(n)                     int n;
 #define FIELDINTOPT(n,d)                int n;
+#define FIELDBOOLOPT(n,d)               bool n;
+#define FIELDDOUBLEOPT(n,d)             double n;
 #define FIELDDOUBLE(n)                  double n;
 #define FIELDSTRING(n)                  const char *n;
 #define FIELDSTRUCT(t,n)                t n;
@@ -99,6 +103,8 @@
 #define FIELDBOOL(n)
 #define FIELDINT(n) 
 #define FIELDINTOPT(n,d)
+#define FIELDBOOLOPT(n,d)
+#define FIELDDOUBLEOPT(n,d)
 #define FIELDDOUBLE(n)
 #define FIELDSTRING(n)
 #define FIELDSTRUCT(t,n)
@@ -139,6 +145,16 @@
     if (!(tmp = mxGetField(prhs,index,#n))) (plhs->n) = (d); else { \
     if (!mxIsNumeric(tmp) || mxGetNumberOfElements(tmp)!=1) mexErrMsgTxt("expected field '" #n "' to be a numeric scalar"); \
     (plhs->n) = (int) mxGetScalar(tmp); }
+
+#define FIELDBOOLOPT(n,d) \
+    if (!(tmp = mxGetField(prhs,index,#n))) (plhs->n) = (d); else { \
+    if (!(mxIsLogical(tmp) && (mxGetNumberOfElements(tmp)==1))) mexErrMsgTxt("expected field '" #n "' to be a logical scalar"); \
+    (plhs->n) = *((bool *)mxGetData(tmp)); }
+
+#define FIELDDOUBLEOPT(n,d) \
+    if (!(tmp = mxGetField(prhs,index,#n))) (plhs->n) = (d); else { \
+    if (!mxIsDouble(tmp) || mxGetNumberOfElements(tmp)!=1) mexErrMsgTxt("expected field '" #n "' to be a double scalar"); \
+    (plhs->n) = *((double *)mxGetData(tmp)); }
     
 #define FIELDDOUBLE(n) \
     if (!(tmp = mxGetField(prhs,index,#n))) mexErrMsgTxt("missing field '" #n "'"); \
@@ -359,6 +375,8 @@ void ParseDynDoubleArray2D(char *str, double **array, int *nr, int *nc)
 #    define FIELDBOOL(n)			GETFIELD(n); p->n = ParseBool(pSubItem->data.value);
 #    define FIELDINT(n)				GETFIELD(n); p->n = (int) strtol(pSubItem->data.value,NULL,10);
 #    define FIELDINTOPT(n,d)		pSubItem = SetupFindField(pItem,#n); p->n = pSubItem ? (int) strtol(pSubItem->data.value,NULL,10) : (d);
+#    define FIELDBOOLOPT(n,d)		pSubItem = SetupFindField(pItem,#n); p->n = pSubItem ? ParseBool(pSubItem->data.value) : (d);
+#    define FIELDDOUBLEOPT(n,d)		pSubItem = SetupFindField(pItem,#n); p->n = pSubItem ? strtod(pSubItem->data.value,NULL) : (d);
 #    define FIELDDOUBLE(n)			GETFIELD(n); p->n = strtod(pSubItem->data.value,NULL);
 #    define FIELDSTRING(n)			GETFIELD(n); p->n = pSubItem->data.value;
 #    define FIELDSTRUCT(t,n)		GETSTRUCT(n); Load##t(pSubItem, &p->n);
@@ -412,8 +430,9 @@ STRUCTBEGIN ( COptions )
     FIELDDOUBLE   ( referencefrequency  )
     FIELDBOOL     ( airabsorption       )
     FIELDBOOL     ( distanceattenuation )
-    FIELDBOOL     ( subsampleaccuracy   )
-    FIELDDOUBLE   ( highpasscutoff      )
+    /* accepted for backward compatibility with old setup files; not implemented */
+    FIELDBOOLOPT  ( subsampleaccuracy, false )
+    FIELDDOUBLEOPT( highpasscutoff, 0        )
     FIELDBOOL     ( verbose             )
 
 	FIELDBOOL	  ( simulatespecular    )

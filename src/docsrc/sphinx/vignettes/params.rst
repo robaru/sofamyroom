@@ -32,8 +32,6 @@ options.bandsperoctave          ``integer``                     Simulation frequ
 options.referencefrequency      ``double``                      Reference frequency [Hz] 
 options.airabsorption           ``boolean``                     Apply air absorption 
 options.distanceattenuation     ``boolean``                     Apply distance attenuation 
-options.subsampleaccuracy       ``boolean``                     Apply subsample accuracy 
-options.highpasscutoff          ``boolean``                     3dB high-pass filter 
 options.verbose                 ``boolean``                     Print status messages 
 
 **Specular Reflections**
@@ -75,6 +73,8 @@ receiver(<n>).description       see [#n_recpos]_, [#n_sofa]_    Receiver type
 .. [#n_orient] Defined as (yaw, pitch, roll) in degrees. Run the script ``matlab_helpers/plotroom.m`` if you need to visualize your configuration.
 .. [#n_recpos] Possible values: omnidirectional, cardioid, subcardioid, hypercardiod, supercardioid, unidirectional, bidirectional, dipole, hemisphere
 .. [#n_sofa] Check the README.md to understand how to handle a SOFA receiver.
+
+The options ``options.subsampleaccuracy`` and ``options.highpasscutoff`` of earlier versions are still accepted but have no effect.
 
 
 Example

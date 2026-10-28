@@ -31,8 +31,6 @@ options.bandsperoctave = 1; %  [bands/octave]
 options.referencefrequency = 125; %  [Hz]
 options.airabsorption = true;
 options.distanceattenuation = true; 
-options.subsampleaccuracy = false;
-options.highpasscutoff = 0; 
 options.verbose = true; 
 
 % output options
