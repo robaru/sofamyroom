@@ -386,26 +386,48 @@ void getMysofaErrorString(int error, char *buffer)
 
 }
 
+/* copy the float HRIRs returned by libmysofa into the double response buffer;
+   with applydelay each channel is shifted by its Data.Delay (rounded to samples) */
+static void sensor_SOFA_copy_response(const CSensorDefinition *sensor)
+{
+	int ch, i, shift;
+	int N = sensor->sofahandle->hrtf->N;
+	int R = sensor->sofahandle->hrtf->R;
+
+	for (ch = 0; ch < R; ++ch)
+	{
+		double *dst = sensor->responsedata + ch * sensor->nSamples;
+		const float *src = sensor->responsedatafloat + ch * N;
+
+		shift = 0;
+		if (sensor->applydelay)
+		{
+			shift = (int)(sensor->delays[ch] + 0.5f);
+			if (shift < 0) shift = 0;
+			if (shift > sensor->maxdelay) shift = sensor->maxdelay;
+		}
+
+		for (i = 0; i < shift; ++i)
+			dst[i] = 0.0;
+		for (i = 0; i < N; ++i)
+			dst[shift + i] = (double)src[i];
+		for (i = shift + N; i < sensor->nSamples; ++i)
+			dst[i] = 0.0;
+	}
+}
+
 int sensor_SOFA_probe_nointerp(const CSensorDefinition* sensor, const XYZ* xyz)
 {
 	float c[3];
-	unsigned int i, size;
-
-	UNREFERENCED_PARAMETER(sensor);
 
 	c[0] = (float)xyz->x;
 	c[1] = (float)xyz->y;
 	c[2] = (float)xyz->z;
 
-	size = sensor->sofahandle->hrtf->R * sensor->sofahandle->hrtf->N;
-
 	mysofa_getfilter_float_nointerp(sensor->sofahandle, c[0], c[1], c[2], sensor->responsedatafloat, sensor->responsedatafloat + sensor->sofahandle->hrtf->N,
 		&sensor->delays[0], &sensor->delays[1]);
 
-	for (i = 0; i < size; ++i)
-	{
-		sensor->responsedata[i] = (double)sensor->responsedatafloat[i];
-	}
+	sensor_SOFA_copy_response(sensor);
 
 	return 0;
 }
@@ -413,23 +435,15 @@ int sensor_SOFA_probe_nointerp(const CSensorDefinition* sensor, const XYZ* xyz)
 int sensor_SOFA_probe(const CSensorDefinition *sensor, const XYZ *xyz)
 {
 	float c[3];
-	unsigned int i, size;
-
-	UNREFERENCED_PARAMETER(sensor);
 
 	c[0] = (float)xyz->x;
 	c[1] = (float)xyz->y;
 	c[2] = (float)xyz->z;
 
-	size = sensor->sofahandle->hrtf->R * sensor->sofahandle->hrtf->N;
-
 	mysofa_getfilter_float(sensor->sofahandle, c[0], c[1], c[2], sensor->responsedatafloat, sensor->responsedatafloat + sensor->sofahandle->hrtf->N,
 		&sensor->delays[0], &sensor->delays[1]);
 
-	for (i = 0; i < size; ++i)
-	{
-		sensor->responsedata[i] = (double)sensor->responsedatafloat[i];
-	}
+	sensor_SOFA_copy_response(sensor);
 
 	return 0;
 }
@@ -437,7 +451,7 @@ int sensor_SOFA_probe(const CSensorDefinition *sensor, const XYZ *xyz)
 void getOptions(char *options, CSensorDefinition *definition)
 {
 	char *option, msg[256];
-	char *stringOptions[] = { "interp=", "norm=", "resampling=" };
+	char *stringOptions[] = { "interp=", "norm=", "resampling=", "delay=" };
 
 	option = strtok(options, " ");
 	
@@ -503,6 +517,26 @@ void getOptions(char *options, CSensorDefinition *definition)
 				definition->resampling = false;
 			}
 		}
+		else if (!strnicmp(option, stringOptions[3], strlen(stringOptions[3])))
+		{
+			switch (*(option + strlen(stringOptions[3])))
+			{
+			case 'f':
+			case 'F':
+			case '0':
+				definition->applydelay = false;
+				break;
+			case 't':
+			case 'T':
+			case '1':
+				definition->applydelay = true;
+				break;
+			default:
+				snprintf(msg, sizeof(msg), "invalid delay value, setting it to false\n");
+				MsgPrintf("%s", msg);
+				definition->applydelay = false;
+			}
+		}
 		else
 		{
 			snprintf(msg, sizeof(msg), "%s, not a valid option\n", option);
@@ -537,6 +571,8 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	definition->interpolation = false;
 	definition->normalization = false;
 	definition->resampling = false;
+	definition->applydelay = false;
+	definition->maxdelay = 0;
 
 	path = strtok(datafilecopy, " ");
 	if (strlen(path) == strlen(datafile))
@@ -697,8 +733,21 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 		MsgErrorExit(msg);
 	}
 	
+	/* largest SOFA Data.Delay, in samples at the (possibly resampled) rate;
+	   the response buffer is extended by this amount when delays are applied */
+	definition->maxdelay = 0;
+	if (definition->applydelay)
+	{
+		float maxdelay = 0;
+		unsigned int k;
+		for (k = 0; k < definition->sofahandle->hrtf->DataDelay.elements; ++k)
+			if (definition->sofahandle->hrtf->DataDelay.values[k] > maxdelay)
+				maxdelay = definition->sofahandle->hrtf->DataDelay.values[k];
+		definition->maxdelay = (int)(maxdelay + 0.5f);
+	}
+
 	/* allocate memory for sensor response data */
-	definition->responsedata = MemMalloc(definition->sofahandle->hrtf->N * definition->sofahandle->hrtf->R * sizeof(double));
+	definition->responsedata = MemMalloc((definition->sofahandle->hrtf->N + definition->maxdelay) * definition->sofahandle->hrtf->R * sizeof(double));
 	if (!definition->responsedata)
 	{
 		ClearSofaSensor(definition);
@@ -706,7 +755,7 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 		MsgErrorExit(msg);
 	}
 
-	memset(definition->responsedata, 0, definition->sofahandle->hrtf->N* definition->sofahandle->hrtf->R * sizeof(double));
+	memset(definition->responsedata, 0, (definition->sofahandle->hrtf->N + definition->maxdelay) * definition->sofahandle->hrtf->R * sizeof(double));
 
 	snprintf(msg, sizeof(msg), "completed\n");
 	MsgPrintf("%s", msg);
@@ -739,7 +788,9 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 
 	definition->nChannels = definition->sofahandle->hrtf->R;
 	definition->nEntries = definition->sofahandle->hrtf->M;
-	definition->nSamples = definition->sofahandle->hrtf->N;
+	definition->nSamples = definition->sofahandle->hrtf->N + definition->maxdelay;
+	if (definition->applydelay)
+		MsgPrintf("Applying SOFA Data.Delay (up to %d samples)\n", definition->maxdelay);
 
 	/* provide some feedback */
 	MsgPrintf("Successfully loaded SOFA HRTFs (#pos=%d, #samples=%d, #ch=%d, fs=%.2f)\n",

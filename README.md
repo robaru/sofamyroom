@@ -125,6 +125,7 @@ make test
 * The library is single-threaded and keeps the loaded sensors in global state: run one simulation at a time per process. To simulate many rooms in parallel, start several processes.
 * Image sources are placed at integer sample delays (no fractional-delay interpolation).
 * SOFA receivers must use the SimpleFreeFieldHRIR convention with exactly two receivers (ears).
+* The SOFA `Data.Delay` is ignored unless the receiver description contains `delay=1`, in which case it is applied as a whole-sample shift per ear.
 * The diffuse tail is rendered from six spatial directions.
 
 ## Testing

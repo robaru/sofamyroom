@@ -135,6 +135,8 @@ struct CSensorDefinition {
 	float  *responsedatafloat;
 	float  *delays; //delays[0] -> left
 	bool   interpolation, normalization, resampling;
+	bool   applydelay;   /* shift each channel by its SOFA Data.Delay */
+	int    maxdelay;     /* largest Data.Delay in samples (0 if not applied) */
 } ;
 
 typedef struct 

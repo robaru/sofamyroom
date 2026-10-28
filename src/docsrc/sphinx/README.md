@@ -74,7 +74,7 @@ Note that there is one WAVE file for every source-receiver couple.
 The format of the field `receiver(<i>).description` is the following:
 
 ```
-'RECEIVER_ID PATH_TO_HRTF_FILE interp=interp_value norm=norm_value resampling=resampling_value'
+'RECEIVER_ID PATH_TO_HRTF_FILE interp=interp_value norm=norm_value resampling=resampling_value delay=delay_value'
 ```
 
 `RECEIVER_ID` must be `SOFA` in order to read a `.sofa` file. `PATH_TO_HRTF_FILE` is the relative or absolute path to your `.sofa` file. The other values are:
@@ -83,8 +83,9 @@ The format of the field `receiver(<i>).description` is the following:
 active), or F[ALSE], f[alse], 0 (interpolation is not performed). Words in square brackets are optional, SofaMyRoom just looks for the first character.
 * `norm`: SofaMyRoom can normalize HRTF data. `norm_value` behaves just like `interp_value`, described above.
 * `resampling`: SofaMyRoom can resample the HRTF data according to the sampling frequency defined in `options.fs`. `resampling_value` behaves just like `interp_value` and `norm_value`, described above.
+* `delay`: SofaMyRoom can apply the per-ear `Data.Delay` stored in the SOFA file, rounded to whole samples. Use it with HRTF sets whose impulse responses are time-aligned and carry the interaural time difference in `Data.Delay`. `delay_value` behaves just like `interp_value`.
 
-All the options described above are optional. If not set, interpolation, normalization and resampling are not performed. Unrecognized options are skipped. If options are repeated, only the last one is used.
+All the options described above are optional. If not set, interpolation, normalization, resampling and `Data.Delay` are not applied. Unrecognized options are skipped. If options are repeated, only the last one is used.
 
 ### Examples
 
@@ -95,6 +96,7 @@ All the examples proposed below are valid:
 'SOFA ./mySofaFile.sofa interp=TRUE norm=0 resampling=t'
 'SOFA ./mySofaFile.sofa interp=1 norm=f'
 'SOFA ./mySofaFile.sofa resampling=0 norm=F interp=0'
+'SOFA ./myTimeAlignedFile.sofa delay=1'
 ```
 
 # Building SofaMyRoom
