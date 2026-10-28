@@ -12,3 +12,18 @@ data/*.sofa
 PLAN.md
 manuscript.pdf
 .claude/
+output_receiver_*.wav
+
+# Python package
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+.venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+python/pysofamyroom/*.so
+python/pysofamyroom/*.dylib
+python/pysofamyroom/*.dll

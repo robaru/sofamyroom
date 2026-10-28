@@ -1,0 +1,141 @@
+[build-system]
+requires = ["scikit-build-core>=0.11"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "pysofamyroom"
+dynamic = ["version"]
+description = "Python interface to SofaMyRoom, a shoebox room acoustics simulator that renders binaural room impulse responses with SOFA HRTFs"
+readme = "README.md"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE.txt", "THIRD_PARTY_LICENSES.md"]
+requires-python = ">=3.10"
+authors = [
+    { name = "Roberto Barumerli", email = "roberto.baru@gmail.com" },
+]
+keywords = [
+    "acoustics",
+    "room acoustics",
+    "binaural",
+    "room impulse response",
+    "HRTF",
+    "SOFA",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Natural Language :: English",
+    "Programming Language :: C",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Multimedia :: Sound/Audio",
+    "Topic :: Scientific/Engineering",
+]
+dependencies = [
+    "numpy>=1.23",
+    "scipy>=1.9",
+    "sofar>=1.1",
+]
+
+[project.optional-dependencies]
+tests = [
+    "pytest",
+    "pytest-cov",
+    "ruff",
+]
+docs = [
+    "sphinx",
+    "pydata-sphinx-theme",
+    "sphinx_mdinclude",
+    "autodocsumm>=0.2.14",
+    "sphinx-design",
+]
+dev = ["pysofamyroom[tests,docs]", "build", "twine", "cibuildwheel"]
+
+[project.urls]
+Homepage = "https://github.com/robaru/sofamyroom"
+Source = "https://github.com/robaru/sofamyroom"
+Tracker = "https://github.com/robaru/sofamyroom/issues"
+Documentation = "https://robaru.github.io/sofamyroom/"
+Paper = "https://arxiv.org/abs/2106.12992"
+
+[tool.scikit-build]
+minimum-version = "build-system.requires"
+build-dir = "build/skbuild/{wheel_tag}"
+cmake.source-dir = "src"
+cmake.build-type = "Release"
+cmake.define.SOFAMYROOM_PYTHON = "ON"
+wheel.packages = ["python/pysofamyroom"]
+# the binding is plain ctypes: one wheel per platform, valid for every Python
+wheel.py-api = "py3"
+sdist.exclude = [
+    "build/",
+    "docs/",
+    "matlab/*.mex*",
+    "data/*.sofa",
+    "manuscript.pdf",
+    "PLAN.md",
+    ".claude/",
+]
+
+[tool.scikit-build.metadata.version]
+provider = "scikit_build_core.metadata.regex"
+input = "python/pysofamyroom/__init__.py"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+exclude = [
+    ".git",
+    "build",
+    "docs",
+    "src",
+    "matlab",
+]
+line-length = 79
+lint.ignore = [
+    "D200",   # One-line docstring should fit on one line with quotes
+    "D202",   # No blank lines allowed after function docstring
+    "D205",   # 1 blank line required between summary line and description
+    "D401",   # First line should be in imperative mood
+    "D404",   # First word of the docstring should not be "This"
+    "B006",   # Do not use mutable data structures for argument defaults
+    "B008",   # Do not perform calls in argument defaults
+    "PT018",  # Assertion should be broken down into multiple parts
+    "PT019",  # Fixture `_` without value is injected as parameter
+]
+lint.select = [
+    "B",      # bugbear extension
+    "ARG",    # Remove unused function/method arguments
+    "C4",     # Check for common security issues
+    "E",      # PEP8 errors
+    "F",      # Pyflakes
+    "W",      # PEP8 warnings
+    "D",      # Docstring guidelines
+    "NPY",    # Check all numpy related deprecations
+    "D417",   # Missing argument descriptions in the docstring
+    "PT",     # Pytest style
+    "A",      # Avoid builtin function and type shadowing
+    "ERA",    # No commented out code
+    "COM",    # trailing comma rules
+    "I002",   # missing required import
+    "TID252", # Use absolute over relative imports
+    "FIX",    # Code should not contain FIXME, TODO, etc
+]
+
+# Ignore missing docstrings in tests
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+    "D100",
+    "D101",
+    "D103",
+    "D104",
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
