@@ -69,6 +69,7 @@ jobs:
           CIBW_BUILD: "cp312-*"
           CIBW_SKIP: "*musllinux*"
           CIBW_ARCHS_MACOS: universal2
+          CIBW_ARCHS_WINDOWS: AMD64     # the project refuses 32-bit builds
           CIBW_ENVIRONMENT_MACOS: MACOSX_DEPLOYMENT_TARGET=11.0
           CIBW_BEFORE_ALL_LINUX: dnf install -y zlib-devel || yum install -y zlib-devel
           CIBW_ENVIRONMENT_WINDOWS: >-
