@@ -38,6 +38,15 @@
 #	define MsgPrintf		 mexPrintf
 #   define MsgRelax          mexEvalString("drawnow;")
 #	define MsgErrorExit(msg) mexErrMsgTxt(msg)
+#elif defined(SMR_EMBED)
+    /* embedded in a host process (pysofamyroom): messages go to a callback,
+       fatal errors unwind to the caller of smr_simulate_*() in capi.c */
+#   include <stdio.h>
+    void SmrPrintf(const char *fmt, ...);
+    void SmrErrorExit(const char *msg);
+#	define MsgPrintf		 SmrPrintf
+#   define MsgRelax
+#	define MsgErrorExit(msg) SmrErrorExit(msg)
 #else
 #	include <stdio.h>
 #   include <stdlib.h>

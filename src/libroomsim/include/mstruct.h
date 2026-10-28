@@ -254,13 +254,22 @@
 #define SKIPDATA(p)		while (*(p)>' ' && *(p)!=',' && *(p)!=';' && *(p)!=']') (p)++
 #define SKIPROWSEP(p)	SKIPWHITE(p); if (*(p)!=';') { /* error */ } (p)++; SKIPWHITE(p)
 
+/* A missing mandatory field is a fatal setup error: the loaded structure
+   would otherwise be left half-initialised. */
+#include <stdio.h>
+#include "setup.h"
+#define MISSINGFIELD(n) \
+	{ char path[256], msg[320]; SetupItemPath(pItem,path,sizeof(path)); \
+	  snprintf(msg,sizeof(msg),"missing field '%s%s%s'",path,path[0]?".":"",#n); \
+	  MsgErrorExit(msg); return; }
+
 #define GETFIELD(n) \
 	pSubItem = SetupFindField(pItem,#n); \
-if (!pSubItem) { MsgPrintf("missing field '"); SetupPrintItemName(pItem); MsgPrintf("." #n "'\n"); return; } 
+if (!pSubItem) MISSINGFIELD(n)
 
 #define GETSTRUCT(n) \
 	pSubItem = SetupFindStruct(pItem,#n); \
-if (!pSubItem) { MsgPrintf("missing field '"); SetupPrintItemName(pItem); MsgPrintf("." #n "'\n"); return; } 
+if (!pSubItem) MISSINGFIELD(n)
 
 #define COUNTFIELDS(count) \
 	{ CFileSetupItem *field=pSubItem->data.field; (count)=0; while (field) { field=field->next; (count)++; } } 

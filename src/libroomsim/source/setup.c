@@ -113,6 +113,23 @@ void SetupPrintItemName(CFileSetupItem *item)
 		printf("%s.", item->name);
 }
 
+void SetupItemPath(CFileSetupItem *item, char *buf, size_t len)
+{
+	size_t used;
+
+	/* root item (no parent) contributes nothing */
+	if (!item || !item->parent)
+	{
+		if (len) buf[0] = '\0';
+		return;
+	}
+
+	SetupItemPath(item->parent, buf, len);
+	used = strlen(buf);
+	if (used + 1 < len)
+		snprintf(buf + used, len - used, "%s%s", used ? "." : "", item->name);
+}
+
 static CFileSetupItem *AddItem(CFileSetupItem *item, char *name, char *value)
 {
 	CFileSetupItem *newitem, *lastitem;
@@ -364,12 +381,44 @@ static char *ParseField(char *p, CFileSetupItem *pRootSetupItem)
 	return p;
 }
 
+int ParseSetup(const char *text, size_t length, CFileSetup *pSetup)
+{
+	char *p;
+
+	/* clear output variable */
+	memset(pSetup,0,sizeof(*pSetup));
+
+	/* limit setup size to 1M */
+	if (length > 1024*1024)
+		return -2;
+
+	/* copy the text into a zero-padded buffer; the parser works in place
+	   and the loaded setup keeps pointers into this buffer */
+	pSetup->buf = calloc(length+4,1);
+	if (!pSetup->buf)
+		return -4;
+	memcpy(pSetup->buf,text,length);
+	pSetup->buflen = (unsigned long)length;
+
+	pSetup->root.type = SI_STRUCT;
+	pSetup->root.name = "setup";
+
+	p = pSetup->buf;
+	do
+	{
+		p = ParseField(p,&pSetup->root);
+	} while (p);
+
+	return 1;
+}
+
 int ReadSetup(char *filename, CFileSetup *pSetup)
 {
 	FILE *fid;
 	unsigned long flen;
-	char *p;
+	char *buf;
 	size_t fread_bytes = 0;
+	int result;
 
 	/* clear output variable */
 	memset(pSetup,0,sizeof(*pSetup));
@@ -385,28 +434,50 @@ int ReadSetup(char *filename, CFileSetup *pSetup)
 
 	/* limit file size to 1M */
 	if (flen > 1024*1024) 
+	{
+		fclose(fid);
 		return -2;
+	}
 
-	/* allocate and clear buffer to hold file plus a little more */
-	pSetup->buf    = calloc(flen+4,1);
-	pSetup->buflen = flen;
-
-	/* read file into buffer, close file */
-	fread_bytes = fread(pSetup->buf,1,flen,fid);
+	/* read file into a temporary buffer, close file */
+	buf = malloc(flen+1);
+	if (!buf)
+	{
+		fclose(fid);
+		return -4;
+	}
+	fread_bytes = fread(buf,1,flen,fid);
 	fclose(fid);
 	if (fread_bytes != flen)
-		return -3;
-
-	pSetup->root.type = SI_STRUCT;
-	pSetup->root.name = "setup";
-
-	p = pSetup->buf;
-	do
 	{
-		p = ParseField(p,&pSetup->root);
-	} while (p);
+		free(buf);
+		return -3;
+	}
 
-	return 1;
+	result = ParseSetup(buf,flen,pSetup);
+	free(buf);
+	return result;
+}
+
+static void FreeSetupItems(CFileSetupItem *item)
+{
+	while (item)
+	{
+		CFileSetupItem *next = item->next;
+		if (item->type == SI_STRUCT)
+			FreeSetupItems(item->data.field);
+		free(item);
+		item = next;
+	}
+}
+
+void FreeSetup(CFileSetup *pSetup)
+{
+	if (!pSetup) return;
+	if (pSetup->root.type == SI_STRUCT)
+		FreeSetupItems(pSetup->root.data.field);
+	free(pSetup->buf);
+	memset(pSetup,0,sizeof(*pSetup));
 }
 
 void PrintSetup(CFileSetupItem *item)

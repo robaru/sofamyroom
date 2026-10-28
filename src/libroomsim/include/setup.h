@@ -28,6 +28,8 @@
 #ifndef SETUP_H_2193798154871641379127
 #define SETUP_H_2193798154871641379127
 
+#include <stddef.h>
+
 struct CFileSetupItem {
 	enum {SI_FIELD,SI_STRUCT} type;
 	char *name;
@@ -46,9 +48,12 @@ typedef struct {
 } CFileSetup;
 
 int ReadSetup(char *filename, CFileSetup *pSetup);
+int ParseSetup(const char *text, size_t length, CFileSetup *pSetup);
+void FreeSetup(CFileSetup *pSetup);
 void PrintSetup(CFileSetupItem *item);
 void SetupPrintItem(CFileSetupItem *item);
 void SetupPrintItemName(CFileSetupItem *item);
+void SetupItemPath(CFileSetupItem *item, char *buf, size_t len);
 
 
 CFileSetupItem *SetupFindField(CFileSetupItem *item, char *name);

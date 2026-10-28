@@ -15,12 +15,14 @@
 #include <stdlib.h>
 
 #include "mem.h"
+#include "msg.h"
 
 static void MemOutOfMemory(size_t bytes, const char *file, int line)
 {
-	fprintf(stderr, "error: out of memory allocating %lu bytes (%s:%d)\n",
+	char msg[512];
+	snprintf(msg, sizeof(msg), "out of memory allocating %lu bytes (%s:%d)",
 		(unsigned long)bytes, file, line);
-	exit(1);
+	MsgErrorExit(msg);
 }
 
 void *MemMallocChecked(size_t size, const char *file, int line)
