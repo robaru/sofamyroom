@@ -11,8 +11,7 @@ Thanks to the Virtual Acoustic Space Traveling (VAST) framework [1], we added th
 
 ## Installing SofaMyRoom
 
-This repository includes the binary files and, if in case of need, the CMake scripts allow a customized compilation. Only 64-bit platforms are supported.
-SofaMyRoom binaries are available for Windows 10, Ubuntu Linux 20.04 and MacOS Catalina.
+SofaMyRoom is built from source with CMake; the required libmysofa and FFTW archives for Windows, Linux and macOS are included in the repository. Only 64-bit platforms are supported.
 
 ### Installation on Windows
 
@@ -35,18 +34,20 @@ No further steps are required to run SofaMyRoom on macOS.
 To use SofaMyRoom, type this command in a Command Prompt or a Terminal:
 
 ```bash
-./sofamyroom setup.txt
+build/cmake/sofamyroom data/sampleroomsetup.txt
 ```
 
-`setup.txt` is the name of the text file containing all the SofaMyRoom setup parameters structure.
-A sample of it can be found in `sampleroomsetup.txt`.
+`data/sampleroomsetup.txt` is a commented sample of the setup file; the paths in it are relative to the directory you run the command from. One WAVE file per receiver is written there.
 
 ## Usage with MATLAB
 
 A MEX-file for 64-bit MATLAB is available. To run it, type these commands in the Command Window:
 
+`readsetup` evaluates a setup file written as a MATLAB script (`data/sampleroomsetup.m`, same content as the `.txt` sample):
+
 ```matlab
-setup = readsetup('sampleroomsetup.txt');
+addpath matlab
+setup = readsetup('data/sampleroomsetup.m');
 output = sofamyroom(setup);
 ```
 
