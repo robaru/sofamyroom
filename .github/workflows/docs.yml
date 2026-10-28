@@ -1,0 +1,42 @@
+# Documentation: Sphinx build on every push to master, published to
+# GitHub Pages (https://robaru.github.io/sofamyroom). Pull requests only
+# build, to catch warnings.
+name: docs
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: zlib for libmysofa
+        run: sudo apt-get install -y zlib1g-dev
+      - name: Install the package with the docs extras
+        run: python -m pip install -e ".[docs]"
+      - name: Sphinx
+        run: sphinx-build -W --keep-going -b html src/docsrc/sphinx build/html
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: build/html
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
