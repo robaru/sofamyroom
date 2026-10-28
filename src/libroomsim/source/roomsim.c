@@ -145,7 +145,6 @@ typedef struct {
 	/* absorption, reflection, and attenuation coefficients */
     double  *logairattenuation;		/**< Frequency dependent air attenuation coefficients. */
     double  *logreflection;			/**< Frequency dependent surface reflection coefficients. */
-    double  *logabsorption;			/**< Frequency dependent surface absorption coefficients. */
     double  *logdiffusion;			/**< Frequency dependent surface diffusion coefficients.  */
     double  *logdiffusereflection;
 	double  *logspecularreflection;
@@ -181,7 +180,6 @@ typedef struct {
 
 /* Convenience macro's to access individual surface absorption and diffusion coefficients */
 #define SURFACELOGREFLECTION(v,s,b)			((v)->logreflection		  [(b) + (s) * ((v)->nBands)])
-#define SURFACELOGABSORPTION(v,s,b)			((v)->logabsorption		  [(b) + (s) * ((v)->nBands)])
 #define SURFACELOGDIFFUSION(v,s,b)			((v)->logdiffusion	      [(b) + (s) * ((v)->nBands)])
 #define SURFACEDIFFUSIONCOEFFICIENT(v,s,b)	((v)->diffusioncoefficient[(b) + (s) * ((v)->nBands)])
 
@@ -242,7 +240,11 @@ void PrintAbsorptionAndDiffusion(const CRoomSetup *pSetup, CRoomsimInternal *pSi
     for (s=0; s<6; s++)
     {
         for (b=0; b<pSimulation->nBands; b++)
-            MsgPrintf("%7.4f ", LINDOMAIN(pSimulation->logabsorption[b+s*pSimulation->nBands]));
+        {
+            /* energy absorption coefficient, r = sqrt(1 - alpha) in InterpolateAbsorptionAndDiffusion */
+            double r = LINDOMAIN(pSimulation->logreflection[b+s*pSimulation->nBands]);
+            MsgPrintf("%7.4f ", 1.0 - r*r);
+        }
         MsgPrintf("\n");
     }
     MsgPrintf("\n\nDiffusion\n");
@@ -275,7 +277,6 @@ void InterpolateAbsorptionAndDiffusion(const CRoomSetup *pSetup, CRoomsimInterna
 	
 	/* allocate arrays in simulation structure */
     pSimulation->logreflection         = (double *) MemMalloc(Nout * 6 * sizeof(double));
-    pSimulation->logabsorption         = (double *) MemMalloc(Nout * 6 * sizeof(double));
     pSimulation->logdiffusion          = (double *) MemMalloc(Nout * 6 * sizeof(double));
     pSimulation->logdiffusereflection  = (double *) MemMalloc(Nout * 6 * sizeof(double));
     pSimulation->logspecularreflection = (double *) MemMalloc(Nout * 6 * sizeof(double));
@@ -306,9 +307,6 @@ void InterpolateAbsorptionAndDiffusion(const CRoomSetup *pSetup, CRoomsimInterna
 			/* r = 1.0 - alpha[j]; */
 			pSimulation->logreflection        [i*Nout + j] = LOGDOMAIN(r);
 			LOGLIMIT(pSimulation->logreflection        [i*Nout + j]);
-
-			pSimulation->logabsorption        [i*Nout + j] = LOGDOMAIN(1.0 - r);
-			LOGLIMIT(pSimulation->logabsorption        [i*Nout + j]);
 
 			pSimulation->logdiffusion         [i*Nout + j] = LOGDOMAIN(d[j]);
 			LOGLIMIT(pSimulation->logdiffusion         [i*Nout + j]);
@@ -806,7 +804,8 @@ CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup, sfmt_t *sfmt)
 
 	/* interpolate absorption/diffusion coefficients to simulation frequencies */
     InterpolateAbsorptionAndDiffusion(pSetup, pSimulation);
-    /*PrintAbsorptionAndDiffusion(pSetup, pSimulation); */
+    if (pSetup->options.verbose)
+        PrintAbsorptionAndDiffusion(pSetup, pSimulation);
 
 	/* init local variables */
 	nTimebin  = (int) ceil( pSetup->options.responseduration / pSetup->options.diffusetimestep);
@@ -966,7 +965,6 @@ BRIR *RoomsimRelease(CRoomsimInternal *pSimulation)
     MemFree(pSimulation->convbuf);
     MemFree(pSimulation->frequency);
     MemFree(pSimulation->logreflection);
-    MemFree(pSimulation->logabsorption);
     MemFree(pSimulation->logdiffusion);
     MemFree(pSimulation->logdiffusereflection);
     MemFree(pSimulation->logspecularreflection);
