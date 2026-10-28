@@ -20,9 +20,15 @@
  * You should have received a copy of the GNU General Public License
  * along with ROOMSIM. If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************
- * Redistributed as part of SofaMyRoom
- * (https://github.com/robaru/sofamyroom). The code is unchanged with
- * respect to the original ROOMSIM file; only this notice was added.
+ * Modified for SofaMyRoom (https://github.com/robaru/sofamyroom).
+ * Copyright 2019-2026, Roberto Barumerli and Daniele Bianchi
+ *
+ * Changes with respect to the original ROOMSIM file:
+ *   - MsgErrorExit no longer waits for a key press before exiting, so
+ *     that the command line tool does not hang when run from scripts.
+ *
+ * The modifications are released under the same GNU General Public
+ * License, version 3 or later.
  *************************************************************************/
 #ifndef _MSG_H_85179461704471264112
 #define _MSG_H_85179461704471264112
@@ -37,7 +43,7 @@
 #   include <stdlib.h>
 #	define MsgPrintf		 printf
 #   define MsgRelax          
-#	define MsgErrorExit(msg) { fprintf(stderr,"error: %s\nPress return to exit...\n", msg); getchar(); exit(1); }
+#	define MsgErrorExit(msg) { fprintf(stderr,"error: %s\n", msg); exit(1); }
 #endif
 
 #endif /* _MSG_H_85179461704471264112 */
