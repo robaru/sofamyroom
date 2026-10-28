@@ -163,7 +163,7 @@ The files inherited from Roomsim by Steven M. Schimmel (University of Zurich, 20
 * `data/materials.mat` (the Roomsim absorption-coefficient database used by `editabsorption.m`)
 * `matlab/` `estimateRT60.m`, `editabsorption.m`, `plotabsorption.m`, `estimateroombreakfreq.m`, `plotcoordsystem.m`, `plotbrir.m`, `readsetup.m`, `rsound.m`, `yprTr2s.m`, `yprTs2r.m`, `selectabsorption.m`, `plotroom.m`, `setcomplexity.m`
 
-Since the simulator core is GPL, every compiled form of sofamyroom (command line tool, MEX file, or a package that links it) is a combined work distributed under the GNU GPL-3.0-or-later; the EUPL-1.2 permits this through its compatibility clause.
+Since the simulator core is GPL, every compiled form of sofamyroom (command line tool, MEX file, or a package that links it) is a combined work distributed under the GNU GPL-3.0-or-later; the EUPL-1.2 permits this through its compatibility clause. The GPL text is in `LICENSE-GPL-3.0.txt`; the Python wheel declares `EUPL-1.2 AND GPL-3.0-or-later` and ships both texts.
 
 The third-party code included in `src/` (libmysofa, PocketFFT, SFMT) is listed with its licence texts in [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
 

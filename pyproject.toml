@@ -7,8 +7,10 @@ name = "pysofamyroom"
 dynamic = ["version"]
 description = "Python interface to SofaMyRoom, a shoebox room acoustics simulator that renders binaural room impulse responses with SOFA HRTFs"
 readme = "README.md"
-license = "EUPL-1.2"
-license-files = ["LICENSE.txt", "THIRD_PARTY_LICENSES.md"]
+# Own code is EUPL-1.2; the Roomsim core compiled into the wheel is GPL-3.0-or-later,
+# so the distributed wheel is a combined work under both (see README, License).
+license = "EUPL-1.2 AND GPL-3.0-or-later"
+license-files = ["LICENSE.txt", "LICENSE-GPL-3.0.txt", "THIRD_PARTY_LICENSES.md"]
 requires-python = ">=3.10"
 authors = [
     { name = "Roberto Barumerli", email = "roberto.baru@gmail.com" },

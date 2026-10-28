@@ -189,7 +189,7 @@ A useful tutorial on how to use Doxygen in combination with Sphinx and CMAKE is 
 
 # License
 
-The code written for SofaMyRoom is licensed under the [EUPL-1.2](https://joinup.ec.europa.eu/sites/default/files/custom-page/attachment/2020-03/EUPL-1.2%20EN.txt). The files inherited from Roomsim by Steven M. Schimmel keep their GNU GPL-3.0-or-later licence, so every compiled form of SofaMyRoom is a combined work distributed under the GPL-3.0-or-later. The included third-party code (libmysofa, PocketFFT, SFMT) and its licences are listed in `THIRD_PARTY_LICENSES.md` in the repository.
+The code written for SofaMyRoom is licensed under the [EUPL-1.2](https://joinup.ec.europa.eu/sites/default/files/custom-page/attachment/2020-03/EUPL-1.2%20EN.txt). The files inherited from Roomsim by Steven M. Schimmel keep their GNU GPL-3.0-or-later licence, so every compiled form of SofaMyRoom is a combined work distributed under the GPL-3.0-or-later (text in `LICENSE-GPL-3.0.txt`; the Python wheel declares `EUPL-1.2 AND GPL-3.0-or-later`). The included third-party code (libmysofa, PocketFFT, SFMT) and its licences are listed in `THIRD_PARTY_LICENSES.md` in the repository.
 
 # Credits
 

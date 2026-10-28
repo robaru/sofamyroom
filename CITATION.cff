@@ -2,7 +2,9 @@ cff-version: 1.2.0
 message: "If you use sofamyroom, please cite it as below."
 title: "sofamyroom"
 type: software
-license: EUPL-1.2
+license:
+  - EUPL-1.2
+  - GPL-3.0-or-later
 repository-code: "https://github.com/robaru/sofamyroom"
 url: "https://robaru.github.io/sofamyroom"
 authors:
