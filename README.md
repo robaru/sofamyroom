@@ -118,7 +118,7 @@ On Windows, pass the location of zlib as extra arguments, for example `make('-IC
 ## Known issues and limitations
 
 * When using the MEX library, MATLAB can crash since the memory allocation performed by libmysofa is not persistent.
-* The library is single-threaded and keeps the loaded sensors in global state: run one simulation at a time per process. To simulate many rooms in parallel, start several processes.
+* The library is single-threaded and keeps the loaded sensors in global state: run one simulation at a time per process. To simulate many rooms in parallel, start several processes; the Python VAST generator does this for you with `generate(..., workers=n)`.
 * Image sources are placed at integer sample delays (no fractional-delay interpolation).
 * `room.surface.absorption` is the energy absorption coefficient: each specular reflection multiplies the amplitude by `sqrt(1 - absorption)`. `room.surface.diffusion` is the scattering coefficient: the specular image source is weighted by `(1 - diffusion)` and the diffuse part by `diffusion`, both in amplitude. The latter is the original Roomsim convention and is kept so that existing results can be reproduced; an energy-consistent weighting may be added later as an option. Both coefficients must be in [0, 1] (values above 1 found in some material tables have to be clipped by the user, the setup is rejected otherwise).
 * Reflections are positive real numbers and the analytical directivity patterns (cardioid, dipole, ...) use the magnitude of the pattern only, so a dipole has two in-phase lobes. This is a simplification shared by the Roomsim family.
