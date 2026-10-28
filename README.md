@@ -12,6 +12,8 @@ Thanks to the Virtual Acoustic Space Traveling (VAST) framework [1], we added th
 :open_book: We are writing an article about sofamyroom and the pre-print is already available on [arXiv](https://arxiv.org/abs/2106.12992).
 
 
+> **Note (October 2026):** the git history was rewritten to merge the old repositories into a single line. If you cloned sofamyroom before, please re-clone it; existing clones will not pull cleanly.
+
 ## Installing sofamyroom
 
 This repository includes the binary files and, if in case of need, the CMake scripts allow a customized compilation. Only 64-bit platforms are supported.
@@ -122,9 +124,29 @@ make test
 
 * When using the MEX library, MATLAB can crash since the memory allocation performed by libmysofa is not persistent.
 
+## Testing
+
+The unit tests need the MIT KEMAR HRTF set in `data/`:
+
+```bash
+curl -L -o data/MIT_KEMAR_normal_pinna.sofa http://sofacoustics.org/data/database/mit/mit_kemar_normal_pinna.sofa
+```
+
+Then build with CMake and run `ctest`:
+
+```bash
+cmake -S src -B build/cmake -DCMAKE_BUILD_TYPE=Release
+cmake --build build/cmake
+ctest --test-dir build/cmake --output-on-failure
+```
+
 ## License
 
-sofamyroom is licensed under the [EUPL-1.2](https://joinup.ec.europa.eu/sites/default/files/custom-page/attachment/2020-03/EUPL-1.2%20EN.txt).
+sofamyroom is licensed under the [EUPL-1.2](https://joinup.ec.europa.eu/sites/default/files/custom-page/attachment/2020-03/EUPL-1.2%20EN.txt), with one exception.
+The files inherited from Roomsim by Steven M. Schimmel (University of Zurich, 2009) keep their original GNU GPL-3.0-or-later licence, as stated in their headers:
+
+* `src/libroomsim/source/interface.c`, `interp.c`, `rng.c`
+* `matlab/` `estimateRT60.m`, `editabsorption.m`, `plotabsorption.m`, `estimateroombreakfreq.m`, `plotcoordsystem.m`, `plotbrir.m`, `readsetup.m`, `rsound.m`, `yprTr2s.m`, `selectabsorption.m`, `yprTs2r.m`, `plotroom.m`, `setcomplexity.m`
 
 ## Credits
 
