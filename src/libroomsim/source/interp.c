@@ -10,7 +10,7 @@
  * ROOMSIM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version. 
+ * (at your option) any later version.
  *
  * ROOMSIM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -19,6 +19,16 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with ROOMSIM. If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************
+ * Modified for SofaMyRoom (https://github.com/robaru/sofamyroom).
+ * Copyright 2019-2020, Roberto Barumerli and Daniele Bianchi
+ *
+ * Changes with respect to the original ROOMSIM file:
+ *   - LinearInterpolate() guards the output index against reading past
+ *     olen and assigns xo == xi[ii] to the next segment.
+ *
+ * The modifications are released under the same GNU General Public
+ * License, version 3 or later.
  *************************************************************************/
 
 #include "interp.h"
