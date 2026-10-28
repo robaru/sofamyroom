@@ -27,28 +27,19 @@ include_directories(
 	"${CMAKE_CURRENT_SOURCE_DIR}/include"
 	"${CMAKE_SOURCE_DIR}/libpocketfft/"
 	"${CMAKE_SOURCE_DIR}/libsfmt/"
-	"${CMAKE_SOURCE_DIR}/libmysofa/${OS}/${PLATFORM}/include"
 	)
 
 set(CMAKE_DEBUG_POSTFIX "d")
 
-set(MYSOFA "${CMAKE_SOURCE_DIR}/libmysofa/${OS}/${PLATFORM}/lib/$<IF:$<OR:$<CONFIG:Debug>,$<CONFIG:Release>>,$<IF:$<CONFIG:Release>,Release,Debug>,Debug>/libmysofa$<$<OR:$<CONFIG:Debug>,$<CONFIG:Unittest>>:${CMAKE_DEBUG_POSTFIX}>${CMAKE_STATIC_LIBRARY_SUFFIX}")
-
-if(CMAKE_SYSTEM_NAME MATCHES Windows)
-	set(MATH "")
-	set(LIBZ "")
-elseif(CMAKE_SYSTEM_NAME MATCHES Linux)
+if(CMAKE_SYSTEM_NAME MATCHES Linux)
 	set(MATH "m")
-	set(LIBZ "z")
-elseif(CMAKE_SYSTEM_NAME MATCHES Darwin)
+else()
 	set(MATH "")
-	set(LIBZ "z")
 endif()
 
 target_link_libraries(libroomsim
 	"${MATH}"
 	libsfmt
 	libpocketfft
-	"${MYSOFA}"
-	"${LIBZ}"
+	libmysofa
 	)

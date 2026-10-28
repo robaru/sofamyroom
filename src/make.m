@@ -29,27 +29,12 @@ src_path = ['..' filesep 'src'];
              ['-I' src_path filesep 'libroomsim' filesep 'include']
              ['-I' src_path filesep 'libsfmt']
              ['-I' src_path filesep 'libpocketfft']
+             ['-I' src_path filesep 'libmysofa']
+             ['-I' src_path filesep 'libmysofa' filesep 'hrtf']
              ['-I' src_path filesep 'wavwriter' filesep 'include']
            };
-       
-if ispc
-    switches =  [switches
-                ['-I' src_path filesep 'libmysofa' filesep 'Windows' filesep 'x64' filesep 'include']
-                ];
-            
-elseif ismac
-    switches = [switches
-               ['-I' src_path filesep 'libmysofa' filesep 'MacOS' filesep '64bit' filesep 'include']
-               ];
-            
-elseif isunix
-    switches = [switches
-               ['-I' src_path filesep 'libmysofa' filesep 'Linux' filesep '64bit' filesep 'include']
-               ];
-end
 
 % Process optional arguments
-debug = false;
 for i = 1:nargin
     switch varargin{i}
         case 'test'
@@ -62,7 +47,6 @@ for i = 1:nargin
             switches = [switches 
                         '-g'
                         ];
-            debug = true;
         otherwise
             switches = [switches 
                         varargin{i}
@@ -70,50 +54,11 @@ for i = 1:nargin
     end
 end
 
-% Set options
+% Link options: libmysofa needs zlib. On macOS and Linux it is a system
+% library; on Windows pass the include and library paths of a zlib build
+% as extra arguments, e.g. make('-IC:\zlib\include', '-LC:\zlib\lib', '-lzlib').
 options = {};
-
-if ispc
-    if ~debug
-        options = [options
-                  ['-L' src_path filesep 'libmysofa' filesep 'Windows' filesep 'x64' filesep 'lib' filesep 'Release']
-                  '-lmysofa'
-            ];
-    else
-        options = [options
-                  ['-L' src_path filesep 'libmysofa' filesep 'Windows' filesep 'x64' filesep 'lib' filesep 'Debug']
-                  '-lmysofad'
-                  ];
-    end
-    
-elseif ismac
-    if ~debug
-        options = [options
-                  ['-L' src_path filesep 'libmysofa' filesep 'MacOS' filesep '64bit' filesep 'lib' filesep 'Release']
-                  '-lmysofa'
-            ];
-    else
-        options = [options
-                  ['-L' src_path filesep 'libmysofa' filesep 'MacOS' filesep '64bit' filesep 'lib' filesep 'Debug']
-                  '-lmysofad'
-                  ];
-    end
-    options = [options
-              "-lz"
-               ];
-    
-elseif isunix
-    if ~debug
-        options = [options
-                  ['-L' src_path filesep 'libmysofa' filesep 'Linux' filesep '64bit' filesep 'lib' filesep 'Release']
-                  '-lmysofa'  
-                  ];
-    else
-        options = [options
-                  ['-L' src_path filesep 'libmysofa' filesep 'Linux' filesep '64bit' filesep 'lib' filesep 'Debug']
-                  '-lmysofad'
-                  ];
-    end
+if ~ispc
     options = [options
                '-lz'
               ];
@@ -128,6 +73,26 @@ mexfiles = { [src_path filesep 'libroomsim' filesep 'source' filesep '3D.c']
              [src_path filesep  'libroomsim'  filesep  'source'  filesep  'sensor.c']
              [src_path filesep  'libsfmt'  filesep  'SFMT.c']
              [src_path filesep  'libpocketfft'  filesep  'pocketfft.c']
+             [src_path filesep  'libmysofa'  filesep  'hdf'  filesep  'btree.c']
+             [src_path filesep  'libmysofa'  filesep  'hdf'  filesep  'dataobject.c']
+             [src_path filesep  'libmysofa'  filesep  'hdf'  filesep  'fractalhead.c']
+             [src_path filesep  'libmysofa'  filesep  'hdf'  filesep  'gcol.c']
+             [src_path filesep  'libmysofa'  filesep  'hdf'  filesep  'gunzip.c']
+             [src_path filesep  'libmysofa'  filesep  'hdf'  filesep  'superblock.c']
+             [src_path filesep  'libmysofa'  filesep  'hrtf'  filesep  'cache.c']
+             [src_path filesep  'libmysofa'  filesep  'hrtf'  filesep  'check.c']
+             [src_path filesep  'libmysofa'  filesep  'hrtf'  filesep  'easy.c']
+             [src_path filesep  'libmysofa'  filesep  'hrtf'  filesep  'interpolate.c']
+             [src_path filesep  'libmysofa'  filesep  'hrtf'  filesep  'kdtree.c']
+             [src_path filesep  'libmysofa'  filesep  'hrtf'  filesep  'lookup.c']
+             [src_path filesep  'libmysofa'  filesep  'hrtf'  filesep  'loudness.c']
+             [src_path filesep  'libmysofa'  filesep  'hrtf'  filesep  'minphase.c']
+             [src_path filesep  'libmysofa'  filesep  'hrtf'  filesep  'neighbors.c']
+             [src_path filesep  'libmysofa'  filesep  'hrtf'  filesep  'reader.c']
+             [src_path filesep  'libmysofa'  filesep  'hrtf'  filesep  'resample.c']
+             [src_path filesep  'libmysofa'  filesep  'hrtf'  filesep  'spherical.c']
+             [src_path filesep  'libmysofa'  filesep  'hrtf'  filesep  'tools.c']
+             [src_path filesep  'libmysofa'  filesep  'resampler'  filesep  'speex_resampler.c']
              [src_path filesep  'mexmain.c']
              [src_path filesep  'build.c']
              [src_path filesep  'wavwriter' filesep 'source' filesep 'wavwriter.c']
