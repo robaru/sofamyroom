@@ -70,6 +70,13 @@
        Also, determine correct interpretation of surface attenuation coefficients
        in material databases. (Is sqrt(1-a) appropriate? It is a little confusing
        when manually setting attenuation coefficients.)
+    => Settled by documentation (sofamyroom, issue #3): the absorption
+       coefficient is the energy coefficient of the material tables, so the
+       amplitude reflection factor is sqrt(1-a). The diffusion coefficient
+       is applied in amplitude as (1-d) and d, which mixes conventions; it
+       is kept as is for backward compatibility and could become an
+       opt-in energy-consistent option later. Values outside [0,1] are
+       rejected by ValidateSetup.
 
 ************************************************ @file *******************/
  

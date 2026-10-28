@@ -21,8 +21,8 @@ room.temperature                ``double``                      Room temperature
 **Surface Absorption and Diffusion Coefficients**
 ----------------------------------------------------------------------------------------------------------------------------
 room.surface.frequency          ``[1, F] double``               Frequency bands    [Hz]
-room.surface.absorption         ``[6, F] double``               Absorption coefficients
-room.surface.diffusion          ``[6, F] double``               Diffusion coefficients
+room.surface.absorption         ``[6, F] double`` [#n_coef]_    Energy absorption coefficients, in [0, 1]
+room.surface.diffusion          ``[6, F] double`` [#n_coef]_    Scattering coefficients, in [0, 1]
 
 **Simulation Options**
 ----------------------------------------------------------------------------------------------------------------------------
@@ -73,6 +73,7 @@ receiver(<n>).description       see [#n_recpos]_, [#n_sofa]_    Receiver type
 .. [#n_orient] Defined as (yaw, pitch, roll) in degrees. Run the script ``matlab_helpers/plotroom.m`` if you need to visualize your configuration.
 .. [#n_recpos] Possible values: omnidirectional, cardioid, subcardioid, hypercardiod, supercardioid, unidirectional, bidirectional, dipole, hemisphere
 .. [#n_sofa] Check the README.md to understand how to handle a SOFA receiver.
+.. [#n_coef] One row per surface (two per axis, in the order x, y, z), one column per frequency in ``room.surface.frequency``; the values are interpolated linearly to the simulation bands. ``absorption`` is the energy absorption coefficient: each specular reflection multiplies the amplitude by ``sqrt(1 - absorption)``. ``diffusion`` is the scattering coefficient: the specular image source is weighted by ``(1 - diffusion)`` and the diffuse part by ``diffusion``, both in amplitude (the original Roomsim convention, kept for backward compatibility). Both must be in [0, 1]; values above 1 found in some material tables have to be clipped before use, otherwise the setup is rejected. Reflections are positive real and the analytical directivity patterns use the magnitude only.
 
 The options ``options.subsampleaccuracy`` and ``options.highpasscutoff`` of earlier versions are still accepted but have no effect.
 
