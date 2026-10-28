@@ -3,6 +3,7 @@ add_library(libroomsim STATIC
 	"${CMAKE_CURRENT_SOURCE_DIR}/source/dsp.c"
 	"${CMAKE_CURRENT_SOURCE_DIR}/source/interface.c"
 	"${CMAKE_CURRENT_SOURCE_DIR}/source/interp.c"
+	"${CMAKE_CURRENT_SOURCE_DIR}/source/mem.c"
 	"${CMAKE_CURRENT_SOURCE_DIR}/source/rng.c"
 	"${CMAKE_CURRENT_SOURCE_DIR}/source/roomsim.c"
 	"${CMAKE_CURRENT_SOURCE_DIR}/source/sensor.c"

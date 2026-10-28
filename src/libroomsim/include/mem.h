@@ -20,9 +20,15 @@
  * You should have received a copy of the GNU General Public License
  * along with ROOMSIM. If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************
- * Redistributed as part of SofaMyRoom
- * (https://github.com/robaru/sofamyroom). The code is unchanged with
- * respect to the original ROOMSIM file; only this notice was added.
+ * Modified for SofaMyRoom (https://github.com/robaru/sofamyroom).
+ * Copyright 2026, Roberto Barumerli
+ *
+ * Changes with respect to the original ROOMSIM file:
+ *   - In the command line build MemMalloc/MemCalloc terminate with an
+ *     error message when the allocation fails (see source/mem.c).
+ *
+ * The modifications are released under the same GNU General Public
+ * License, version 3 or later.
  *************************************************************************/
 
 #ifndef _MEM_H_19237197329817461287
@@ -36,8 +42,10 @@
 #  define MemFree(p)     mxFree(p)
 #else
 #  include <stdlib.h>
-#  define MemMalloc(s)   malloc(s)
-#  define MemCalloc(n,s) calloc(n,s)
+   void *MemMallocChecked(size_t size, const char *file, int line);
+   void *MemCallocChecked(size_t count, size_t size, const char *file, int line);
+#  define MemMalloc(s)   MemMallocChecked((s), __FILE__, __LINE__)
+#  define MemCalloc(n,s) MemCallocChecked((n), (s), __FILE__, __LINE__)
 #  define MemFree(p)     free(p)
 #endif
 
