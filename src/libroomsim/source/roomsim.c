@@ -1866,16 +1866,28 @@ BRIR *Roomsim(const CRoomSetup *pSetup)
 
 #define VALIDATE(a,s) if (!(a)) { MsgErrorExit("invalid setup: " s); }
  
-void ValidateSetup(CRoomSetup *pSetup)
+void ValidateSetup(const CRoomSetup *pSetup)
 {
+	int i, n;
+
 	VALIDATE(pSetup->room.surface.nRowsAbsorption == 6, "surface absorption not defined for 6 surfaces");
 	VALIDATE(pSetup->room.surface.nColsAbsorption == pSetup->room.surface.nBands,
 		"surface absorption not defined for all surface frequency bands");
+
+	/* an absorption above 1 would give sqrt of a negative number, i.e. NaN */
+	n = 6 * pSetup->room.surface.nBands;
+	for (i=0; i<n; i++)
+		VALIDATE(pSetup->room.surface.absorption[i] >= 0.0 && pSetup->room.surface.absorption[i] <= 1.0,
+			"surface absorption must be in [0,1]");
 
 	if (pSetup->options.simulatediffuse)
 	{
 		VALIDATE(pSetup->room.surface.nRowsDiffusion == 6, "surface diffusion not defined for 6 surfaces");
 		VALIDATE(pSetup->room.surface.nColsDiffusion == pSetup->room.surface.nBands,
 			"surface diffusion not defined for all surface frequency bands");
+
+		for (i=0; i<n; i++)
+			VALIDATE(pSetup->room.surface.diffusion[i] >= 0.0 && pSetup->room.surface.diffusion[i] <= 1.0,
+				"surface diffusion must be in [0,1]");
 	}
 }

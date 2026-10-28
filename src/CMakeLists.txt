@@ -70,6 +70,16 @@ target_compile_definitions(sofamyroom_unittest PRIVATE
 target_link_libraries(sofamyroom_unittest libroomsim wavwriter)
 add_test(NAME unittest COMMAND sofamyroom_unittest)
 
+# Setup validation: coefficients outside [0,1] must be rejected before simulating.
+add_test(NAME invalid_absorption
+	COMMAND sofamyroom "${CMAKE_SOURCE_DIR}/../data/invalid_absorption.txt")
+set_tests_properties(invalid_absorption PROPERTIES
+	PASS_REGULAR_EXPRESSION "surface absorption must be in \\[0,1\\]")
+add_test(NAME invalid_diffusion
+	COMMAND sofamyroom "${CMAKE_SOURCE_DIR}/../data/invalid_diffusion.txt")
+set_tests_properties(invalid_diffusion PROPERTIES
+	PASS_REGULAR_EXPRESSION "surface diffusion must be in \\[0,1\\]")
+
 if(BUILD_DOCS MATCHES True)
 	add_subdirectory ("docsrc")
 endif()
