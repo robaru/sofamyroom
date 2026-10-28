@@ -182,7 +182,7 @@ A useful tutorial on how to use Doxygen in combination with Sphinx and CMAKE is 
 
 # License
 
-The code written for SofaMyRoom is licensed under the [EUPL-1.2](https://joinup.ec.europa.eu/sites/default/files/custom-page/attachment/2020-03/EUPL-1.2%20EN.txt). The files inherited from Roomsim by Steven M. Schimmel keep their GNU GPL-3.0-or-later licence, so every compiled form of SofaMyRoom is a combined work distributed under the GPL-3.0-or-later. The included third-party code (libmysofa, PocketFFT, SFMT, WAVE writer) and its licences are listed in `THIRD_PARTY_LICENSES.md` in the repository.
+The code written for SofaMyRoom is licensed under the [EUPL-1.2](https://joinup.ec.europa.eu/sites/default/files/custom-page/attachment/2020-03/EUPL-1.2%20EN.txt). The files inherited from Roomsim by Steven M. Schimmel keep their GNU GPL-3.0-or-later licence, so every compiled form of SofaMyRoom is a combined work distributed under the GPL-3.0-or-later. The included third-party code (libmysofa, PocketFFT, SFMT) and its licences are listed in `THIRD_PARTY_LICENSES.md` in the repository.
 
 # Credits
 
@@ -191,7 +191,7 @@ The code written for SofaMyRoom is licensed under the [EUPL-1.2](https://joinup.
 * Martin Reinecke - [PocketFFT](https://github.com/mreineck/pocketfft)
 * Mutsuo Saito and Makoto Matsumoto - [SFMT](http://www.math.sci.hiroshima-u.ac.jp/m-mat/MT/SFMT/)
 * Piotr Majdak et al. - [Spatially Oriented Format for Acoustics (SOFA)](https://www.sofaconventions.org/)
-* Andrew Ippoliti - [WAV file writer](http://blog.acipo.com/generating-wave-files-in-c/)
+* Andrew Ippoliti - [Generating WAVE files in C](http://blog.acipo.com/generating-wave-files-in-c/), the model for the first version of our WAVE writer
 * Antoine Deleforge and Clément Gaultier [VAST](http://thevastproject.inria.fr/dataset/)
 
 # References

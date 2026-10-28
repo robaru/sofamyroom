@@ -146,8 +146,7 @@ void mexFunction(
 
                 MsgPrintf("Writing output file '%s'\n", filename);
 
-                w = makeWave(3, (int)brir[i].fs, (short int)brir[i].nChannels, (short int)32);
-                waveSetDuration(&w, (float)brir[i].nSamples / brir[i].fs);
+                w = makeWave((int)brir[i].fs, brir[i].nChannels, brir[i].nSamples);
                 for (int j = 0; j < brir[i].nSamples; ++j)
                 {
                     for (int k = 0; k < brir[i].nChannels; ++k)
@@ -156,7 +155,8 @@ void mexFunction(
                     }
                     waveAddSampleFloat(&w, sample);
                 }
-                waveToFile(&w, filename);
+                if (waveToFile(&w, filename) != 0)
+                    MsgPrintf("Unable to write '%s'\n", filename);
                 waveDestroy(&w);
             }
 

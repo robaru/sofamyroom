@@ -4,14 +4,15 @@ sofamyroom compiles the following third-party code from the copies kept
 under `src/`. Their licences are reproduced below and must accompany any
 binary distribution of sofamyroom (command line tool, MEX file, Python
 package). zlib, used by libmysofa, is taken from the system and is not
-included.
+included. The WAVE writer in `src/wavwriter/` is sofamyroom code (EUPL-1.2);
+it replaces an earlier adaptation of Andrew Ippoliti's blog example
+"Generating WAVE files in C" (http://blog.acipo.com/generating-wave-files-in-c/).
 
 | Component | Version | Location | Licence |
 |-----------|---------|----------|---------|
 | [libmysofa](https://github.com/hoene/libmysofa) | 1.3.5 | `src/libmysofa/` | BSD-3-Clause |
 | [PocketFFT](https://github.com/mreineck/pocketfft) (C version) | master, 2019 | `src/libpocketfft/` | BSD-3-Clause |
 | [SFMT](http://www.math.sci.hiroshima-u.ac.jp/m-mat/MT/SFMT/) | 1.5 | `src/libsfmt/` | BSD-3-Clause |
-| WAVE writer by Andrew Ippoliti | 2014 | `src/wavwriter/` | see below |
 
 The simulator core in `src/libroomsim/` derives from Roomsim by Steven M.
 Schimmel and is GPL-3.0-or-later; see the README for the licence of
@@ -118,10 +119,3 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ```
-
-## WAVE writer
-
-`src/wavwriter/` is adapted from the example code published by Andrew
-Ippoliti in the blog post "Generating WAVE files in C"
-(http://blog.acipo.com/generating-wave-files-in-c/, 2014). The post does
-not state a licence; the code is used with attribution.

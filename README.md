@@ -138,7 +138,7 @@ The files inherited from Roomsim by Steven M. Schimmel (University of Zurich, 20
 
 Since the simulator core is GPL, every compiled form of sofamyroom (command line tool, MEX file, or a package that links it) is a combined work distributed under the GNU GPL-3.0-or-later; the EUPL-1.2 permits this through its compatibility clause.
 
-The third-party code included in `src/` (libmysofa, PocketFFT, SFMT and the WAVE writer) is listed with its licence texts in [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
+The third-party code included in `src/` (libmysofa, PocketFFT, SFMT) is listed with its licence texts in [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
 
 ## Credits
 
@@ -147,7 +147,7 @@ The third-party code included in `src/` (libmysofa, PocketFFT, SFMT and the WAVE
 * Martin Reinecke - [PocketFFT](https://github.com/mreineck/pocketfft)
 * Mutsuo Saito and Makoto Matsumoto - [SFMT](http://www.math.sci.hiroshima-u.ac.jp/m-mat/MT/SFMT/)
 * Piotr Majdak et al. - [Spatially Oriented Format for Acoustics (SOFA)](https://www.sofaconventions.org/)
-* Andrew Ippoliti - [WAV file writer](http://blog.acipo.com/generating-wave-files-in-c/)
+* Andrew Ippoliti - [Generating WAVE files in C](http://blog.acipo.com/generating-wave-files-in-c/), the model for the first version of our WAVE writer
 * Antoine Deleforge and Clément Gaultier [VAST](http://thevastproject.inria.fr/dataset/)
 
 ## References

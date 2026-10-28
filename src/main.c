@@ -101,8 +101,7 @@ int main(int argc, char **argv)
 
 		MsgPrintf("Writing output file '%s'\n", filename);
 
-		w = makeWave(3, (int)response[i].fs, (short int)response[i].nChannels, (short int)32);
-		waveSetDuration(&w, (float)(response[i].nSamples / response[i].fs));
+		w = makeWave((int)response[i].fs, response[i].nChannels, response[i].nSamples);
 		for (j = 0; j < response[i].nSamples; ++j)
 		{
 			for (k = 0; k < response[i].nChannels; ++k)
@@ -111,7 +110,8 @@ int main(int argc, char **argv)
 			}
 			waveAddSampleFloat(&w, sample);
 		}
-		waveToFile(&w, filename);
+		if (waveToFile(&w, filename) != 0)
+			MsgPrintf("Unable to write '%s'\n", filename);
 		waveDestroy(&w);
 
 	}
