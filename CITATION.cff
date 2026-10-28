@@ -1,0 +1,34 @@
+cff-version: 1.2.0
+message: "If you use sofamyroom, please cite it as below."
+title: "sofamyroom"
+type: software
+license: EUPL-1.2
+repository-code: "https://github.com/robaru/sofamyroom"
+url: "https://robaru.github.io/sofamyroom"
+authors:
+  - family-names: Barumerli
+    given-names: Roberto
+  - family-names: Bianchi
+    given-names: Daniele
+  - family-names: Geronazzo
+    given-names: Michele
+  - family-names: Avanzini
+    given-names: Federico
+preferred-citation:
+  type: article
+  title: "SofaMyRoom: a fast and multiplatform \"shoebox\" room simulator for binaural room impulse response dataset generation"
+  authors:
+    - family-names: Barumerli
+      given-names: Roberto
+    - family-names: Bianchi
+      given-names: Daniele
+    - family-names: Geronazzo
+      given-names: Michele
+    - family-names: Avanzini
+      given-names: Federico
+  year: 2021
+  journal: "arXiv preprint"
+  identifiers:
+    - type: other
+      value: "arXiv:2106.12992"
+  url: "https://arxiv.org/abs/2106.12992"
