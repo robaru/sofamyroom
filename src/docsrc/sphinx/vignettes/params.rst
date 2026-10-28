@@ -48,6 +48,7 @@ options.numberofrays            ``integer``                     Number of rays 2
 options.diffusetimestep         ``double``                      Time resolution in diffuse energy histogram [s]
 options.rayenergyfloordB        ``double``                      Ray energy threshold with respect to initial energy [dB]
 options.uncorrelatednoise       ``boolean``                     Uncorrelated poisson arrivals
+options.seed                    ``integer``                     Seed of the random number generator (optional, 0 = built-in default)
 
 **Output Options**
 ----------------------------------------------------------------------------------------------------------------------------

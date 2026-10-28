@@ -39,6 +39,7 @@
 #undef STRUCTEND
 #undef FIELDBOOL
 #undef FIELDINT
+#undef FIELDINTOPT
 #undef FIELDDOUBLE
 #undef FIELDSTRING
 #undef FIELDSTRUCT
@@ -63,6 +64,7 @@
 
 #define FIELDBOOL(n)                    bool n;
 #define FIELDINT(n)                     int n;
+#define FIELDINTOPT(n,d)                int n;
 #define FIELDDOUBLE(n)                  double n;
 #define FIELDSTRING(n)                  const char *n;
 #define FIELDSTRUCT(t,n)                t n;
@@ -96,6 +98,7 @@
 
 #define FIELDBOOL(n)
 #define FIELDINT(n) 
+#define FIELDINTOPT(n,d)
 #define FIELDDOUBLE(n)
 #define FIELDSTRING(n)
 #define FIELDSTRUCT(t,n)
@@ -130,6 +133,12 @@
     if (!(tmp = mxGetField(prhs,index,#n))) mexErrMsgTxt("missing field '" #n "'"); \
     if (!mxIsNumeric(tmp) || mxGetNumberOfElements(tmp)!=1) mexErrMsgTxt("expected field '" #n "' to be a numeric scalar"); \
     (plhs->n) = (int) *((double *)mxGetData(tmp));
+
+/* optional integer field: takes default d when missing */
+#define FIELDINTOPT(n,d) \
+    if (!(tmp = mxGetField(prhs,index,#n))) (plhs->n) = (d); else { \
+    if (!mxIsNumeric(tmp) || mxGetNumberOfElements(tmp)!=1) mexErrMsgTxt("expected field '" #n "' to be a numeric scalar"); \
+    (plhs->n) = (int) mxGetScalar(tmp); }
     
 #define FIELDDOUBLE(n) \
     if (!(tmp = mxGetField(prhs,index,#n))) mexErrMsgTxt("missing field '" #n "'"); \
@@ -349,6 +358,7 @@ void ParseDynDoubleArray2D(char *str, double **array, int *nr, int *nc)
 
 #    define FIELDBOOL(n)			GETFIELD(n); p->n = ParseBool(pSubItem->data.value);
 #    define FIELDINT(n)				GETFIELD(n); p->n = (int) strtol(pSubItem->data.value,NULL,10);
+#    define FIELDINTOPT(n,d)		pSubItem = SetupFindField(pItem,#n); p->n = pSubItem ? (int) strtol(pSubItem->data.value,NULL,10) : (d);
 #    define FIELDDOUBLE(n)			GETFIELD(n); p->n = strtod(pSubItem->data.value,NULL);
 #    define FIELDSTRING(n)			GETFIELD(n); p->n = pSubItem->data.value;
 #    define FIELDSTRUCT(t,n)		GETSTRUCT(n); Load##t(pSubItem, &p->n);
@@ -414,6 +424,7 @@ STRUCTBEGIN ( COptions )
 	FIELDDOUBLE   ( diffusetimestep     )
 	FIELDDOUBLE   ( rayenergyfloordB    )
 	FIELDBOOL	  ( uncorrelatednoise   )
+	FIELDINTOPT   ( seed, 0             )  /* 0 = built-in default seed */
 
 	FIELDSTRING	  ( outputname			)
 #	ifdef MEX

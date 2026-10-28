@@ -62,6 +62,7 @@ options.numberofrays        = 2000;                 % number of rays in simulati
 options.diffusetimestep     = 0.010;                % time resolution in diffuse energy histogram (seconds)
 options.rayenergyfloordB    = -80;                  % ray energy threshold (dB, with respect to initial energy)
 options.uncorrelatednoise   = true;                 % use uncorrelated poisson arrivals for binaural impulse responses?
+options.seed                = 0;                    % seed of the random number generator (0 = built-in default)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %

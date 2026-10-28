@@ -58,9 +58,9 @@ uint32_t RandomGet(CRNG *rng)
 
 */
 
-void RngInit(sfmt_t *sfmt)
+void RngInit(sfmt_t *sfmt, uint32_t seed)
 {
-    sfmt_init_gen_rand(sfmt, 0xdeaf0bad);
+    sfmt_init_gen_rand(sfmt, seed);
 }
 
 void RngSeed(void)

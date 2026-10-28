@@ -37,10 +37,15 @@
 #include "types.h"
 #include "SFMT.h"
 
+/* seed used when options.seed is 0; reproduces the results of earlier releases */
+#define RNG_DEFAULT_SEED 0xdeaf0bad
+
 /*double RandomUniform(void); */
-void RngInit(sfmt_t *sfmt);
+void RngInit(sfmt_t *sfmt, uint32_t seed);
 void RngLambert(sfmt_t *sfmt, XYZ *xyz);
 
-#define RngFill_uint32(sfmt,array,size) RngInit(sfmt);sfmt_fill_array32(sfmt,array,size)
+/* sfmt_fill_array32 must follow an init (SFMT requirement), so the generator
+   is re-seeded before every fill; all fills in a run share the same seed */
+#define RngFill_uint32(sfmt,seed,array,size) RngInit(sfmt,seed);sfmt_fill_array32(sfmt,array,size)
 
 #endif /* RNG_H_19239561826387126831623 */

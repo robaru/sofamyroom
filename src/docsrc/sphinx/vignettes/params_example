@@ -9,6 +9,7 @@ options.numberofrays        = 2000;
 options.diffusetimestep     = 0.010; %[s]
 options.rayenergyfloordB    = -80;  %[dB]
 options.uncorrelatednoise   = true;    
+options.seed                = 0;
 
 % specular reflections simulation options
 options.simulatespecular = true; 

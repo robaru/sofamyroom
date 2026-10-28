@@ -285,6 +285,7 @@ void Roomsetup(CRoomSetup* par)
     par->options.numberofrays = 20 * RAYORDER * RAYORDER;
     par->options.rayenergyfloordB = -80;
     par->options.diffusetimestep = 0.010;
+    par->options.seed = 0;
 
     par->room.dimension[0] = 1000;
     par->room.dimension[1] = 1000;
@@ -402,6 +403,81 @@ void testEmptyRoom(void)
     CmdClearAllSensors();
 }
 
+/* diffuse-only simulation of a small room with omnidirectional sensors;
+   returns a copy of the first BRIR, to be freed by the caller */
+static double *runDiffuseRoom(int seed, int *nSamples)
+{
+    static double frequency[] = { 125, 250, 500, 1000, 2000, 4000 };
+    static double absorption[6 * 6];
+    static double diffusion[6 * 6];
+    static const CSensor source[]   = { {{2, 2, 1.5}, {0, 0, 0}, "omnidirectional"} };
+    static const CSensor receiver[] = { {{5, 4, 1.5}, {0, 0, 0}, "omnidirectional"} };
+    CRoomSetup setup;
+    BRIR *brir;
+    double *copy;
+    int i;
+
+    for (i = 0; i < 36; i++) { absorption[i] = 0.3; diffusion[i] = 0.5; }
+
+    Roomsetup(&setup);
+    setup.options.responseduration = 0.2;
+    setup.options.verbose = false;
+    setup.options.simulatespecular = false;
+    setup.options.simulatediffuse = true;
+    setup.options.numberofrays = 20 * 3 * 3;
+    setup.options.uncorrelatednoise = false;
+    setup.options.seed = seed;
+    setup.room.dimension[0] = 7;
+    setup.room.dimension[1] = 6;
+    setup.room.dimension[2] = 3;
+    setup.room.surface.frequency = frequency;
+    setup.room.surface.nBands = 6;
+    setup.room.surface.absorption = absorption;
+    setup.room.surface.nRowsAbsorption = 6;
+    setup.room.surface.nColsAbsorption = 6;
+    setup.room.surface.diffusion = diffusion;
+    setup.room.surface.nRowsDiffusion = 6;
+    setup.room.surface.nColsDiffusion = 6;
+    setup.source = source;
+    setup.nSources = 1;
+    setup.receiver = receiver;
+    setup.nReceivers = 1;
+
+    ValidateSetup(&setup);
+    brir = Roomsim(&setup);
+
+    *nSamples = brir->nChannels * brir->nSamples;
+    copy = (double *) malloc(*nSamples * sizeof(double));
+    memcpy(copy, brir->sample, *nSamples * sizeof(double));
+
+    ReleaseBRIR(brir);
+    CmdClearAllSensors();
+    return copy;
+}
+
+void testRngSeed(void)
+{
+    double *a, *b, *c;
+    int na, nb, nc, i;
+    double energy = 0;
+
+    a = runDiffuseRoom(1, &na);
+    b = runDiffuseRoom(1, &nb);
+    c = runDiffuseRoom(2, &nc);
+
+    if (na != nb || na != nc) ERROR("response length differs between runs");
+
+    for (i = 0; i < na; i++) energy += a[i] * a[i];
+    if (energy <= 0) ERROR("diffuse tail is empty");
+
+    if (memcmp(a, b, na * sizeof(double)) != 0)
+        ERROR("same seed gives different responses");
+    if (memcmp(a, c, na * sizeof(double)) == 0)
+        ERROR("different seeds give identical responses");
+
+    free(a); free(b); free(c);
+}
+
 typedef struct {
     char *name;
     void (*run)(void);
@@ -413,5 +489,6 @@ CUnittest unittest[] = {
     { "minimum phase FIR filter design",        testMinPhaseFIR         },
 	{ "freqz log magnitude frequency response", testFreqzLogMagnitude   },
     { "empty room",                             testEmptyRoom   },
+    { "random number generator seed",           testRngSeed     },
 };
 int nUnittests = sizeof(unittest) / sizeof(CUnittest);

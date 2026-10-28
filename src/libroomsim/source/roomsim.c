@@ -768,6 +768,12 @@ void InitSimulationWeights(CRoomsimInternal *pSimulation, CSensorDefinition *pSe
 
 }
 
+/* seed of the random number generator for this setup */
+static uint32_t RoomsimSeed(const CRoomSetup *pSetup)
+{
+	return pSetup->options.seed > 0 ? (uint32_t) pSetup->options.seed : RNG_DEFAULT_SEED;
+}
+
 CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup, sfmt_t *sfmt)
 {
     char msg[256];
@@ -949,7 +955,7 @@ CRoomsimInternal *RoomsimInit(const CRoomSetup *pSetup, sfmt_t *sfmt)
     }
 
 	/* initialize random number generator */
-	RngInit(sfmt);
+	RngInit(sfmt, RoomsimSeed(pSetup));
 
 	return pSimulation;
 }
@@ -1695,7 +1701,7 @@ TEMP */
 #endif /* LOGTAIL */
 
 				/* generate noise signal */
-				RngFill_uint32(sfmt, pSimulation->noise, (nRecvCh*length+3)&-4);
+				RngFill_uint32(sfmt, RoomsimSeed(pSetup), pSimulation->noise, (nRecvCh*length+3)&-4);
 
 #ifdef LOGTAIL
 				fwrite(pSimulation->noise,sizeof(pSimulation->noise[0]),nRecvCh*length,fidtail);
