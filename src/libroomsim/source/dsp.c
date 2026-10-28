@@ -27,6 +27,10 @@
  *   - FFTW replaced by PocketFFT (BSD) for the real FFTs of the minimum
  *     phase filter design; the half-complex buffer layout of FFTW is kept
  *     and converted in ExecuteR2HC()/ExecuteHC2R().
+ *   - Conv() and FIRfilter() iterate over the filter taps in the outer loop
+ *     and over the samples in the inner loop, so that the inner loop is a
+ *     plain multiply-add the compiler can vectorize. Every output sample
+ *     still accumulates its products in the same order as the direct form.
  *
  * The modifications are released under the same GNU General Public
  * License, version 3 or later.
@@ -41,6 +45,17 @@
 #include "interp.h"
 #include "mem.h"
 #include "msg.h"
+
+/* Pointers that do not alias let the compiler vectorize the inner loops. */
+#if defined(_MSC_VER)
+#  define DSP_RESTRICT __restrict
+#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
+#  define DSP_RESTRICT restrict
+#elif defined(__GNUC__)
+#  define DSP_RESTRICT __restrict__
+#else
+#  define DSP_RESTRICT
+#endif
 
 /** Convolution. The sequence \a h[0...\a hlen - 1] is convolved with
  *  the sequence \a x[0...\a xlen - 1], and the result is stored in 
@@ -60,50 +75,30 @@
  *     are handled correctly. Internally, if \a hlen > \a xlen then 
  *     \a h,\a hlen and \a x,\a xlen are swapped.
  */
-void Conv(const double *h, int hlen, const double *x, int xlen, double *y)
+void Conv(const double *DSP_RESTRICT h, int hlen, const double *DSP_RESTRICT x, int xlen, double *DSP_RESTRICT y)
 {
-    const double *hp, *xp;
-    int   count, i;
+    const double *tmp;
+    double hk;
+    int    i, k;
     
     /* make sure hlen <= xlen */
     if (hlen>xlen) 
     { 
         /* swap h and x */
-        hp = h; h = x; x = hp;
+        tmp = h; h = x; x = tmp;
         i = hlen; hlen = xlen; xlen = i;
     }
     
-    /* compute head */
-    for (i=0; i<hlen-1; i++)
+    /* Tap-outer, sample-inner form. Output sample y[n] receives its
+       products in the order h[0]x[n], h[1]x[n-1], ..., exactly as the 
+       direct form does, so the result is bit-identical; the inner loop
+       is a multiply-add over contiguous memory that vectorizes. */
+    memset(y, 0, (size_t)(hlen+xlen-1)*sizeof(double));
+    for (k=0; k<hlen; k++)
     {
-        y[i] = 0.0;
-        hp = h;
-        xp = &(x[i]);
-        count = i+1;
-        while (count--)
-            y[i] += (*xp--) * (*hp++);
-    }
-
-    /* compute mid-section */
-    for (i=hlen-1; i<=xlen-1; i++)
-    {
-        y[i] = 0.0;
-        hp = h;
-        xp = &(x[i]);
-        count = hlen;
-        while (count--)
-            y[i] += (*xp--) * (*hp++);
-    }
-    
-    /* compute tail */
-    for (i=xlen; i<xlen+hlen-1; i++)
-    {
-        y[i] = 0.0;
-        hp = &(h[(i-xlen) + 1]);
-        xp = &(x[xlen-1]);
-        count = hlen-1 - (i-xlen);
-        while (count--)
-            y[i] += (*xp--) * (*hp++);
+        hk = h[k];
+        for (i=0; i<xlen; i++)
+            y[k+i] += hk * x[i];
     }
 }
 
@@ -127,68 +122,39 @@ void Conv(const double *h, int hlen, const double *x, int xlen, double *y)
  *  @warning
  *     Requires that \a xlen > \a hlen.
  */
-void FIRfilter(const double *h, int hlen, const double *x, int xlen, double *y, double *state)
+void FIRfilter(const double *DSP_RESTRICT h, int hlen, const double *DSP_RESTRICT x, int xlen, double *DSP_RESTRICT y, double *DSP_RESTRICT state)
 {
-    const double *hp, *xp;
-    int          count, i;
+    double hk;
+    int    i, k;
     
+    /* initial value of each output sample: the previous state, or zero */
     if (state)
     {
-        /* compute initial output using previous state */
-        for (i=0; i<hlen-1; i++)
-        {
-            y[i]  = state[i];
-            hp    = h;
-            xp    = &(x[i]);
-            count = i+1;
-            while (count--)
-                y[i] += (*xp--) * (*hp++);
-        }
-        
-        /* compute mid-section  */
-        for (i=hlen-1; i<xlen; i++)
-        {
-            y[i]  = 0.0;
-            hp    = h;
-            xp    = &(x[i]);
-            count = hlen;
-            while (count--)
-                y[i] += (*xp--) * (*hp++);
-        }
-        
-        /* update state */
-        for (i=0; i<hlen-1; i++)
-        {
-            state[i] = 0.0;
-            hp       = &(h[i+1]);
-            xp       = &(x[xlen-1]);
-            count    = hlen - 1 - i;
-            while (count--)
-                state[i] += (*xp--) * (*hp++);
-        }
+        memcpy(y, state, (size_t)(hlen-1)*sizeof(double));
+        memset(&y[hlen-1], 0, (size_t)(xlen-hlen+1)*sizeof(double));
     }
     else
     {
-        /* compute initial output without a previous state */
-        for (i=0; i<hlen-1; i++)
+        memset(y, 0, (size_t)xlen*sizeof(double));
+    }
+    
+    /* tap-outer, sample-inner form; see Conv() */
+    for (k=0; k<hlen; k++)
+    {
+        hk = h[k];
+        for (i=0; i<xlen-k; i++)
+            y[k+i] += hk * x[i];
+    }
+    
+    if (state)
+    {
+        /* update state: state[i] = sum_{k>i} h[k] x[xlen-k+i], products in ascending k */
+        memset(state, 0, (size_t)(hlen-1)*sizeof(double));
+        for (k=1; k<hlen; k++)
         {
-            y[i]  = 0.0;
-            hp    = h;
-            xp    = &(x[i]);
-            count = i+1;
-            while (count--)
-                y[i] += (*xp--) * (*hp++);
-        }
-        
-        /* compute mid-section */
-        for (i=hlen-1; i<xlen; i++)
-        {
-            y[i]  = 0.0;
-            hp    = h;
-            xp    = &(x[i]);
-            count = hlen;
-            while (count--)
-                y[i] += (*xp--) * (*hp++);
+            hk = h[k];
+            for (i=0; i<k; i++)
+                state[i] += hk * x[xlen-k+i];
         }
     }
 }
