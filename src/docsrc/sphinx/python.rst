@@ -130,6 +130,9 @@ and source annotations described in :doc:`vignettes/vast`:
    dataset.rir_left.shape        # (20000, n_responses)
    dataset.save("vast_kemar.mat")   # loadable in MATLAB: load('vast_kemar.mat')
 
+``workers=4`` simulates the chunks of source positions in four processes;
+the dataset is the same whatever the number of workers (in a script, keep
+the call under ``if __name__ == "__main__":`` as for any multiprocessing).
 The simulation runs at the sampling frequency of the HRTFs and the stored
 responses are resampled to ``fs``; ``vast.rt60()`` gives the
 Norris-Eyring reverberation time per band used for the annotation. The

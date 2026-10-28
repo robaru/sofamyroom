@@ -30,6 +30,19 @@ def test_rt60_matches_matlab_port():
     assert np.all(vast.rt60(anechoic) == 0)
 
 
+def test_generate_workers_give_same_result(sofa_path):
+    options = smr.Options(simulatediffuse=True, numberofrays=200,
+                          reflectionorder=(3, 3, 3), verbose=False)
+    cond = _conditions()[1]
+    kw = {"fs": 16000, "duration": 0.25, "step": 50, "options": options,
+          "chunk": 4}
+    serial = vast.generate(cond, sofa_path, **kw)
+    parallel = vast.generate(cond, sofa_path, workers=2, **kw)
+    assert serial.n_responses == parallel.n_responses > 4
+    assert np.array_equal(serial.rir_left, parallel.rir_left)
+    assert np.array_equal(serial.rir_right, parallel.rir_right)
+
+
 def test_generate_two_rooms(sofa_path, tmp_path):
     options = smr.Options(simulatediffuse=True, numberofrays=200,
                           reflectionorder=(3, 3, 3), verbose=False)

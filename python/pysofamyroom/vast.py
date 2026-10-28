@@ -28,6 +28,7 @@ Example
 from __future__ import annotations
 
 from collections.abc import Callable, Sequence
+from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass, field
 from fractions import Fraction
 from os import PathLike
@@ -277,12 +278,34 @@ def _rotate_z(points: np.ndarray, yaw_deg: float) -> np.ndarray:
     return points @ rot.T
 
 
+def _simulate_chunk(arg: tuple[str, int, int, int],
+                    ) -> tuple[np.ndarray, np.ndarray]:
+    """Simulate one setup text; left/right responses as (length, n) float32.
+
+    Module-level so that :func:`generate` can hand it to worker processes.
+    """
+    from pysofamyroom._native import simulate_text
+
+    text, up, down, length = arg
+    brirs = simulate_text(text)
+    left = np.zeros((length, len(brirs)), dtype=np.float32)
+    right = np.zeros((length, len(brirs)), dtype=np.float32)
+    for i, brir in enumerate(brirs):
+        ir = brir[0]
+        if up != down:
+            ir = scipy.signal.resample_poly(ir, up, down, axis=0)
+        ir = ir[:length]
+        left[:len(ir), i] = ir[:, 0]
+        right[:len(ir), i] = ir[:, 1]
+    return left, right
+
+
 def generate(conditions: RoomCondition | Sequence[RoomCondition],
              sofa: str | PathLike, *, fs: float = 16000.0,
              duration: float = 1.25, margin: float = 0.2, step: int = 1,
              options: Options | None = None, interp: bool = True,
              norm: bool = True, resampling: bool = True,
-             chunk: int = 32, verbose: bool = False,
+             chunk: int = 32, workers: int = 1, verbose: bool = False,
              progress: Callable[[str, int, int], None] | None = None,
              ) -> VAST:
     """Simulate a VAST dataset for one or more room conditions.
@@ -313,6 +336,13 @@ def generate(conditions: RoomCondition | Sequence[RoomCondition],
         Flags of the SOFA receiver (see :meth:`Receiver.sofa`).
     chunk : int
         Number of sources per call of the simulator (bounds memory use).
+    workers : int
+        Number of processes simulating chunks in parallel (1 = run in
+        this process). The result does not depend on it: every chunk is
+        seeded from its own setup. Each worker loads the SOFA file once.
+        Worker processes are started with the ``spawn`` method on macOS
+        and Windows, so a script calling ``generate(..., workers=n)``
+        must keep that call under ``if __name__ == "__main__":``.
     verbose : bool
         Print the simulator's messages.
     progress : callable or None
@@ -361,21 +391,23 @@ def generate(conditions: RoomCondition | Sequence[RoomCondition],
                             interp=interp, norm=norm, resampling=resampling)
         left = np.empty((length, n), dtype=np.float32)
         right = np.empty((length, n), dtype=np.float32)
-        for start in range(0, n, chunk):
-            stop = min(start + chunk, n)
-            setup = Setup(room=room, options=opts,
-                          sources=[Source(p) for p in positions[start:stop]],
-                          receivers=[rec])
-            for i, brir in enumerate(setup.simulate()):
-                ir = brir[0]
-                if up_down != 1:
-                    ir = scipy.signal.resample_poly(
-                        ir, up_down.numerator, up_down.denominator, axis=0)
-                ir = ir[:length]
-                left[:len(ir), start + i] = ir[:, 0]
-                right[:len(ir), start + i] = ir[:, 1]
-                left[len(ir):, start + i] = 0.0
-                right[len(ir):, start + i] = 0.0
+        bounds = [(start, min(start + chunk, n))
+                  for start in range(0, n, chunk)]
+        args = [(Setup(room=room, options=opts,
+                       sources=[Source(p) for p in positions[start:stop]],
+                       receivers=[rec]).to_text(),
+                 up_down.numerator, up_down.denominator, length)
+                for start, stop in bounds]
+        if workers > 1:
+            pool = ProcessPoolExecutor(max_workers=min(workers, len(args)))
+            with pool:
+                results = pool.map(_simulate_chunk, args)
+        else:
+            results = map(_simulate_chunk, args)
+        for (start, stop), (part_left, part_right) in zip(bounds, results,
+                                                          strict=True):
+            left[:, start:stop] = part_left
+            right[:, start:stop] = part_right
             if progress is not None:
                 progress(cond.name, stop, n)
 
