@@ -815,11 +815,15 @@ CSensorDefinitionListItem *FindSensorData(const char *name, const char *subid)
 {
     CSensorDefinitionListItem *pItem = g_pSensordefinitionlist;
     
+    /* a missing sub-identifier is stored as an empty string */
+    if (!subid) subid = "";
+
+    /* keys must match exactly: a prefix match would return "SOFA x.sofa"
+       for a later request of "SOFA x.sofa interp=1" */
     while (pItem)
     {
-        if (strnicmp(name,pItem->sensorid,strlen(pItem->sensorid))==0)
-            if (!subid || strnicmp(subid,pItem->subid,strlen(pItem->subid))==0)
-                break;
+        if (stricmp(name,pItem->sensorid)==0 && stricmp(subid,pItem->subid)==0)
+            break;
 
         pItem = pItem->next;
     }
