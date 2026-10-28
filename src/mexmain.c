@@ -128,7 +128,12 @@ void mexFunction(
             Wave	   w;
             float      *sample;
             
-            sample = (float*)malloc(brir[0].nChannels * sizeof(float));
+            int        maxch = 0;
+
+            /* scratch buffer sized for the receiver with the most channels */
+            for (int i = 0; i < roomsetup.nSources*roomsetup.nReceivers; i++)
+                if (brir[i].nChannels > maxch) maxch = brir[i].nChannels;
+            sample = (float*)malloc(maxch * sizeof(float));
 
             if (!sample)
             {

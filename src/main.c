@@ -89,7 +89,11 @@ int main(int argc, char **argv)
 
 	fid = NULL;
 
-	sample = (float*)malloc(response[0].nChannels * sizeof(float));
+	/* scratch buffer sized for the receiver with the most channels */
+	k = 0;
+	for (i = 0; i < setup.nSources*setup.nReceivers; i++)
+		if (response[i].nChannels > k) k = response[i].nChannels;
+	sample = (float*)malloc(k * sizeof(float));
 
 	if (!sample)
 	{
