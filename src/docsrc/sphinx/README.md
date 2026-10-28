@@ -11,23 +11,7 @@ Thanks to the Virtual Acoustic Space Traveling (VAST) framework [1], we added th
 
 ## Installing SofaMyRoom
 
-SofaMyRoom is built from source with CMake; the required libmysofa and FFTW archives for Windows, Linux and macOS are included in the repository. Only 64-bit platforms are supported.
-
-### Installation on Windows
-
-No futher steps are required to run SofaMyRoom on Windows.
-
-### Installation on Ubuntu Linux
-
-`libmysofa` requires the `zlib` library in order to work properly. To install it, open a terminal and enter the following command:
-
-```bash
-sudo apt-get install zlib1g
-```
-
-### Installation on macOS
-
-No further steps are required to run SofaMyRoom on macOS.
+SofaMyRoom is built from source with CMake (see Building). The third-party code it needs (libmysofa, PocketFFT, SFMT) is included in the repository and compiled together with it, so the resulting program is self-contained. The only system library is zlib, which macOS, the Linux distributions and MATLAB already provide; on Ubuntu Linux the development package is needed to build (`sudo apt-get install zlib1g-dev`), on Windows see Building on Windows. Only 64-bit platforms are supported.
 
 # Usage
 
@@ -109,10 +93,10 @@ You can use CMake to generate a Visual Studio solution that can be used to build
 
 ```bash
 > cd build
-> cmake ../src -G"Visual Studio 16 2019"
+> cmake ../src -G"Visual Studio 16 2019" -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
 ```
 
-To know how to generate solutions for other versions of Visual Studio, type `cmake --help`.
+zlib must be available to the compiler; the command above takes it from [vcpkg](https://vcpkg.io) (`vcpkg install zlib`). To know how to generate solutions for other versions of Visual Studio, type `cmake --help`.
 
 ## Building on Ubuntu Linux
 
@@ -124,12 +108,10 @@ cmake ../src -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=BUILD_TYPE
 make
 ```
 
-`CMAKE_BUILD_TYPE` can be `Debug`, `Release` or `Unittest`. If CMAKE_BUILD_TYPE is not set, the default build type is `Release`. Before building the project, the following libraries may be needed:
+`CMAKE_BUILD_TYPE` can be `Debug`, `Release` or `Unittest`. If CMAKE_BUILD_TYPE is not set, the default build type is `Release`. Before building the project, install the zlib headers:
 
 ```bash
-sudo apt-get install libfftw3-dev
 sudo apt-get install zlib1g-dev
-sudo apt-get install libcunit1-dev
 ```
 
 ## Building on MacOS
@@ -140,8 +122,6 @@ You can use CMake to generate a XCode project. Open a new Terminal window and ty
 cd sofamyroom/build
 cmake ../src -G"XCode"
 ```
-
-The `cunit` library may be required. You can install it with a package manager for MacOS, i.e. Homebrew.
 
 ## Building with MATLAB
 
@@ -163,6 +143,8 @@ You can also build it in Unittest mode, to check the validity of SofaMyRoom func
 ```matlab
 make test
 ```
+
+On Windows, pass the location of zlib as extra arguments, for example `make('-IC:\vcpkg\installed\x64-windows\include', '-LC:\vcpkg\installed\x64-windows\lib', '-lzlib')`.
 
 ## Building the documentation
 
@@ -200,12 +182,14 @@ A useful tutorial on how to use Doxygen in combination with Sphinx and CMAKE is 
 
 # License
 
-SofaMyRoom is licensed under the [EUPL-1.2](https://joinup.ec.europa.eu/sites/default/files/custom-page/attachment/2020-03/EUPL-1.2%20EN.txt).
+The code written for SofaMyRoom is licensed under the [EUPL-1.2](https://joinup.ec.europa.eu/sites/default/files/custom-page/attachment/2020-03/EUPL-1.2%20EN.txt). The files inherited from Roomsim by Steven M. Schimmel keep their GNU GPL-3.0-or-later licence, so every compiled form of SofaMyRoom is a combined work distributed under the GPL-3.0-or-later. The included third-party code (libmysofa, PocketFFT, SFMT, WAVE writer) and its licences are listed in `THIRD_PARTY_LICENSES.md` in the repository.
 
 # Credits
 
 * Steven M. Schimmel, Martin F. Muller, and Norbert Dillier - [Roomsim](https://sourceforge.net/projects/roomsim/)
 * Christian Hoene, Isabel C. Patiño Mejía, Alexandru Cacerovschi - [MySofa](https://github.com/hoene/libmysofa)
+* Martin Reinecke - [PocketFFT](https://github.com/mreineck/pocketfft)
+* Mutsuo Saito and Makoto Matsumoto - [SFMT](http://www.math.sci.hiroshima-u.ac.jp/m-mat/MT/SFMT/)
 * Piotr Majdak et al. - [Spatially Oriented Format for Acoustics (SOFA)](https://www.sofaconventions.org/)
 * Andrew Ippoliti - [WAV file writer](http://blog.acipo.com/generating-wave-files-in-c/)
 * Antoine Deleforge and Clément Gaultier [VAST](http://thevastproject.inria.fr/dataset/)

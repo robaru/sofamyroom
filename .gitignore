@@ -11,3 +11,4 @@ src/docsrc/sphinx/_build
 data/*.sofa
 PLAN.md
 manuscript.pdf
+.claude/
