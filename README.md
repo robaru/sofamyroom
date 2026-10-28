@@ -119,9 +119,13 @@ You can also build it in Unittest mode, to check the validity of sofamyroom func
 make test
 ```
 
-## Known issues
+## Known issues and limitations
 
 * When using the MEX library, MATLAB can crash since the memory allocation performed by libmysofa is not persistent.
+* The library is single-threaded and keeps the loaded sensors in global state: run one simulation at a time per process. To simulate many rooms in parallel, start several processes.
+* Image sources are placed at integer sample delays (no fractional-delay interpolation).
+* SOFA receivers must use the SimpleFreeFieldHRIR convention with exactly two receivers (ears).
+* The diffuse tail is rendered from six spatial directions.
 
 ## Testing
 
