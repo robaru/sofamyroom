@@ -72,6 +72,17 @@ endif()
 
 target_link_libraries(sofamyroom libroomsim wavwriter)
 
+# Unit tests: build, then run `ctest` in the build directory.
+# The "empty room" test needs data/MIT_KEMAR_normal_pinna.sofa (see README).
+enable_testing()
+add_executable(sofamyroom_unittest build.c main.c unittest.c)
+set_source_files_properties(unittest.c PROPERTIES HEADER_FILE_ONLY TRUE)
+target_compile_definitions(sofamyroom_unittest PRIVATE
+	UNITTEST
+	TEST_SOFA_PATH="${CMAKE_SOURCE_DIR}/../data/MIT_KEMAR_normal_pinna.sofa")
+target_link_libraries(sofamyroom_unittest libroomsim wavwriter)
+add_test(NAME unittest COMMAND sofamyroom_unittest)
+
 if(BUILD_DOCS MATCHES True)
 	add_subdirectory ("docsrc")
 endif()

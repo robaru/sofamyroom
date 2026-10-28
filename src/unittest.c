@@ -18,6 +18,15 @@
 #  pragma warning( disable : 4996)
 #endif
 
+/* SOFA file used by the "empty room" test; override with -DTEST_SOFA_PATH="..." */
+#ifndef TEST_SOFA_PATH
+#  ifndef MEX
+#    define TEST_SOFA_PATH "../../data/MIT_KEMAR_normal_pinna.sofa"
+#  else
+#    define TEST_SOFA_PATH "../data/MIT_KEMAR_normal_pinna.sofa"
+#  endif
+#endif
+
 #define EPSILON     1e-10
 #define EPSEQ(x,y)  (fabs((x)-(y))<EPSILON)
 
@@ -222,11 +231,7 @@ void Roomsetup(CRoomSetup* par)
     };
     static const CSensor receiver[] = {
         {{500,500,500}, {0,0,0}, 
-#	ifndef MEX
-		"SOFA ../../data/MIT_KEMAR_normal_pinna.sofa"
-#	else
-		"SOFA ../data/MIT_KEMAR_normal_pinna.sofa"
-#	endif
+		"SOFA " TEST_SOFA_PATH
 		}
     };
     FILE* fid;
@@ -278,7 +283,9 @@ void Roomsetup(CRoomSetup* par)
 
     /* Output */
     par->options.outputname = "brir";
+#ifdef MEX
     par->options.mex_saveaswav = false;
+#endif
 
     /* read absorption and diffusion data if exists */
     fid = fopen("abscoeff.txt", "r");
@@ -329,11 +336,7 @@ void testEmptyRoom(void)
 
     MsgPrintf("Extracting HRTF from SOFA file...\n");
     definition = LoadSensor(
-#	ifndef MEX
-		"SOFA ../../data/MIT_KEMAR_normal_pinna.sofa"
-#	else
-		"SOFA ../data/MIT_KEMAR_normal_pinna.sofa"
-#	endif
+		"SOFA " TEST_SOFA_PATH
     );
     if (!SensorGetResponse(definition, &xyz, &response))
         MsgErrorExit("didn't get response from sensor");

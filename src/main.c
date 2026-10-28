@@ -121,8 +121,7 @@ int main(void)
         MsgPrintf("passed.\n");
     }
 
-	printf("Press return to exit...\n");
-	getchar();
+    MsgPrintf("all %d tests passed.\n", nUnittests);
     return 0;
 }
 #endif /* defined(UNIT_TEST) */
