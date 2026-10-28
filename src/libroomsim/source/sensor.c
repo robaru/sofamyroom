@@ -36,6 +36,7 @@
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
+#include <sys/stat.h>
 
 #include "3D.h"
 #include "defs.h"
@@ -574,16 +575,53 @@ void sensor_SOFA_init(const char *datafile, CSensorDefinition *definition)
 	definition->applydelay = false;
 	definition->maxdelay = 0;
 
-	path = strtok(datafilecopy, " ");
-	if (strlen(path) == strlen(datafile))
+	/* the path may be double-quoted ("...") so that it can contain spaces;
+	   the options follow it */
+	path = datafilecopy;
+	while (*path == ' ') path++;
+	if (*path == '"')
+	{
+		char *end = strchr(++path, '"');
+		if (!end)
+		{
+			MemFree(datafilecopy);
+			MsgErrorExit("unterminated quote in SOFA sensor description");
+		}
+		*end = '\0';
+		options = end + 1;
+	}
+	else
+	{
+		options = path;
+		while (*options && *options != ' ') options++;
+		if (*options) *options++ = '\0';
+	}
+	while (*options == ' ') options++;
+	if (*options)
+	{
+		getOptions(options, definition);
+	}
+	else
 	{
 		snprintf(msg, sizeof(msg), "no options provided in sensor description, using default values\n");
 		MsgPrintf("%s", msg);
 	}
-	else
+
+	/* libmysofa does not cope with a path that is not a regular file */
 	{
-		options = path + strlen(path) + 1;
-		getOptions(options, definition);
+		struct stat st;
+		if (stat(path, &st) != 0)
+		{
+			snprintf(msg, sizeof(msg), "SOFA data file '%s' not found", path);
+			MemFree(datafilecopy);
+			MsgErrorExit(msg);
+		}
+		if (st.st_mode & S_IFDIR)
+		{
+			snprintf(msg, sizeof(msg), "SOFA data file '%s' is a directory", path);
+			MemFree(datafilecopy);
+			MsgErrorExit(msg);
+		}
 	}
 
 	/* memory allocation for SOFA data */
