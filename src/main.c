@@ -53,7 +53,6 @@ int main(int argc, char **argv)
 {
 	CRoomSetup setup;
     BRIR	   *response;
-    FILE	   *fid;
 	int		   i, j, k;
 	CFileSetup filesetup;
 	char	   filename[256];
@@ -83,11 +82,6 @@ int main(int argc, char **argv)
 
 	/* run the simulator */
     response = Roomsim(&setup);
-
-#define FWVAR(v) fwrite(&(v),sizeof(v),1,fid)
-#define FWDBLARR(v,c) fwrite(v,sizeof((v)[0]),c,fid)
-
-	fid = NULL;
 
 	/* scratch buffer sized for the receiver with the most channels */
 	k = 0;

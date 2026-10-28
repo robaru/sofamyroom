@@ -96,11 +96,7 @@
 #endif
 
 /* to avoid compiler warnings about unreferenced parameters */
-#ifdef _MSC_VER
-#  define UNREFERENCED_PARAMETER(P) (P)
-#else
-#  define UNREFERENCED_PARAMETER(P) 
-#endif
+#define UNREFERENCED_PARAMETER(P) (void)(P)
 
 /* DEBUG OUTPUT */
 /* #define LOGRAYS */

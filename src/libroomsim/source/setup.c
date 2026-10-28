@@ -394,6 +394,8 @@ int ReadSetup(char *filename, CFileSetup *pSetup)
 	/* read file into buffer, close file */
 	fread_bytes = fread(pSetup->buf,1,flen,fid);
 	fclose(fid);
+	if (fread_bytes != flen)
+		return -3;
 
 	pSetup->root.type = SI_STRUCT;
 	pSetup->root.name = "setup";

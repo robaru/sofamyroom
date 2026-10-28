@@ -86,9 +86,9 @@ void PrintConv(double *h, int hlen, double *x, int xlen, double *y)
     MsgPrintf("]\n");
 }
 
-#define LENGTH(x) (sizeof(x)/sizeof(x[0]))
-#define DBLLEN(x) (sizeof(x)/sizeof(double))
-#define INTLEN(x) (sizeof(x)/sizeof(int))
+#define LENGTH(x) ((int)(sizeof(x)/sizeof(x[0])))
+#define DBLLEN(x) ((int)(sizeof(x)/sizeof(double)))
+#define INTLEN(x) ((int)(sizeof(x)/sizeof(int)))
 #define DISPDBL(x) mexPrintf("%s:\n",#x);for (i=0; i<DBLLEN(x); i++) mexPrintf("  %d = %f\n",i,(x)[i]);
 #define DISPINT(x) mexPrintf("%s:\n",#x);for (i=0; i<INTLEN(x); i++) mexPrintf("  %d = %d\n",i,(x)[i]);
 
@@ -339,7 +339,6 @@ void testEmptyRoom(void)
     BRIR* brir;
     CSensorDefinition *definition;
     CSensorResponse response;
-    int error;
     XYZ xyz = { 0 };
     int i;
 
