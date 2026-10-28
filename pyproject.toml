@@ -53,6 +53,8 @@ docs = [
     "sphinx>=7",
     "sphinx_rtd_theme",
     "myst-parser",
+    "hawkmoth",   # C reference from the header comments
+    "libclang",   # the clang bindings hawkmoth needs, with the shared library
 ]
 dev = ["pysofamyroom[tests,docs]", "build", "twine", "cibuildwheel"]
 
