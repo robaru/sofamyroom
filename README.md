@@ -143,10 +143,11 @@ ctest --test-dir build/cmake --output-on-failure
 ## License
 
 sofamyroom is licensed under the [EUPL-1.2](https://joinup.ec.europa.eu/sites/default/files/custom-page/attachment/2020-03/EUPL-1.2%20EN.txt), with one exception.
-The files inherited from Roomsim by Steven M. Schimmel (University of Zurich, 2009) keep their original GNU GPL-3.0-or-later licence, as stated in their headers:
+The files inherited from Roomsim by Steven M. Schimmel (University of Zurich, 2009) keep their original GNU GPL-3.0-or-later licence, and our modifications to them are released under the same GPL terms. Each of these files carries the original Roomsim header followed by a notice that states whether, and how, it was changed for sofamyroom:
 
-* `src/libroomsim/source/interface.c`, `interp.c`, `rng.c`
-* `matlab/` `estimateRT60.m`, `editabsorption.m`, `plotabsorption.m`, `estimateroombreakfreq.m`, `plotcoordsystem.m`, `plotbrir.m`, `readsetup.m`, `rsound.m`, `yprTr2s.m`, `selectabsorption.m`, `yprTs2r.m`, `plotroom.m`, `setcomplexity.m`
+* `src/libroomsim/` (all `.c` and `.h` files, except `include/global.h` which is new and EUPL-1.2)
+* `src/libroomsim.h`, `src/main.c`, `src/mexmain.c`, `src/unittest.c`
+* `matlab/` `estimateRT60.m`, `editabsorption.m`, `plotabsorption.m`, `estimateroombreakfreq.m`, `plotcoordsystem.m`, `plotbrir.m`, `readsetup.m`, `rsound.m`, `yprTr2s.m`, `yprTs2r.m`, `selectabsorption.m`, `plotroom.m`, `setcomplexity.m`
 
 ## Credits
 
