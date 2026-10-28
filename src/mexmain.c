@@ -2,12 +2,37 @@
  * @file mexmain.c
  * @brief Main file for MEX interface with MATLAB.
  **********************************************************************//*
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Author: Steven Schimmel, stevenmschimmel@gmail.com
-% adapted and updated by: Roberto Barumerli, roberto.baru@gmail.com
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+ * Author: Steven Schimmel, stevenmschimmel@gmail.com
+ * Copyright 2009, University of Zurich
+ *************************************************************************
+ * This file is part of ROOMSIM.
+ *
+ * ROOMSIM is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ROOMSIM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ROOMSIM. If not, see <http://www.gnu.org/licenses/>.
+ *************************************************************************
+ * Modified for SofaMyRoom (https://github.com/robaru/sofamyroom).
+ * Copyright 2019-2020, Roberto Barumerli and Daniele Bianchi
+ *
+ * Changes with respect to the original ROOMSIM file:
+ *   - MEX entry point renamed to sofamyroom; the setup is checked with
+ *     ValidateSetup(); the responses can be written to WAVE files
+ *     (option mex_saveaswav) through wavwriter.
+ *   - mxGetDimensions() handled with size_t; stricmp() mapped to
+ *     strcasecmp() when compiling with GCC or Clang.
+ *
+ * The modifications are released under the same GNU General Public
+ * License, version 3 or later.
+ *************************************************************************/
 
 /****** NOTES *********************************************************//**
 
