@@ -48,11 +48,9 @@ tests = [
     "ruff",
 ]
 docs = [
-    "sphinx",
-    "pydata-sphinx-theme",
-    "sphinx_mdinclude",
-    "autodocsumm>=0.2.14",
-    "sphinx-design",
+    "sphinx>=7",
+    "sphinx_rtd_theme",
+    "myst-parser",
 ]
 dev = ["pysofamyroom[tests,docs]", "build", "twine", "cibuildwheel"]
 

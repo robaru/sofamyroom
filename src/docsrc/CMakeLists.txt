@@ -38,10 +38,10 @@ set(SPHINX_INDEX_FILE ${SPHINX_BUILD}/index.html)
 # - Our doc files have been updated
 # - The Sphinx config has been updated
 add_custom_command(OUTPUT ${SPHINX_INDEX_FILE}
-                   COMMAND 
+                   COMMAND
+                     # Tell conf.py where to find the Doxygen output (breathe)
+                     ${CMAKE_COMMAND} -E env SOFAMYROOM_DOXYGEN_XML=${DOXYGEN_OUTPUT_DIR}/xml
                      ${SPHINX_EXECUTABLE} -b html
-                     # Tell Breathe where to find the Doxygen output
-                     -Dbreathe_projects.SofaMyRoom=${DOXYGEN_OUTPUT_DIR}/xml
                    	${SPHINX_SOURCE} ${SPHINX_BUILD}
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
                        ${CMAKE_CURRENT_BINARY_DIR}/sphinx ${PROJECT_SOURCE_DIR}/../docs/

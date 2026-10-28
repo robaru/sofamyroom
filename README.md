@@ -38,6 +38,20 @@ setup = readsetup('data/sampleroomsetup.m');
 output = sofamyroom(setup);
 ```
 
+### Usage with Python
+
+The `pysofamyroom` package (`pip install pysofamyroom`, Python 3.10 or later) drives the same library in-process with the same parameters and returns the same samples:
+
+```python
+import pysofamyroom as smr
+
+setup = smr.read_setup("data/sampleroomsetup.txt")   # or build a smr.Setup(...)
+setup.receivers[0] = smr.Receiver.sofa("data/MIT_KEMAR_normal_pinna.sofa", (3, 5, 1.2))
+brirs = smr.simulate(setup)          # brirs[source][receiver]: (n_samples, n_channels)
+```
+
+`pysofamyroom.vast` generates annotated multi-room BRIR datasets in the VAST format (`examples/vast_demo.py`). See the [Python documentation](https://robaru.github.io/sofamyroom/python.html) for details.
+
 ## Building SofaMyRoom
 
 These instructions will guide you through the steps to build SofaMyRoom on your local machine. CMake is required.
@@ -127,6 +141,17 @@ cmake -S src -B build/cmake -DCMAKE_BUILD_TYPE=Release
 cmake --build build/cmake
 ctest --test-dir build/cmake --output-on-failure
 ```
+
+The Python package is tested with pytest (the SOFA file is downloaded automatically if missing; one test compares the Python output with the `sofamyroom` executable above, bit for bit, when it has been built):
+
+```bash
+pip install -e ".[tests]"
+pytest
+```
+
+### Building the Python package
+
+`pip install .` (or `pip install -e .` for development) compiles the library through the same CMake project with `-DSOFAMYROOM_PYTHON=ON`; it needs a C compiler and the zlib development files, CMake and ninja are fetched automatically if they are not installed. `python -m build` produces the sdist and the wheel.
 
 ## License
 

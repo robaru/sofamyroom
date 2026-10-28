@@ -1,59 +1,77 @@
 # Configuration file for the Sphinx documentation builder.
 #
-# This file only contains a selection of the most common options. For a full
-# list see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
+# Two ways to build:
+#   * `cmake -DBUILD_DOCS=True`: Doxygen runs first and the C reference page
+#     (doxydoc.rst) is rendered through breathe; CMake passes the location
+#     of the Doxygen XML in SOFAMYROOM_DOXYGEN_XML.
+#   * `pip install .[docs]` + `sphinx-build` (Read the Docs): the Python
+#     pages are built with autodoc, the C reference page is skipped.
 
-# -- Path setup --------------------------------------------------------------
-
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-#
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
-
+import os
 
 # -- Project information -----------------------------------------------------
 project = 'SofaMyRoom'
-copyright = 'EUPL v1.2, 2020'
-author = 'Roberto Barumerli Daniele Bianchi'
+copyright = '2019-2026, Roberto Barumerli, Daniele Bianchi'
+author = 'Roberto Barumerli, Daniele Bianchi'
 
+try:
+    import pysofamyroom
+    release = version = pysofamyroom.__version__
+except ImportError:  # docs of the C code only
+    release = version = ''
 
 # -- General configuration ---------------------------------------------------
-
-# Add any Sphinx extension module names here, as strings. They can be
-# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
-# ones.
 extensions = [
-	"breathe",
-	"recommonmark"
+    'myst_parser',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon',
+    'sphinx.ext.intersphinx',
 ]
 
-# Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
-
-# List of patterns, relative to source directory, that match files and
-# directories to ignore when looking for source files.
-# This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '.nojekyll']
 
+# C reference through Doxygen + breathe, only when the XML output exists;
+# otherwise the doxydoc page says how to build it
+doxygen_xml = os.environ.get('SOFAMYROOM_DOXYGEN_XML', '')
+have_doxygen = bool(doxygen_xml) and os.path.isdir(doxygen_xml)
+if have_doxygen:
+    extensions.append('breathe')
+    breathe_projects = {'SofaMyRoom': doxygen_xml}
+    breathe_default_project = 'SofaMyRoom'
+
+
+def setup(app):
+    if have_doxygen:
+        return
+    from docutils import nodes
+    from docutils.parsers.rst import Directive
+
+    class NoDoxygen(Directive):
+        def run(self):
+            text = ('The C code reference is generated with Doxygen and '
+                    'Breathe when the documentation is built through CMake '
+                    '(cmake -DBUILD_DOCS=True); it is not part of this '
+                    'build.')
+            return [nodes.note('', nodes.paragraph(text=text))]
+
+    app.add_directive('doxygenindex', NoDoxygen)
+
+autodoc_member_order = 'bysource'
+autodoc_typehints = 'description'
+napoleon_numpy_docstring = True
+napoleon_google_docstring = False
+napoleon_use_rtype = False
+
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+    'numpy': ('https://numpy.org/doc/stable/', None),
+    'scipy': ('https://docs.scipy.org/doc/scipy/', None),
+}
+
+myst_heading_anchors = 3
+
+master_doc = 'index'
 
 # -- Options for HTML output -------------------------------------------------
-
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
-#
 html_theme = 'sphinx_rtd_theme'
-
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
-
-# Breathe Configuration
-breathe_default_project = "SofaMyRoom"
-
-# index file
-master_doc = 'index'
+html_static_path = []

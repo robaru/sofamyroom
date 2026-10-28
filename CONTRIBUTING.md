@@ -21,7 +21,10 @@ documentation at https://robaru.github.io/sofamyroom first.
 1. Fork the repository and create a branch from `master`.
 2. Build with CMake (see the README) and make sure `unittest` still passes.
 3. Keep the C code warning-free under `-Wall -Wextra`.
-4. Open a pull request describing what changed and why.
+4. For the Python package: `pip install -e ".[tests]"`, then `ruff check python tests` and `pytest` must pass. Python code follows the numpy docstring style (configured in `pyproject.toml`).
+5. Open a pull request describing what changed and why.
+
+Changes that alter the simulated output must be opt-in options that default to the previous behaviour, so that published results stay reproducible.
 
 By contributing you agree that your contribution is released under the
 EUPL-1.2 licence of this project (see `LICENSE.txt`).

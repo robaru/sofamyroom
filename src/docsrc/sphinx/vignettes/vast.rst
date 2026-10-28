@@ -11,6 +11,9 @@ Here is reported the organization of the VAST structure. The VAST project is ava
 .. IMPORTANT::
   In this version, the VAST dataset can handle more than six frequency bands and, moreover, the HRTF dataset is not restricted to the one recorded at MIT on the KEMAR mannequin.
 
+.. NOTE::
+  The same structure is produced from Python by :func:`pysofamyroom.vast.generate`, which can put several rooms into one dataset; :meth:`pysofamyroom.vast.VAST.save` writes it as a ``.mat`` file with the field names below (see :doc:`../python`).
+
 ==================================
 VAST structure
 ==================================

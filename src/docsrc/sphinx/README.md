@@ -35,6 +35,10 @@ setup = readsetup('data/sampleroomsetup.m');
 output = sofamyroom(setup);
 ```
 
+## Usage with Python
+
+The `pysofamyroom` package (`pip install pysofamyroom`) drives the same library from Python with the same parameters, and generates VAST datasets; see {doc}`python`.
+
 ## Notes about the setup file
 
 This file stores all the information needed by SofaMyRoom to perform the simulation.
@@ -152,10 +156,11 @@ You can optionally build the documentation files from the source code. Documenta
 First of all, you need to install all of the required software. Please refer to the installation guides of each software in order to know the steps to install them on your machine. For MS Windows, we recommend to use the package manager `pip3` to install Sphinx and Breathe ([ref](https://www.sphinx-doc.org/en/master/usage/installation.html)) while with Ubuntu is suggested to run:
 
 ```bash
-# IMPORTANT: recommonmark version 0.5.0 or later
 sudo apt install doxygen
-pip3 install sphinx sphinx_rtd_theme recommonmark breathe
+pip3 install sphinx sphinx_rtd_theme myst-parser breathe
 ```
+
+The Python pages (autodoc) need the `pysofamyroom` package installed; without Doxygen and Breathe, `sphinx-build -b html src/docsrc/sphinx <output>` builds everything except the C code reference (this is what Read the Docs does).
 
 When the installation is complete, you need to enable the building of the documentation files. When using CMake, you need to add the following to the CMake command:
 

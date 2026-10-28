@@ -13,16 +13,23 @@ SofaMyRoom - Home
    Overview <README.md>
 
 .. toctree::
+   :caption: Python package
+   :maxdepth: 2
+
+   Using pysofamyroom <python>
+   Python API reference <python_api>
+
+.. toctree::
    :caption: Vignettes
    :maxdepth: 1
-   
+
    Simulation parameters <vignettes/params>
    VAST structure <vignettes/vast>
 
 .. toctree::
    :caption: Code Reference
    :maxdepth: 1
-   
+
    Code documentation <doxydoc>
 
 
