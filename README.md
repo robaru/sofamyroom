@@ -147,6 +147,7 @@ The files inherited from Roomsim by Steven M. Schimmel (University of Zurich, 20
 
 * `src/libroomsim/` (all `.c` and `.h` files, except `include/global.h` which is new and EUPL-1.2)
 * `src/libroomsim.h`, `src/main.c`, `src/mexmain.c`, `src/unittest.c`
+* `data/materials.mat` (the Roomsim absorption-coefficient database used by `editabsorption.m`)
 * `matlab/` `estimateRT60.m`, `editabsorption.m`, `plotabsorption.m`, `estimateroombreakfreq.m`, `plotcoordsystem.m`, `plotbrir.m`, `readsetup.m`, `rsound.m`, `yprTr2s.m`, `yprTs2r.m`, `selectabsorption.m`, `plotroom.m`, `setcomplexity.m`
 
 ## Credits
