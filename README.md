@@ -7,9 +7,7 @@ The SOFA support is possible thanks to MySofa library (hereinafter referred as `
 
 Thanks to the Virtual Acoustic Space Traveling (VAST) framework [1], we added the possibility to systematically generate labeled datasets to train and test machine learning algorithms.
 
-:open_book: The full documentation is available [here](https://robaru.github.io/sofamyroom)
-
-:open_book: We are writing an article about sofamyroom and the pre-print is already available on [arXiv](https://arxiv.org/abs/2106.12992).
+The full documentation is available at [robaru.github.io/sofamyroom](https://robaru.github.io/sofamyroom). A pre-print describing sofamyroom is available on [arXiv](https://arxiv.org/abs/2106.12992).
 
 
 > **Note (October 2026):** the git history was rewritten to merge the old repositories into a single line. If you cloned sofamyroom before, please re-clone it; existing clones will not pull cleanly.
@@ -27,6 +25,31 @@ build/cmake/sofamyroom data/sampleroomsetup.txt
 ```
 
 `data/sampleroomsetup.txt` is a commented sample of the setup file; the paths in it (SOFA file, output name) are relative to the directory you run the command from.
+
+### The setup file
+
+The setup file lists the room, the simulation options and the sources and receivers, one `name = value;` assignment per line (`%` starts a comment). The complete list of parameters is in the [documentation](https://robaru.github.io/sofamyroom/vignettes/params.html). Two options concern the output: `options.outputname` is the first part of the name of the WAVE files (one per source-receiver pair, the extension is added by sofamyroom), and `options.mex_saveaswav` makes the MEX file write WAVE files instead of returning a cell array (MATLAB only).
+
+A binaural receiver is described by a string of the form
+
+```
+'SOFA PATH_TO_HRTF_FILE interp=VALUE norm=VALUE resampling=VALUE delay=VALUE'
+```
+
+where `PATH_TO_HRTF_FILE` is the relative or absolute path of the `.sofa` file and the options are:
+
+* `interp`: interpolate the neighbouring HRTFs instead of picking the closest measured direction.
+* `norm`: normalise the HRTF data.
+* `resampling`: resample the HRTFs to `options.fs`.
+* `delay`: apply the per-ear `Data.Delay` stored in the SOFA file, rounded to whole samples; use it with HRTF sets whose impulse responses are time-aligned and carry the interaural time difference in `Data.Delay`.
+
+A value is `T[RUE]`, `t[rue]` or `1` to enable an option and `F[ALSE]`, `f[alse]` or `0` to disable it (only the first character is read). All options are optional and off by default; unrecognised options are skipped and, if an option is repeated, the last value is used. Valid examples:
+
+```
+'SOFA ./mySofaFile.sofa'
+'SOFA ./mySofaFile.sofa interp=TRUE norm=0 resampling=t'
+'SOFA ./myTimeAlignedFile.sofa delay=1'
+```
 
 ### Usage with MATLAB
 
@@ -153,6 +176,17 @@ pytest
 
 `pip install .` (or `pip install -e .` for development) compiles the library through the same CMake project with `-DSOFAMYROOM_PYTHON=ON`; it needs a C compiler and the zlib development files, CMake and ninja are fetched automatically if they are not installed. `python -m build` produces the sdist and the wheel.
 
+### Building the documentation
+
+The documentation is built with [Sphinx](https://www.sphinx-doc.org) only; the Python pages use autodoc, so the package must be installed:
+
+```bash
+pip install -e ".[docs]"
+sphinx-build -b html src/docsrc/sphinx build/html
+```
+
+The site at [robaru.github.io/sofamyroom](https://robaru.github.io/sofamyroom) is rebuilt from `master` by the `docs` GitHub workflow.
+
 ## License
 
 The code written for sofamyroom is licensed under the [EUPL-1.2](https://joinup.ec.europa.eu/sites/default/files/custom-page/attachment/2020-03/EUPL-1.2%20EN.txt) (`LICENSE.txt`).
@@ -165,7 +199,7 @@ The files inherited from Roomsim by Steven M. Schimmel (University of Zurich, 20
 
 Since the simulator core is GPL, every compiled form of sofamyroom (command line tool, MEX file, or a package that links it) is a combined work distributed under the GNU GPL-3.0-or-later; the EUPL-1.2 permits this through its compatibility clause. The GPL text is in `LICENSE-GPL-3.0.txt`; the Python wheel declares `EUPL-1.2 AND GPL-3.0-or-later` and ships both texts.
 
-The third-party code included in `src/` (libmysofa, PocketFFT, SFMT) is listed with its licence texts in [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
+The third-party code included in `src/` (libmysofa, PocketFFT, SFMT) is listed with its licence texts in [THIRD_PARTY_LICENSES.md](https://github.com/robaru/sofamyroom/blob/master/THIRD_PARTY_LICENSES.md).
 
 ## Credits
 
